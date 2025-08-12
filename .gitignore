@@ -17,10 +17,10 @@
 /.next/
 /out/
 
-# production
+#  production
 /build
 
-# misc
+#  misc
 .DS_Store
 *.pem
 
