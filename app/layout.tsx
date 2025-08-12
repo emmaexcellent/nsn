@@ -23,12 +23,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
           <Navigation />
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen">
+            {children}
+          </main>
           <Footer />
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

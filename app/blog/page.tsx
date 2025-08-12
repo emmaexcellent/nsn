@@ -125,14 +125,16 @@ export default function BlogPage() {
   })
 
   return (
-    <div className="min-h-screen pt-24 pb-12">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen py-24 lg:py-36 pb-12">
+      <div className="w-full max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center space-y-4 mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">Resources & Blog</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+            Resources & Blog
+          </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Expert tips, comprehensive guides, and inspiring success stories to help you succeed in your scholarship
-            journey
+            Expert tips, comprehensive guides, and inspiring success stories to
+            help you succeed in your scholarship journey
           </p>
         </div>
 
@@ -146,16 +148,22 @@ export default function BlogPage() {
                 fill
                 className="object-cover"
               />
-              <Badge className="absolute top-4 left-4 bg-gold text-navy">Featured</Badge>
+              <Badge className="absolute top-4 left-4 bg-gold text-navy">
+                Featured
+              </Badge>
             </div>
             <div className="p-8 flex flex-col justify-center">
               <div className="space-y-4">
                 <Badge variant="secondary" className="w-fit">
                   {featuredPost.category}
                 </Badge>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{featuredPost.title}</h2>
-                <p className="text-gray-600 dark:text-gray-400">{featuredPost.excerpt}</p>
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  {featuredPost.title}
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {featuredPost.excerpt}
+                </p>
+                <div className="flex items-center space-x-4 text-sm text-gray-500 pb-4">
                   <div className="flex items-center">
                     <User className="h-4 w-4 mr-1" />
                     {featuredPost.author}
@@ -178,7 +186,7 @@ export default function BlogPage() {
         </Card>
 
         {/* Search and Filter */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -189,7 +197,10 @@ export default function BlogPage() {
                 className="pl-10"
               />
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
@@ -203,7 +214,9 @@ export default function BlogPage() {
             </Select>
           </div>
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400">{filteredPosts.length} articles found</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {filteredPosts.length} articles found
+            </p>
           </div>
         </div>
 
@@ -222,7 +235,9 @@ export default function BlogPage() {
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <Badge className="absolute top-4 left-4 bg-navy/90 text-white">{post.category}</Badge>
+                <Badge className="absolute top-4 left-4 bg-navy/90 text-white">
+                  {post.category}
+                </Badge>
               </div>
               <CardContent className="p-6 space-y-4">
                 <div className="space-y-2">
@@ -277,5 +292,5 @@ export default function BlogPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
