@@ -1,20 +1,17 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, BookOpen, Calendar, DollarSign } from "lucide-react"
-import { CountdownTimer } from "@/components/countdown-timer"
-import { BookmarkButton } from "@/components/bookmark-button"
+import { ArrowRight, BookOpen } from "lucide-react"
 import Hero from "@/components/home/hero"
 import Testimonials from "@/components/home/testimonials"
-import { featuredScholarships, blogPosts } from "@/public/constants";
+import { featuredScholarships, blogPosts } from "@/lib/constants"
 import { ScholarshipCard } from "@/components/schorlarships/scholarship-card"
 
-export default function HomePage() {  
-
+export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -24,12 +21,9 @@ export default function HomePage() {
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Featured Opportunities
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Featured Opportunities</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Discover prestigious scholarships that could transform your
-              educational journey
+              Discover prestigious scholarships that could transform your educational journey
             </p>
           </div>
 
@@ -66,9 +60,7 @@ export default function HomePage() {
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Latest Resources
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Latest Resources</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Expert tips, guides, and success stories to help you succeed
             </p>
@@ -88,14 +80,10 @@ export default function HomePage() {
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <Badge className="absolute top-4 left-4 bg-navy text-white">
-                    {post.category}
-                  </Badge>
+                  <Badge className="absolute top-4 left-4 bg-navy text-white">{post.category}</Badge>
                 </div>
                 <CardContent className="p-6 space-y-3">
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {post.date}
-                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">{post.date}</div>
                   <CardTitle className="text-xl group-hover:text-navy dark:group-hover:text-gold transition-colors line-clamp-2">
                     {post.title}
                   </CardTitle>
@@ -133,19 +121,14 @@ export default function HomePage() {
       <section className="py-20 bg-navy dark:bg-gray-800 text-white">
         <div className="w-full max-w-6xl mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Ready to Start Your Scholarship Journey?
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Ready to Start Your Scholarship Journey?</h2>
             <p className="text-xl text-gray-200">
-              Join thousands of students who have already discovered their
-              perfect scholarship opportunities through NSN.
+              Join thousands of students who have already discovered their perfect scholarship opportunities through
+              NSN.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/scholarships">
-                <Button
-                  size="lg"
-                  className="bg-gold hover:bg-gold/90 text-navy font-semibold text-lg px-8 py-4"
-                >
+                <Button size="lg" className="bg-gold hover:bg-gold/90 text-navy font-semibold text-lg px-8 py-4">
                   Explore Scholarships
                 </Button>
               </Link>
@@ -163,5 +146,5 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  );
+  )
 }

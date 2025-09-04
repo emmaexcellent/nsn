@@ -1,35 +1,32 @@
 import { Client, Account, Databases } from "appwrite"
 
-// Environment variables with fallbacks and validation
-const projectID = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID
+// Environment variables with fallbacks
 const projectEndpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT
-const databaseId = process.env.NEXT_PUBLIC_DATABASE_ID
+const projectID = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID
+const databaseID = process.env.NEXT_PUBLIC_DATABASE_ID
 
-// Validate required environment variables
-if (!projectID) {
-  console.warn("NEXT_PUBLIC_APPWRITE_PROJECT_ID is not set")
-}
+// Create Appwrite client
+const client = new Client()
 
-if (!projectEndpoint) {
-  console.warn("NEXT_PUBLIC_APPWRITE_ENDPOINT is not set")
-}
-
-if (!databaseId) {
-  console.warn("NEXT_PUBLIC_DATABASE_ID is not set")
-}
-
-export const client = new Client()
-
-// Only configure client if environment variables are available
+// Only configure if environment variables exist
 if (projectEndpoint && projectID) {
   try {
     client.setEndpoint(projectEndpoint).setProject(projectID)
   } catch (error) {
     console.error("Failed to configure Appwrite client:", error)
   }
+} else {
+  console.warn("Appwrite environment variables not configured. Using mock authentication.")
 }
 
-export const account = new Account(client)
-export const databases = new Databases(client)
-export { databaseId }
-export { ID } from "appwrite"
+// Initialize services
+const account = new Account(client)
+const databases = new Databases(client)
+
+// Export configuration
+export { client, account, databases, databaseID }
+
+// Helper function to check if Appwrite is configured
+export const isAppwriteConfigured = () => {
+  return !!(projectEndpoint && projectID && databaseID)
+}

@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight, Calendar, DollarSign } from "lucide-react"
-import { CountdownTimer } from "@/components/schorlarships/countdown-timer"
-import { BookmarkButton } from "@/components/schorlarships/bookmark-button"
+import { CountdownTimer } from "@/components/countdown-timer"
+import { BookmarkButton } from "@/components/bookmark-button"
 
 interface Scholarship {
   id: number
@@ -20,7 +20,7 @@ interface Scholarship {
 
 interface ScholarshipCardProps {
   scholarship: Scholarship
-  variant?: "featured" | "default"
+  variant?: "default" | "featured" | "compact"
   animationDelay?: number
 }
 
