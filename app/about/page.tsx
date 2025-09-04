@@ -82,10 +82,10 @@ export default function AboutPage() {
   ]
 
   return (
-    <div className="min-h-screen pt-24 pb-12">
+    <div className="min-h-screen pb-12">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-navy to-navy/90 text-white">
-        <div className="container mx-auto px-4">
+      <section className="py-24 lg:py-40 bg-gradient-to-br from-navy to-navy/90 text-white">
+        <div className="w-full max-w-6xl mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <h1 className="text-4xl md:text-6xl font-bold">About Newton Scholarship Nexus</h1>
             <p className="text-xl md:text-2xl text-gray-200">
@@ -106,7 +106,7 @@ export default function AboutPage() {
 
       {/* Mission & Story */}
       <section className="py-20 bg-white dark:bg-gray-800">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Our Mission</h2>
@@ -135,7 +135,7 @@ export default function AboutPage() {
 
       {/* Vision & Values */}
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Our Vision & Values</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -237,7 +237,7 @@ export default function AboutPage() {
 
       {/* Team Section */}
       <section className="py-20 bg-white dark:bg-gray-800">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Meet Our Team</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -295,7 +295,7 @@ export default function AboutPage() {
 
       {/* Partners Section */}
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Our Partners</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -324,7 +324,7 @@ export default function AboutPage() {
 
       {/* CTA Section */}
       <section className="py-20 bg-navy dark:bg-gray-800 text-white">
-        <div className="container mx-auto px-4 text-center">
+        <div className="w-full max-w-6xl mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-3xl md:text-4xl font-bold">Join Our Mission</h2>
             <p className="text-xl text-gray-200">

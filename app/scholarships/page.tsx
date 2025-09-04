@@ -10,6 +10,7 @@ import Link from "next/link"
 import { Search, Filter, Calendar, DollarSign, MapPin, Users, ArrowRight, Share2 } from "lucide-react"
 import { CountdownTimer } from "@/components/countdown-timer"
 import { BookmarkButton } from "@/components/bookmark-button"
+import { ScholarshipCard } from "@/components/schorlarships/scholarship-card"
 
 export default function ScholarshipsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -120,18 +121,21 @@ export default function ScholarshipsPage() {
   })
 
   return (
-    <div className="min-h-screen pt-24 pb-12">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen py-24 lg:py-40">
+      <div className="w-full max-w-6xl mx-auto mx-auto px-4">
         {/* Header */}
         <div className="text-center space-y-4 mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">Scholarship Opportunities</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+            Scholarship Opportunities{" "}
+          </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Discover and apply to scholarships that match your profile and aspirations
+            Discover and apply to scholarships that match your profile and
+            aspirations
           </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8 border">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Search */}
             <div className="lg:col-span-2 relative">
@@ -145,7 +149,10 @@ export default function ScholarshipsPage() {
             </div>
 
             {/* Category Filter */}
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
@@ -188,98 +195,20 @@ export default function ScholarshipsPage() {
           </div>
 
           <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400">{filteredScholarships.length} scholarships found</p>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Advanced Filters
-            </Button>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {filteredScholarships.length} scholarships found
+            </p>
           </div>
         </div>
 
         {/* Scholarships Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2  gap-8 mt-5 sm:px-3">
           {filteredScholarships.map((scholarship, index) => (
-            <Card
+            <ScholarshipCard
               key={scholarship.id}
-              className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-lg animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <CardHeader className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <div className="flex gap-2">
-                    <Badge variant="secondary" className="bg-navy/10 text-navy dark:bg-gold/10 dark:text-gold">
-                      {scholarship.category}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {scholarship.level}
-                    </Badge>
-                  </div>
-                  <div className="flex gap-2">
-                    <BookmarkButton
-                      scholarshipId={scholarship.id}
-                      initialBookmarked={scholarship.saved}
-                      variant="heart"
-                      size="sm"
-                    />
-                    <Button variant="ghost" size="sm">
-                      <Share2 className="h-4 w-4 text-gray-400" />
-                    </Button>
-                  </div>
-                </div>
-                <CardTitle className="text-xl group-hover:text-navy dark:group-hover:text-gold transition-colors">
-                  {scholarship.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <CardDescription className="text-gray-600 dark:text-gray-400">
-                  {scholarship.description}
-                </CardDescription>
-
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center text-gray-500">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">Deadline</div>
-                      <div className="text-red-600">{scholarship.deadline}</div>
-                      <CountdownTimer deadline={scholarship.deadline} variant="badge" className="mt-1" />
-                    </div>
-                  </div>
-                  <div className="flex items-center text-gray-500">
-                    <DollarSign className="h-4 w-4 mr-2" />
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">Amount</div>
-                      <div className="text-green-600">{scholarship.amount}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center text-gray-500">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">Country</div>
-                      <div>{scholarship.country}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center text-gray-500">
-                    <Users className="h-4 w-4 mr-2" />
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">Sponsor</div>
-                      <div className="truncate">{scholarship.sponsor}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    <span className="font-medium">Eligibility:</span> {scholarship.eligibility}
-                  </p>
-                  <Link href={`/scholarships/${scholarship.id}`}>
-                    <Button className="w-full bg-navy hover:bg-navy/90 text-white group-hover:bg-gold group-hover:text-navy transition-all">
-                      View Details & Apply
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
+              scholarship={scholarship}
+              animationDelay={index * 100}
+            />
           ))}
         </div>
 
@@ -295,5 +224,5 @@ export default function ScholarshipsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
