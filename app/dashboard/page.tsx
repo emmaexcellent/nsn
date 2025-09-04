@@ -1,13 +1,11 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
-import Image from "next/image"
 import {
   Heart,
   Calendar,
@@ -23,18 +21,13 @@ import {
   Bell,
   Settings,
   Plus,
+  User2,
 } from "lucide-react"
-import { ApplicationTracker } from "@/components/application-tracker"
 import { CountdownTimer } from "@/components/countdown-timer"
+import { useAuth } from "@/context/auth"
 
 export default function DashboardPage() {
-  const [user] = useState({
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    avatar: "/placeholder.svg?height=100&width=100",
-    memberSince: "September 2024",
-    profileCompletion: 85,
-  })
+  const { user } = useAuth()
 
   const savedScholarships = [
     {
@@ -167,7 +160,7 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Welcome back, {user.name}!
+              Welcome back, {user?.firstName}!
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Track your scholarship journey and discover new opportunities
@@ -186,7 +179,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -227,33 +220,17 @@ export default function DashboardPage() {
                     Profile Completion
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {user.profileCompletion}%
+                    {user?.profileCompletion}%
                   </p>
                 </div>
                 <Target className="h-8 w-8 text-purple-600" />
               </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Success Rate
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    33%
-                  </p>
-                </div>
-                <TrendingUp className="h-8 w-8 text-gold" />
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Profile Completion */}
-        {user.profileCompletion < 100 && (
+        {user?.profileCompletion < 100 && (
           <Card className="mb-8 border-gold/20 bg-gold/5">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -270,9 +247,9 @@ export default function DashboardPage() {
                   Complete Profile
                 </Button>
               </div>
-              <Progress value={user.profileCompletion} className="h-2" />
+              <Progress value={user?.profileCompletion} className="h-2" />
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                {user.profileCompletion}% complete - Add your academic
+                {user?.profileCompletion}% complete - Add your academic
                 achievements and career goals
               </p>
             </CardContent>
@@ -282,20 +259,14 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            <Tabs defaultValue="tracker" className="w-full">
+            <Tabs defaultValue="saved" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="tracker">Application Tracker</TabsTrigger>
                 <TabsTrigger value="saved">Saved Scholarships</TabsTrigger>
                 <TabsTrigger value="recommendations">
                   Recommendations
                 </TabsTrigger>
                 <TabsTrigger value="deadlines">Deadlines</TabsTrigger>
               </TabsList>
-
-              <TabsContent value="tracker">
-                <ApplicationTracker />
-              </TabsContent>
-
               <TabsContent value="saved" className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Saved Scholarships</h3>
@@ -457,22 +428,17 @@ export default function DashboardPage() {
             {/* User Profile Card */}
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="relative w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden">
-                  <Image
-                    src={user.avatar || "/placeholder.svg"}
-                    alt={user.name}
-                    fill
-                    className="object-cover"
-                  />
+                <div className="relative w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center bg-gray-200">
+                  <User2 className="object-cover" />
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {user.name}
+                  {user?.firstName} {user?.lastName}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {user.email}
+                  {user?.email}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Member since {user.memberSince}
+                  Member since {new Date(user?.$createdAt as string).toLocaleDateString()}
                 </p>
                 <Button
                   variant="outline"
@@ -481,45 +447,6 @@ export default function DashboardPage() {
                 >
                   Edit Profile
                 </Button>
-              </CardContent>
-            </Card>
-
-            {/* Upcoming Deadlines */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Upcoming Deadlines</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {upcomingDeadlines.map((scholarship) => (
-                  <div
-                    key={scholarship.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium text-sm text-gray-900 dark:text-white truncate">
-                        {scholarship.title}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {scholarship.deadline}
-                      </p>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={
-                        scholarship.daysLeft <= 30
-                          ? "border-red-500 text-red-600"
-                          : "border-green-500 text-green-600"
-                      }
-                    >
-                      {scholarship.daysLeft}d
-                    </Badge>
-                  </div>
-                ))}
-                {upcomingDeadlines.length === 0 && (
-                  <p className="text-sm text-gray-500 text-center py-4">
-                    No upcoming deadlines
-                  </p>
-                )}
               </CardContent>
             </Card>
 

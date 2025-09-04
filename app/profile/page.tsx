@@ -79,7 +79,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen pt-24 pb-12 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-6xl mx-auto px-4">
+      <div className="w-full max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="text-center space-y-4 mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
@@ -95,21 +95,6 @@ export default function ProfilePage() {
         <Card className="mb-8">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
-              <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
-                {user.avatar ? (
-                  <Image
-                    src={user.avatar || "/placeholder.svg"}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <User className="h-12 w-12 text-gray-400" />
-                  </div>
-                )}
-              </div>
-
               <div className="flex-1 space-y-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -129,7 +114,7 @@ export default function ProfilePage() {
                     {user.address?.city && (
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-1" />
-                        {user.address.city}, {user.address.country}
+                        {user.state}, {user.country}
                       </div>
                     )}
                   </div>
@@ -141,10 +126,10 @@ export default function ProfilePage() {
                       <GraduationCap className="h-5 w-5 text-blue-600" />
                       <div>
                         <p className="font-medium text-sm">
-                          {user.education.currentLevel}
+                          {user.currentLevel}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {user.education.institution}
+                          {user.institution}
                         </p>
                       </div>
                     </div>
@@ -165,7 +150,7 @@ export default function ProfilePage() {
                     <div>
                       <p className="font-medium text-sm">Member Since</p>
                       <p className="text-xs text-gray-500">
-                        {new Date(user.createdAt).toLocaleDateString()}
+                        {new Date(user.$createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>

@@ -5,6 +5,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { LoginForm } from "./login-form";
 import { SignupForm } from "./signup-form";
 import { ForgotPasswordForm } from "./forgot-password-form";
+import { useRouter } from "next/navigation";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -17,14 +18,15 @@ export function AuthModal({
   onClose,
   defaultView = "login",
 }: AuthModalProps) {
+  const router = useRouter()
   const [currentView, setCurrentView] = useState<
     "login" | "signup" | "forgot-password"
   >(defaultView);
 
   const handleSuccess = () => {
     onClose();
-    // Reset to login view for next time
     setCurrentView("login");
+    router.push("/profile")
   };
 
   const renderCurrentView = () => {

@@ -42,7 +42,7 @@ export interface User {
   };
   profile?: {
     bio: string;
-    achievements: string[];
+    achievements?: string[];
     extracurriculars: string[];
     workExperience: string[];
     languages: string[];
@@ -64,7 +64,7 @@ interface AuthContextType {
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   updateProfile: (
-    updates: Partial<User>
+    updates: Partial<Models.Document>
   ) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (
     email: string
@@ -233,7 +233,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Create profile document
       const userProfile = await databases.createDocument(
         databaseId,
-        "profile", // ✅ Use a real collection ID constant
+        "profile",
         userAccount.$id,
         newUser
       );
@@ -258,28 +258,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
-  const updateProfile = async (updates: Partial<User>) => {
+  const updateProfile = async (updates: Partial<Models.Document>) => {
     try {
       if (!user) return { success: false, error: "Not authenticated" };
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await databases.updateDocument(databaseId, "profile", updates.$id as string, updates)
 
       const updatedUser = { ...user, ...updates };
 
-      // Calculate profile completion
-      let completion = 25; // Base for having an account
-      if (updatedUser.avatar) completion += 10;
-      if (updatedUser.phone) completion += 5;
-      if (updatedUser.address) completion += 15;
-      if (updatedUser.education) completion += 20;
-      if (updatedUser.profile?.bio) completion += 10;
-      if (updatedUser.profile?.achievements?.length) completion += 10;
-      if (updatedUser.preferences) completion += 5;
-
-      updatedUser.profileCompletion = Math.min(completion, 100);
-
-      localStorage.setItem("user_data", JSON.stringify(updatedUser));
       setUser(updatedUser);
 
       return { success: true };
