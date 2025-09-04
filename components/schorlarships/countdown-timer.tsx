@@ -1,83 +1,86 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Badge } from "../ui/badge";
-import { differenceInDays, formatDistanceToNow } from "date-fns";
+import { useState, useEffect } from "react"
+import { Badge } from "@/components/ui/badge"
+import { Clock, AlertTriangle } from "lucide-react"
 
 interface CountdownTimerProps {
-  deadline: string;
-  variant?: "badge" | "compact";
-  className?: string;
+  deadline: string
+  variant?: "default" | "compact" | "detailed"
+  showIcon?: boolean
+  urgencyThreshold?: number // days
 }
 
-export default function CountdownTimer({
+export function CountdownTimer({
   deadline,
-  variant = "badge",
-  className = "",
+  variant = "default",
+  showIcon = true,
+  urgencyThreshold = 7,
 }: CountdownTimerProps) {
-  const [timeLeft, setTimeLeft] = useState("");
+  const [timeLeft, setTimeLeft] = useState<{
+    days: number
+    hours: number
+    minutes: number
+    seconds: number
+    total: number
+  }>({ days: 0, hours: 0, minutes: 0, seconds: 0, total: 0 })
 
   useEffect(() => {
-    const updateTimer = () => {
-      const deadlineDate = new Date(deadline);
-      const now = new Date();
+    const calculateTimeLeft = () => {
+      const deadlineDate = new Date(deadline)
+      const now = new Date()
+      const difference = deadlineDate.getTime() - now.getTime()
 
-      if (deadlineDate < now) {
-        setTimeLeft("Expired");
-        return;
-      }
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000)
 
-      const daysLeft = differenceInDays(deadlineDate, now);
-
-      if (variant === "compact") {
-        setTimeLeft(`${daysLeft}d left`);
+        setTimeLeft({ days, hours, minutes, seconds, total: difference })
       } else {
-        if (daysLeft <= 0) {
-          setTimeLeft("Last day");
-        } else if (daysLeft <= 7) {
-          setTimeLeft(`${daysLeft} days remaining`);
-        } else {
-          setTimeLeft(`Due ${formatDistanceToNow(deadlineDate)}`);
-        }
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, total: 0 })
       }
-    };
+    }
 
-    updateTimer();
-    const interval = setInterval(updateTimer, 60 * 60 * 1000); // Update every hour
+    calculateTimeLeft()
+    const timer = setInterval(calculateTimeLeft, 1000)
 
-    return () => clearInterval(interval);
-  }, [deadline, variant]);
+    return () => clearInterval(timer)
+  }, [deadline])
 
-  const isUrgent = timeLeft.includes("days") && parseInt(timeLeft) <= 3;
+  const isUrgent = timeLeft.days <= urgencyThreshold && timeLeft.total > 0
+  const isExpired = timeLeft.total <= 0
 
-  if (variant === "badge") {
-    return (
-      <Badge
-        variant={
-          timeLeft === "Expired"
-            ? "destructive"
-            : isUrgent
-            ? "destructive"
-            : "outline"
-        }
-        className={`text-xs ${className}`}
-      >
-        {timeLeft}
-      </Badge>
-    );
+  const getVariantClasses = () => {
+    if (isExpired) return "bg-gray-500 text-white"
+    if (isUrgent) return "bg-red-500 text-white animate-pulse"
+    return "bg-green-500 text-white"
+  }
+
+  const formatTime = () => {
+    if (isExpired) return "Expired"
+
+    if (variant === "compact") {
+      if (timeLeft.days > 0) return `${timeLeft.days}d ${timeLeft.hours}h`
+      if (timeLeft.hours > 0) return `${timeLeft.hours}h ${timeLeft.minutes}m`
+      return `${timeLeft.minutes}m ${timeLeft.seconds}s`
+    }
+
+    if (variant === "detailed") {
+      return `${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`
+    }
+
+    // Default variant
+    if (timeLeft.days > 0) return `${timeLeft.days} days left`
+    if (timeLeft.hours > 0) return `${timeLeft.hours} hours left`
+    return `${timeLeft.minutes} minutes left`
   }
 
   return (
-    <span
-      className={`text-sm ${
-        timeLeft === "Expired"
-          ? "text-red-600"
-          : isUrgent
-          ? "text-orange-500"
-          : "text-gray-500"
-      } ${className}`}
-    >
-      {timeLeft}
-    </span>
-  );
+    <Badge className={`${getVariantClasses()} flex items-center gap-1 text-xs font-medium`}>
+      {showIcon && (isExpired ? <AlertTriangle className="h-3 w-3" /> : <Clock className="h-3 w-3" />)}
+      {formatTime()}
+    </Badge>
+  )
 }
