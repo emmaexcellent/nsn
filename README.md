@@ -1,6 +1,6 @@
 # Newton scholarship nexus website
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/emmanuel-excellents-projects/v0-newton-scholarship-nexus-website)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/qf33jGX6QiT)
