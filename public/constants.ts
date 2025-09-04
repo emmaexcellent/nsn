@@ -83,4 +83,3 @@ const blogPosts = [
 ];
 
 export { featuredScholarships, testimonials, blogPosts };
-

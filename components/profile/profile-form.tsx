@@ -1,96 +1,74 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth, type User } from "@/context/auth";
-import {
-  Save,
-  Upload,
-  X,
-  Plus,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
-import Image from "next/image";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useAuth, type User } from "@/context/auth"
+import { Save, Upload, X, Plus, CheckCircle, AlertCircle, Loader2, Lightbulb } from "lucide-react"
+import Image from "next/image"
 
 export function ProfileForm() {
-  const { user, updateProfile } = useAuth();
-  const [formData, setFormData] = useState<Partial<User>>(user || {});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user, updateProfile } = useAuth()
+  const [formData, setFormData] = useState<Partial<User>>(user || {})
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
-  const [newAchievement, setNewAchievement] = useState("");
-  const [newLanguage, setNewLanguage] = useState("");
+    type: "success" | "error"
+    text: string
+  } | null>(null)
+  const [newAchievement, setNewAchievement] = useState("")
+  const [newLanguage, setNewLanguage] = useState("")
 
-  if (!user) return null;
+  if (!user) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setMessage(null);
+    e.preventDefault()
+    setIsSubmitting(true)
+    setMessage(null)
 
     try {
-      const result = await updateProfile(formData);
+      const result = await updateProfile(formData)
       if (result.success) {
-        setMessage({ type: "success", text: "Profile updated successfully!" });
+        setMessage({ type: "success", text: "Profile updated successfully!" })
+        // Scroll to top to show success message
+        window.scrollTo({ top: 0, behavior: "smooth" })
       } else {
-        setMessage({ type: "error", text: result.error || "Update failed" });
+        setMessage({ type: "error", text: result.error || "Update failed" })
       }
     } catch (err) {
-      setMessage({ type: "error", text: "An unexpected error occurred" });
+      setMessage({ type: "error", text: "An unexpected error occurred" })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (message) setMessage(null);
-  };
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    if (message) setMessage(null)
+  }
 
-  const handleNestedInputChange = (
-    parent: string,
-    field: string,
-    value: any
-  ) => {
+  const handleNestedInputChange = (parent: string, field: string, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [parent]: {
         ...((prev as any)[parent] || {}),
         [field]: value,
       },
-    }));
-    if (message) setMessage(null);
-  };
+    }))
+    if (message) setMessage(null)
+  }
 
   const addToArray = (parent: string, field: string, value: string) => {
-    if (!value.trim()) return;
+    if (!value.trim()) return
 
     setFormData((prev) => ({
       ...prev,
@@ -98,41 +76,60 @@ export function ProfileForm() {
         ...((prev as any)[parent] || {}),
         [field]: [...((prev as any)[parent]?.[field] || []), value.trim()],
       },
-    }));
-  };
+    }))
+  }
 
   const removeFromArray = (parent: string, field: string, index: number) => {
     setFormData((prev) => ({
       ...prev,
       [parent]: {
         ...((prev as any)[parent] || {}),
-        [field]: ((prev as any)[parent]?.[field] || []).filter(
-          (_: any, i: number) => i !== index
-        ),
+        [field]: ((prev as any)[parent]?.[field] || []).filter((_: any, i: number) => i !== index),
       },
-    }));
-  };
+    }))
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {message && (
         <Alert variant={message.type === "error" ? "destructive" : "default"}>
-          {message.type === "success" ? (
-            <CheckCircle className="h-4 w-4" />
-          ) : (
-            <AlertCircle className="h-4 w-4" />
-          )}
+          {message.type === "success" ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
           <AlertDescription>{message.text}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Profile Tips for New Users */}
+      {user.profileCompletion < 50 && (
+        <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
+          <Lightbulb className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <AlertDescription className="text-blue-800 dark:text-blue-200">
+            <strong>Pro Tip:</strong> The more complete your profile, the better scholarship matches you'll receive.
+            Start with your education information and work your way through each section.
+          </AlertDescription>
         </Alert>
       )}
 
       <form onSubmit={handleSubmit}>
         <Tabs defaultValue="personal" className="w-full">
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="personal">Personal</TabsTrigger>
-            <TabsTrigger value="education">Education</TabsTrigger>
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="preferences">Preferences</TabsTrigger>
+            <TabsTrigger value="personal">
+              Personal
+              {!formData.phone && <span className="ml-1 w-2 h-2 bg-orange-400 rounded-full"></span>}
+            </TabsTrigger>
+            <TabsTrigger value="education">
+              Education
+              {!formData.education?.institution && <span className="ml-1 w-2 h-2 bg-orange-400 rounded-full"></span>}
+            </TabsTrigger>
+            <TabsTrigger value="profile">
+              Profile
+              {!formData.profile?.bio && <span className="ml-1 w-2 h-2 bg-orange-400 rounded-full"></span>}
+            </TabsTrigger>
+            <TabsTrigger value="preferences">
+              Preferences
+              {!formData.preferences?.scholarshipTypes?.length && (
+                <span className="ml-1 w-2 h-2 bg-orange-400 rounded-full"></span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="security">Security</TabsTrigger>
           </TabsList>
 
@@ -141,7 +138,8 @@ export function ProfileForm() {
               <CardHeader>
                 <CardTitle>Personal Information</CardTitle>
                 <CardDescription>
-                  Update your personal details and contact information
+                  Update your personal details and contact information. This helps scholarship providers learn more
+                  about you.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -149,12 +147,7 @@ export function ProfileForm() {
                 <div className="flex items-center space-x-4">
                   <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800">
                     {formData.avatar ? (
-                      <Image
-                        src={formData.avatar || "/placeholder.svg"}
-                        alt="Profile"
-                        fill
-                        className="object-cover"
-                      />
+                      <Image src={formData.avatar || "/placeholder.svg"} alt="Profile" fill className="object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
                         <Upload className="h-8 w-8" />
@@ -166,9 +159,7 @@ export function ProfileForm() {
                       <Upload className="h-4 w-4 mr-2" />
                       Upload Photo
                     </Button>
-                    <p className="text-xs text-gray-500 mt-1">
-                      JPG, PNG up to 5MB
-                    </p>
+                    <p className="text-xs text-gray-500 mt-1">JPG, PNG up to 5MB</p>
                   </div>
                 </div>
 
@@ -178,9 +169,7 @@ export function ProfileForm() {
                     <Input
                       id="firstName"
                       value={formData.firstName || ""}
-                      onChange={(e) =>
-                        handleInputChange("firstName", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("firstName", e.target.value)}
                       disabled={isSubmitting}
                     />
                   </div>
@@ -189,9 +178,7 @@ export function ProfileForm() {
                     <Input
                       id="lastName"
                       value={formData.lastName || ""}
-                      onChange={(e) =>
-                        handleInputChange("lastName", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("lastName", e.target.value)}
                       disabled={isSubmitting}
                     />
                   </div>
@@ -214,12 +201,16 @@ export function ProfileForm() {
                     <Input
                       id="phone"
                       type="tel"
+                      placeholder="+1 (555) 123-4567"
                       value={formData.phone || ""}
-                      onChange={(e) =>
-                        handleInputChange("phone", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("phone", e.target.value)}
                       disabled={isSubmitting}
                     />
+                    {!formData.phone && (
+                      <p className="text-xs text-orange-600">
+                        Adding a phone number helps with scholarship notifications
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="dateOfBirth">Date of Birth</Label>
@@ -227,9 +218,7 @@ export function ProfileForm() {
                       id="dateOfBirth"
                       type="date"
                       value={formData.dateOfBirth || ""}
-                      onChange={(e) =>
-                        handleInputChange("dateOfBirth", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
                       disabled={isSubmitting}
                     />
                   </div>
@@ -242,13 +231,7 @@ export function ProfileForm() {
                     <Input
                       placeholder="Street Address"
                       value={formData.address?.street || ""}
-                      onChange={(e) =>
-                        handleNestedInputChange(
-                          "address",
-                          "street",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleNestedInputChange("address", "street", e.target.value)}
                       disabled={isSubmitting}
                     />
                   </div>
@@ -256,25 +239,13 @@ export function ProfileForm() {
                     <Input
                       placeholder="City"
                       value={formData.address?.city || ""}
-                      onChange={(e) =>
-                        handleNestedInputChange(
-                          "address",
-                          "city",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleNestedInputChange("address", "city", e.target.value)}
                       disabled={isSubmitting}
                     />
                     <Input
                       placeholder="State/Province"
                       value={formData.address?.state || ""}
-                      onChange={(e) =>
-                        handleNestedInputChange(
-                          "address",
-                          "state",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleNestedInputChange("address", "state", e.target.value)}
                       disabled={isSubmitting}
                     />
                   </div>
@@ -282,20 +253,12 @@ export function ProfileForm() {
                     <Input
                       placeholder="ZIP/Postal Code"
                       value={formData.address?.zipCode || ""}
-                      onChange={(e) =>
-                        handleNestedInputChange(
-                          "address",
-                          "zipCode",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleNestedInputChange("address", "zipCode", e.target.value)}
                       disabled={isSubmitting}
                     />
                     <Select
                       value={formData.address?.country || ""}
-                      onValueChange={(value) =>
-                        handleNestedInputChange("address", "country", value)
-                      }
+                      onValueChange={(value) => handleNestedInputChange("address", "country", value)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Country" />
@@ -320,7 +283,8 @@ export function ProfileForm() {
               <CardHeader>
                 <CardTitle>Education Information</CardTitle>
                 <CardDescription>
-                  Tell us about your educational background
+                  Tell us about your educational background. This is crucial for matching you with relevant
+                  scholarships.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -328,22 +292,14 @@ export function ProfileForm() {
                   <Label htmlFor="currentLevel">Current Education Level</Label>
                   <Select
                     value={formData.education?.currentLevel || ""}
-                    onValueChange={(value) =>
-                      handleNestedInputChange(
-                        "education",
-                        "currentLevel",
-                        value
-                      )
-                    }
+                    onValueChange={(value) => handleNestedInputChange("education", "currentLevel", value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select your current level" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="High School">High School</SelectItem>
-                      <SelectItem value="Undergraduate">
-                        Undergraduate
-                      </SelectItem>
+                      <SelectItem value="Undergraduate">Undergraduate</SelectItem>
                       <SelectItem value="Graduate">Graduate</SelectItem>
                       <SelectItem value="PhD">PhD</SelectItem>
                       <SelectItem value="Postdoc">Postdoc</SelectItem>
@@ -357,15 +313,12 @@ export function ProfileForm() {
                     id="institution"
                     placeholder="Your school/university name"
                     value={formData.education?.institution || ""}
-                    onChange={(e) =>
-                      handleNestedInputChange(
-                        "education",
-                        "institution",
-                        e.target.value
-                      )
-                    }
+                    onChange={(e) => handleNestedInputChange("education", "institution", e.target.value)}
                     disabled={isSubmitting}
                   />
+                  {!formData.education?.institution && (
+                    <p className="text-xs text-orange-600">Institution name is required for most scholarships</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -375,20 +328,12 @@ export function ProfileForm() {
                       id="major"
                       placeholder="Computer Science, Biology, etc."
                       value={formData.education?.major || ""}
-                      onChange={(e) =>
-                        handleNestedInputChange(
-                          "education",
-                          "major",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleNestedInputChange("education", "major", e.target.value)}
                       disabled={isSubmitting}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="graduationYear">
-                      Expected Graduation Year
-                    </Label>
+                    <Label htmlFor="graduationYear">Expected Graduation Year</Label>
                     <Input
                       id="graduationYear"
                       type="number"
@@ -396,11 +341,7 @@ export function ProfileForm() {
                       max="2035"
                       value={formData.education?.graduationYear || ""}
                       onChange={(e) =>
-                        handleNestedInputChange(
-                          "education",
-                          "graduationYear",
-                          Number.parseInt(e.target.value)
-                        )
+                        handleNestedInputChange("education", "graduationYear", Number.parseInt(e.target.value))
                       }
                       disabled={isSubmitting}
                     />
@@ -417,15 +358,10 @@ export function ProfileForm() {
                     max="4"
                     placeholder="3.75"
                     value={formData.education?.gpa || ""}
-                    onChange={(e) =>
-                      handleNestedInputChange(
-                        "education",
-                        "gpa",
-                        Number.parseFloat(e.target.value)
-                      )
-                    }
+                    onChange={(e) => handleNestedInputChange("education", "gpa", Number.parseFloat(e.target.value))}
                     disabled={isSubmitting}
                   />
+                  <p className="text-xs text-gray-500">GPA helps with merit-based scholarship matching</p>
                 </div>
               </CardContent>
             </Card>
@@ -436,7 +372,8 @@ export function ProfileForm() {
               <CardHeader>
                 <CardTitle>Profile Details</CardTitle>
                 <CardDescription>
-                  Share more about yourself to improve scholarship matching
+                  Share more about yourself to improve scholarship matching. This information helps scholarship
+                  providers understand your background and goals.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -444,14 +381,17 @@ export function ProfileForm() {
                   <Label htmlFor="bio">Bio</Label>
                   <Textarea
                     id="bio"
-                    placeholder="Tell us about yourself, your goals, and interests..."
+                    placeholder="Tell us about yourself, your goals, interests, and what makes you unique. This is your chance to stand out!"
                     rows={4}
                     value={formData.profile?.bio || ""}
-                    onChange={(e) =>
-                      handleNestedInputChange("profile", "bio", e.target.value)
-                    }
+                    onChange={(e) => handleNestedInputChange("profile", "bio", e.target.value)}
                     disabled={isSubmitting}
                   />
+                  {!formData.profile?.bio && (
+                    <p className="text-xs text-orange-600">
+                      A compelling bio significantly improves your scholarship matches
+                    </p>
+                  )}
                 </div>
 
                 {/* Achievements */}
@@ -459,14 +399,14 @@ export function ProfileForm() {
                   <Label>Achievements</Label>
                   <div className="flex space-x-2">
                     <Input
-                      placeholder="Add an achievement..."
+                      placeholder="Add an achievement (e.g., Dean's List, Award Winner)..."
                       value={newAchievement}
                       onChange={(e) => setNewAchievement(e.target.value)}
                       onKeyPress={(e) => {
                         if (e.key === "Enter") {
-                          e.preventDefault();
-                          addToArray("profile", "achievements", newAchievement);
-                          setNewAchievement("");
+                          e.preventDefault()
+                          addToArray("profile", "achievements", newAchievement)
+                          setNewAchievement("")
                         }
                       }}
                       disabled={isSubmitting}
@@ -474,8 +414,8 @@ export function ProfileForm() {
                     <Button
                       type="button"
                       onClick={() => {
-                        addToArray("profile", "achievements", newAchievement);
-                        setNewAchievement("");
+                        addToArray("profile", "achievements", newAchievement)
+                        setNewAchievement("")
                       }}
                       disabled={!newAchievement.trim() || isSubmitting}
                     >
@@ -483,26 +423,27 @@ export function ProfileForm() {
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {(formData.profile?.achievements || []).map(
-                      (achievement, index) => (
-                        <Badge key={index} variant="secondary" className="pr-1">
-                          {achievement}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-1 ml-1 hover:bg-transparent"
-                            onClick={() =>
-                              removeFromArray("profile", "achievements", index)
-                            }
-                            disabled={isSubmitting}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </Badge>
-                      )
-                    )}
+                    {(formData.profile?.achievements || []).map((achievement, index) => (
+                      <Badge key={index} variant="secondary" className="pr-1">
+                        {achievement}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-1 ml-1 hover:bg-transparent"
+                          onClick={() => removeFromArray("profile", "achievements", index)}
+                          disabled={isSubmitting}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </Badge>
+                    ))}
                   </div>
+                  {(formData.profile?.achievements || []).length === 0 && (
+                    <p className="text-xs text-gray-500">
+                      Add your academic achievements, awards, honors, or recognitions
+                    </p>
+                  )}
                 </div>
 
                 {/* Languages */}
@@ -510,14 +451,14 @@ export function ProfileForm() {
                   <Label>Languages</Label>
                   <div className="flex space-x-2">
                     <Input
-                      placeholder="Add a language..."
+                      placeholder="Add a language (e.g., Spanish - Fluent)..."
                       value={newLanguage}
                       onChange={(e) => setNewLanguage(e.target.value)}
                       onKeyPress={(e) => {
                         if (e.key === "Enter") {
-                          e.preventDefault();
-                          addToArray("profile", "languages", newLanguage);
-                          setNewLanguage("");
+                          e.preventDefault()
+                          addToArray("profile", "languages", newLanguage)
+                          setNewLanguage("")
                         }
                       }}
                       disabled={isSubmitting}
@@ -525,8 +466,8 @@ export function ProfileForm() {
                     <Button
                       type="button"
                       onClick={() => {
-                        addToArray("profile", "languages", newLanguage);
-                        setNewLanguage("");
+                        addToArray("profile", "languages", newLanguage)
+                        setNewLanguage("")
                       }}
                       disabled={!newLanguage.trim() || isSubmitting}
                     >
@@ -534,26 +475,25 @@ export function ProfileForm() {
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {(formData.profile?.languages || []).map(
-                      (language, index) => (
-                        <Badge key={index} variant="secondary" className="pr-1">
-                          {language}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-1 ml-1 hover:bg-transparent"
-                            onClick={() =>
-                              removeFromArray("profile", "languages", index)
-                            }
-                            disabled={isSubmitting}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </Badge>
-                      )
-                    )}
+                    {(formData.profile?.languages || []).map((language, index) => (
+                      <Badge key={index} variant="secondary" className="pr-1">
+                        {language}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-1 ml-1 hover:bg-transparent"
+                          onClick={() => removeFromArray("profile", "languages", index)}
+                          disabled={isSubmitting}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </Badge>
+                    ))}
                   </div>
+                  <p className="text-xs text-gray-500">
+                    Include programming languages, spoken languages, and proficiency levels
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -564,38 +504,22 @@ export function ProfileForm() {
               <CardHeader>
                 <CardTitle>Scholarship Preferences</CardTitle>
                 <CardDescription>
-                  Help us recommend the best scholarships for you
+                  Help us recommend the best scholarships for you by setting your preferences and notification settings.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
                   <Label>Preferred Scholarship Types</Label>
                   <div className="grid grid-cols-2 gap-4">
-                    {[
-                      "Merit-Based",
-                      "Need-Based",
-                      "Research",
-                      "STEM",
-                      "Arts",
-                      "Sports",
-                    ].map((type) => (
+                    {["Merit-Based", "Need-Based", "Research", "STEM", "Arts", "Sports"].map((type) => (
                       <div key={type} className="flex items-center space-x-2">
                         <Checkbox
                           id={type}
-                          checked={(
-                            formData.preferences?.scholarshipTypes || []
-                          ).includes(type)}
+                          checked={(formData.preferences?.scholarshipTypes || []).includes(type)}
                           onCheckedChange={(checked) => {
-                            const current =
-                              formData.preferences?.scholarshipTypes || [];
-                            const updated = checked
-                              ? [...current, type]
-                              : current.filter((t) => t !== type);
-                            handleNestedInputChange(
-                              "preferences",
-                              "scholarshipTypes",
-                              updated
-                            );
+                            const current = formData.preferences?.scholarshipTypes || []
+                            const updated = checked ? [...current, type] : current.filter((t) => t !== type)
+                            handleNestedInputChange("preferences", "scholarshipTypes", updated)
                           }}
                           disabled={isSubmitting}
                         />
@@ -603,6 +527,11 @@ export function ProfileForm() {
                       </div>
                     ))}
                   </div>
+                  {(formData.preferences?.scholarshipTypes || []).length === 0 && (
+                    <p className="text-xs text-orange-600">
+                      Select at least one scholarship type to improve recommendations
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-3">
@@ -611,70 +540,44 @@ export function ProfileForm() {
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="emailNotifications"
-                        checked={
-                          formData.preferences?.notifications?.email || false
-                        }
+                        checked={formData.preferences?.notifications?.email || false}
                         onCheckedChange={(checked) =>
-                          handleNestedInputChange(
-                            "preferences",
-                            "notifications",
-                            {
-                              ...formData.preferences?.notifications,
-                              email: checked,
-                            }
-                          )
+                          handleNestedInputChange("preferences", "notifications", {
+                            ...formData.preferences?.notifications,
+                            email: checked,
+                          })
                         }
                         disabled={isSubmitting}
                       />
-                      <Label htmlFor="emailNotifications">
-                        Email notifications
-                      </Label>
+                      <Label htmlFor="emailNotifications">Email notifications</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="deadlineReminders"
-                        checked={
-                          formData.preferences?.notifications
-                            ?.deadlineReminders || false
-                        }
+                        checked={formData.preferences?.notifications?.deadlineReminders || false}
                         onCheckedChange={(checked) =>
-                          handleNestedInputChange(
-                            "preferences",
-                            "notifications",
-                            {
-                              ...formData.preferences?.notifications,
-                              deadlineReminders: checked,
-                            }
-                          )
+                          handleNestedInputChange("preferences", "notifications", {
+                            ...formData.preferences?.notifications,
+                            deadlineReminders: checked,
+                          })
                         }
                         disabled={isSubmitting}
                       />
-                      <Label htmlFor="deadlineReminders">
-                        Deadline reminders
-                      </Label>
+                      <Label htmlFor="deadlineReminders">Deadline reminders</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="newOpportunities"
-                        checked={
-                          formData.preferences?.notifications
-                            ?.newOpportunities || false
-                        }
+                        checked={formData.preferences?.notifications?.newOpportunities || false}
                         onCheckedChange={(checked) =>
-                          handleNestedInputChange(
-                            "preferences",
-                            "notifications",
-                            {
-                              ...formData.preferences?.notifications,
-                              newOpportunities: checked,
-                            }
-                          )
+                          handleNestedInputChange("preferences", "notifications", {
+                            ...formData.preferences?.notifications,
+                            newOpportunities: checked,
+                          })
                         }
                         disabled={isSubmitting}
                       />
-                      <Label htmlFor="newOpportunities">
-                        New scholarship opportunities
-                      </Label>
+                      <Label htmlFor="newOpportunities">New scholarship opportunities</Label>
                     </div>
                   </div>
                 </div>
@@ -686,18 +589,14 @@ export function ProfileForm() {
             <Card>
               <CardHeader>
                 <CardTitle>Security Settings</CardTitle>
-                <CardDescription>
-                  Manage your account security and password
-                </CardDescription>
+                <CardDescription>Manage your account security and password</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
                       <h4 className="font-medium">Password</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Last changed: Never
-                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Last changed: Never</p>
                     </div>
                     <Button variant="outline" type="button">
                       Change Password
@@ -719,9 +618,7 @@ export function ProfileForm() {
                   <div className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
                       <h4 className="font-medium">Login Sessions</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Manage your active login sessions
-                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Manage your active login sessions</p>
                     </div>
                     <Button variant="outline" type="button">
                       View Sessions
@@ -737,11 +634,7 @@ export function ProfileForm() {
           <Button type="button" variant="outline" disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            className="bg-navy hover:bg-navy/90 text-white"
-            disabled={isSubmitting}
-          >
+          <Button type="submit" className="bg-navy hover:bg-navy/90 text-white" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -757,5 +650,5 @@ export function ProfileForm() {
         </div>
       </form>
     </div>
-  );
+  )
 }

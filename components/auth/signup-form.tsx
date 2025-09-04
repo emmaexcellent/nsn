@@ -1,40 +1,26 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from "@/context/auth";
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  User,
-  Calendar,
-  AlertCircle,
-  Loader2,
-  CheckCircle,
-} from "lucide-react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAuth } from "@/context/auth"
+import { Eye, EyeOff, Mail, Lock, User, Calendar, AlertCircle, Loader2, CheckCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface SignupFormProps {
-  onSuccess?: () => void;
-  onSwitchToLogin?: () => void;
+  onSuccess?: () => void
+  onSwitchToLogin?: () => void
 }
 
 export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
-  const { signup } = useAuth();
+  const { signup } = useAuth()
+  const router = useRouter()
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -43,50 +29,50 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [error, setError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState(0)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
 
   const calculatePasswordStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 8) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
-    if (/[a-z]/.test(password)) strength += 25;
-    if (/[0-9]/.test(password)) strength += 25;
-    return strength;
-  };
+    let strength = 0
+    if (password.length >= 8) strength += 25
+    if (/[A-Z]/.test(password)) strength += 25
+    if (/[a-z]/.test(password)) strength += 25
+    if (/[0-9]/.test(password)) strength += 25
+    return strength
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault()
+    setError("")
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
+      setError("Passwords do not match")
+      return
     }
 
     if (passwordStrength < 75) {
-      setError("Password is too weak. Please use a stronger password.");
-      return;
+      setError("Password is too weak. Please use a stronger password.")
+      return
     }
 
     if (!formData.agreeToTerms) {
-      setError("Please agree to the Terms of Service and Privacy Policy");
-      return;
+      setError("Please agree to the Terms of Service and Privacy Policy")
+      return
     }
 
-    const age =
-      new Date().getFullYear() - new Date(formData.dateOfBirth).getFullYear();
+    const age = new Date().getFullYear() - new Date(formData.dateOfBirth).getFullYear()
     if (age < 13) {
-      setError("You must be at least 13 years old to create an account");
-      return;
+      setError("You must be at least 13 years old to create an account")
+      return
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
       const result = await signup({
@@ -96,50 +82,77 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
         lastName: formData.lastName,
         dateOfBirth: formData.dateOfBirth,
         agreeToTerms: formData.agreeToTerms,
-      });
+      })
 
       if (result.success) {
-        onSuccess?.();
+        setShowSuccessMessage(true)
+
+        // Show success message for 2 seconds, then redirect to profile
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess()
+          }
+          // Redirect to profile page to complete profile
+          router.push("/profile?welcome=true")
+        }, 2000)
       } else {
-        setError(result.error || "Signup failed");
+        setError(result.error || "Signup failed")
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      setError("An unexpected error occurred")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (error) setError("");
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    if (error) setError("")
 
     if (field === "password" && typeof value === "string") {
-      setPasswordStrength(calculatePasswordStrength(value));
+      setPasswordStrength(calculatePasswordStrength(value))
     }
-  };
+  }
 
   const getPasswordStrengthColor = () => {
-    if (passwordStrength < 25) return "bg-red-500";
-    if (passwordStrength < 50) return "bg-orange-500";
-    if (passwordStrength < 75) return "bg-yellow-500";
-    return "bg-green-500";
-  };
+    if (passwordStrength < 25) return "bg-red-500"
+    if (passwordStrength < 50) return "bg-orange-500"
+    if (passwordStrength < 75) return "bg-yellow-500"
+    return "bg-green-500"
+  }
 
   const getPasswordStrengthText = () => {
-    if (passwordStrength < 25) return "Weak";
-    if (passwordStrength < 50) return "Fair";
-    if (passwordStrength < 75) return "Good";
-    return "Strong";
-  };
+    if (passwordStrength < 25) return "Weak"
+    if (passwordStrength < 50) return "Fair"
+    if (passwordStrength < 75) return "Good"
+    return "Strong"
+  }
+
+  if (showSuccessMessage) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardContent className="p-8 text-center">
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Welcome to NSN!</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Your account has been created successfully. You'll be redirected to complete your profile in a moment.
+          </p>
+          <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Redirecting to profile setup...</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Create Account</CardTitle>
-        <CardDescription>
-          Join Newton Scholarship Nexus and start your scholarship journey
-        </CardDescription>
+        <CardDescription>Join Newton Scholarship Nexus and start your scholarship journey</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -160,9 +173,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                   type="text"
                   placeholder="John"
                   value={formData.firstName}
-                  onChange={(e) =>
-                    handleInputChange("firstName", e.target.value)
-                  }
+                  onChange={(e) => handleInputChange("firstName", e.target.value)}
                   className="pl-10"
                   required
                   disabled={isSubmitting}
@@ -179,9 +190,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                   type="text"
                   placeholder="Doe"
                   value={formData.lastName}
-                  onChange={(e) =>
-                    handleInputChange("lastName", e.target.value)
-                  }
+                  onChange={(e) => handleInputChange("lastName", e.target.value)}
                   className="pl-10"
                   required
                   disabled={isSubmitting}
@@ -215,19 +224,11 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                 id="dateOfBirth"
                 type="date"
                 value={formData.dateOfBirth}
-                onChange={(e) =>
-                  handleInputChange("dateOfBirth", e.target.value)
-                }
+                onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
                 className="pl-10"
                 required
                 disabled={isSubmitting}
-                max={
-                  new Date(
-                    new Date().setFullYear(new Date().getFullYear() - 13)
-                  )
-                    .toISOString()
-                    .split("T")[0]
-                }
+                max={new Date(new Date().setFullYear(new Date().getFullYear() - 13)).toISOString().split("T")[0]}
               />
             </div>
           </div>
@@ -264,16 +265,14 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
             {formData.password && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Password strength:
-                  </span>
+                  <span className="text-gray-600 dark:text-gray-400">Password strength:</span>
                   <span
                     className={`font-medium ${
                       passwordStrength >= 75
                         ? "text-green-600"
                         : passwordStrength >= 50
-                        ? "text-yellow-600"
-                        : "text-red-600"
+                          ? "text-yellow-600"
+                          : "text-red-600"
                     }`}
                   >
                     {getPasswordStrengthText()}
@@ -298,9 +297,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
-                onChange={(e) =>
-                  handleInputChange("confirmPassword", e.target.value)
-                }
+                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                 className="pl-10 pr-10"
                 required
                 disabled={isSubmitting}
@@ -341,34 +338,22 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
             <Checkbox
               id="agreeToTerms"
               checked={formData.agreeToTerms}
-              onCheckedChange={(checked) =>
-                handleInputChange("agreeToTerms", checked as boolean)
-              }
+              onCheckedChange={(checked) => handleInputChange("agreeToTerms", checked as boolean)}
               disabled={isSubmitting}
             />
             <Label htmlFor="agreeToTerms" className="text-sm leading-5">
               I agree to the{" "}
-              <a
-                href="/terms"
-                className="text-navy dark:text-gold hover:underline"
-              >
+              <a href="/terms" className="text-navy dark:text-gold hover:underline">
                 Terms of Service
               </a>{" "}
               and{" "}
-              <a
-                href="/privacy"
-                className="text-navy dark:text-gold hover:underline"
-              >
+              <a href="/privacy" className="text-navy dark:text-gold hover:underline">
                 Privacy Policy
               </a>
             </Label>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-navy hover:bg-navy/90 text-white"
-            disabled={isSubmitting}
-          >
+          <Button type="submit" className="w-full bg-navy hover:bg-navy/90 text-white" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -380,9 +365,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
           </Button>
 
           <div className="text-center text-sm">
-            <span className="text-gray-600 dark:text-gray-400">
-              Already have an account?{" "}
-            </span>
+            <span className="text-gray-600 dark:text-gray-400">Already have an account? </span>
             <button
               type="button"
               onClick={onSwitchToLogin}
@@ -395,5 +378,5 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
         </form>
       </CardContent>
     </Card>
-  );
+  )
 }
