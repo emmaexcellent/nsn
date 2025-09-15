@@ -230,11 +230,11 @@ export default function AdminDashboard() {
   const [filterStatus, setFilterStatus] = useState("all")
 
   // Check if user is admin (in real app, this would be a proper role check)
-  useEffect(() => {
+  {/** useEffect(() => {
     if (!user || user.email !== "admin@nsn.org") {
       router.push("/")
     }
-  }, [user, router])
+  }, [user, router]) 
 
   if (!user || user.email !== "admin@nsn.org") {
     return (
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
         </div>
       </div>
     )
-  }
+  } **/}
 
   const stats = {
     totalScholarships: scholarships.length,
