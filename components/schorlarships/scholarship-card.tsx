@@ -16,23 +16,11 @@ import {
   CardDescription,
 } from "../ui/card";
 import { Badge } from "../ui/badge";
-import BookmarkButton from "./bookmark-button";
 import CountdownTimer from "./countdown-timer";
+import { Models } from "appwrite";
 
 interface ScholarshipCardProps {
-  scholarship: {
-    id: string | number;
-    title: string;
-    description: string;
-    category: string;
-    level?: string;
-    country: string;
-    sponsor?: string;
-    amount: string;
-    deadline: string;
-    eligibility?: string;
-    saved?: boolean;
-  };
+  scholarship: Models.Document,
   variant?: "default" | "featured";
   animationDelay?: number;
   className?: string;
@@ -46,12 +34,11 @@ export function ScholarshipCard({
 }: ScholarshipCardProps) {
   const isFeatured = variant === "featured";
 
+ 
   return (
     <Card
-      className={`group shadow hover:shadow-lg dark:shadow-white/50 dark:hover:shadow-white/50 transition-all duration-300 ${
-        isFeatured
-          ? "hover:-translate-y-2 shadow-lg"
-          : "hover:-translate-y-1 border-0"
+      className={`group border shadow hover:shadow-lg dark:shadow-white/50 dark:hover:shadow-white/50 transition-all duration-300 ${
+        isFeatured ? "hover:-translate-y-2 shadow-lg" : "hover:-translate-y-1"
       } animate-fade-in ${className}`}
       style={{ animationDelay: `${animationDelay}ms` }}
     >
@@ -71,17 +58,11 @@ export function ScholarshipCard({
             )}
             {isFeatured && (
               <Badge variant="outline" className="text-xs">
-                {scholarship.country}
+                {scholarship.location}
               </Badge>
             )}
           </div>
-          <div className="flex gap-2">
-            <BookmarkButton
-              scholarshipId={scholarship.id as string}
-              initialBookmarked={scholarship.saved}
-              variant="heart"
-              size="sm"
-            />
+          <div className="flex gap-2">            
             {!isFeatured && (
               <Button variant="ghost" size="sm">
                 <Share2 className="h-4 w-4 text-gray-400" />
@@ -110,14 +91,22 @@ export function ScholarshipCard({
                 Deadline
               </span>
               <span className="font-semibold text-red-600">
-                {scholarship.deadline}
+                {scholarship.deadline
+                  ? new Date(scholarship.deadline).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "Not Specified"}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <CountdownTimer
-                deadline={scholarship.deadline}
-                variant="compact"
-              />
+              {scholarship.deadline && (
+                <CountdownTimer
+                  deadline={scholarship.deadline}
+                  variant="compact"
+                />
+              )}
             </div>
             <div className="flex items-center justify-between text-sm pb-2">
               <span className="flex items-center text-gray-500">
@@ -125,7 +114,7 @@ export function ScholarshipCard({
                 Award Amount
               </span>
               <span className="font-semibold text-green-600">
-                {scholarship.amount}
+                {scholarship.currency || "NGN"} {scholarship.amount}
               </span>
             </div>
           </div>
@@ -137,12 +126,27 @@ export function ScholarshipCard({
                 <div className="font-medium text-gray-900 dark:text-white">
                   Deadline
                 </div>
-                <div className="text-red-600">{scholarship.deadline}</div>
-                <CountdownTimer
-                  deadline={scholarship.deadline}
-                  variant="badge"
-                  className="mt-1"
-                />
+                <div>
+                  <span className="font-semibold text-xs text-red-500">
+                    {scholarship.deadline
+                      ? new Date(scholarship.deadline).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )
+                      : "Not Specified"}
+                  </span>
+                </div>
+                {scholarship.deadline && (
+                  <CountdownTimer
+                    deadline={scholarship.deadline}
+                    variant="badge"
+                    className="mt-1"
+                  />
+                )}
               </div>
             </div>
             <div className="flex items-center text-gray-500">
@@ -182,7 +186,7 @@ export function ScholarshipCard({
               {scholarship.eligibility}
             </p>
           )}
-          <Link href={`/scholarships/${scholarship.id}`}>
+          <Link href={`/scholarships/${scholarship.$id}`}>
             <Button
               className={`w-full bg-navy hover:bg-navy/90 text-white group-hover:bg-gold group-hover:text-navy transition-all ${
                 isFeatured ? "mt-2" : ""

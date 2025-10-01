@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { AuthProvider } from "@/context/auth"
+import NextTopLoader from "nextjs-toploader";
+import ConfirmScholarshipApplication from "@/components/confirm-application"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -30,10 +32,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          
+        <NextTopLoader />
           <AuthProvider>
             <Navigation />
             <main className="min-h-screen">{children}</main>
             <Footer />
+            <ConfirmScholarshipApplication/>
           </AuthProvider>
         </ThemeProvider>
       </body>

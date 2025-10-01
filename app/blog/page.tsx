@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { Models, Query } from "appwrite";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,119 +11,51 @@ import Link from "next/link"
 import Image from "next/image"
 import { Search, Calendar, User, ArrowRight } from "lucide-react"
 import { NewsletterSubscription } from "@/components/newsletter-subscription"
+import { databaseId, databases } from "@/lib/appwrite"
 
 export default function BlogPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [blogPosts, setBlogPosts] = useState<Models.Document[]>([]);
+  const [featuredPost, setFeaturedPost] = useState<Models.Document | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const featuredPost = {
-    id: 1,
-    title: "The Complete Guide to Scholarship Essays: How to Stand Out from the Crowd",
-    excerpt:
-      "Learn the insider secrets that make scholarship essays memorable and compelling. Our comprehensive guide covers everything from brainstorming to final edits.",
-    image: "/placeholder.svg?height=400&width=800",
-    date: "December 18, 2024",
-    author: "Dr. Sarah Johnson",
-    category: "Tips",
-    readTime: "12 min read",
-  }
+  const categories = [
+    "all",
+    "Tips",
+    "Guide",
+    "Success Story",
+    "Field-Specific",
+    "Graduate",
+  ];
 
-  const blogPosts = [
-    {
-      id: 2,
-      title: "10 Tips for Writing a Winning Scholarship Essay",
-      excerpt: "Learn the essential strategies that make scholarship essays stand out from the competition.",
-      image: "/placeholder.svg?height=200&width=300",
-      date: "December 15, 2024",
-      author: "Mark Thompson",
-      category: "Tips",
-      readTime: "8 min read",
-    },
-    {
-      id: 3,
-      title: "International Scholarships: A Complete Guide",
-      excerpt:
-        "Everything you need to know about applying for scholarships abroad, from eligibility to application process.",
-      image: "/placeholder.svg?height=200&width=300",
-      date: "December 10, 2024",
-      author: "Lisa Chen",
-      category: "Guide",
-      readTime: "15 min read",
-    },
-    {
-      id: 4,
-      title: "Success Story: From Community College to Harvard",
-      excerpt: "Read how one student overcame challenges and secured a full scholarship to Harvard University.",
-      image: "/placeholder.svg?height=200&width=300",
-      date: "December 8, 2024",
-      author: "Michael Rodriguez",
-      category: "Success Story",
-      readTime: "6 min read",
-    },
-    {
-      id: 5,
-      title: "Understanding Financial Aid vs. Scholarships",
-      excerpt:
-        "Learn the key differences between financial aid and scholarships and how to maximize both opportunities.",
-      image: "/placeholder.svg?height=200&width=300",
-      date: "December 5, 2024",
-      author: "Jennifer Adams",
-      category: "Guide",
-      readTime: "10 min read",
-    },
-    {
-      id: 6,
-      title: "Building a Strong Academic Profile for Scholarships",
-      excerpt:
-        "Discover how to develop the academic credentials and extracurricular activities that scholarship committees value.",
-      image: "/placeholder.svg?height=200&width=300",
-      date: "December 3, 2024",
-      author: "Dr. Robert Kim",
-      category: "Tips",
-      readTime: "12 min read",
-    },
-    {
-      id: 7,
-      title: "STEM Scholarships: Opportunities in Science and Technology",
-      excerpt: "Explore the growing number of scholarships available for students pursuing careers in STEM fields.",
-      image: "/placeholder.svg?height=200&width=300",
-      date: "November 30, 2024",
-      author: "Amanda Foster",
-      category: "Field-Specific",
-      readTime: "9 min read",
-    },
-    {
-      id: 8,
-      title: "Scholarship Interview Preparation: What to Expect",
-      excerpt: "Get ready for scholarship interviews with our comprehensive preparation guide and common questions.",
-      image: "/placeholder.svg?height=200&width=300",
-      date: "November 28, 2024",
-      author: "David Wilson",
-      category: "Tips",
-      readTime: "7 min read",
-    },
-    {
-      id: 9,
-      title: "Graduate School Funding: Beyond Traditional Scholarships",
-      excerpt:
-        "Explore alternative funding sources for graduate students including assistantships, fellowships, and grants.",
-      image: "/placeholder.svg?height=200&width=300",
-      date: "November 25, 2024",
-      author: "Dr. Emily Martinez",
-      category: "Graduate",
-      readTime: "11 min read",
-    },
-  ]
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await databases.listDocuments(
+          databaseId, // replace with your actual database ID
+          "blogs", // replace with your blog collection ID
+          [Query.orderDesc("$createdAt"), Query.limit(20)]
+        );
+        const posts = response.documents;
+        setBlogPosts(posts);
+        const featured = posts.find((post) => post.tags?.includes("featured"));
+        setFeaturedPost(featured || posts[0]);
+      } catch (error) {
+        console.error("Error fetching blog posts:", error);
+      }
+    };
 
-  const categories = ["all", "Tips", "Guide", "Success Story", "Field-Specific", "Graduate"]
+    fetchPosts();
+  }, []);
 
   const filteredPosts = blogPosts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || post.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
+      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || post.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen py-24 lg:py-36 pb-12">
@@ -143,8 +76,8 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="relative h-64 lg:h-auto">
               <Image
-                src={featuredPost.image || "/placeholder.svg"}
-                alt={featuredPost.title}
+                src={featuredPost?.image || "/placeholder.svg"}
+                alt={featuredPost?.title || "featured post"}
                 fill
                 className="object-cover"
               />
@@ -155,26 +88,33 @@ export default function BlogPage() {
             <div className="p-8 flex flex-col justify-center">
               <div className="space-y-4">
                 <Badge variant="secondary" className="w-fit">
-                  {featuredPost.category}
+                  {featuredPost?.category}
                 </Badge>
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                  {featuredPost.title}
+                  {featuredPost?.title}
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {featuredPost.excerpt}
+                  {featuredPost?.excerpt}
                 </p>
                 <div className="flex items-center space-x-4 text-sm text-gray-500 pb-4">
                   <div className="flex items-center">
                     <User className="h-4 w-4 mr-1" />
-                    {featuredPost.author}
+                    {featuredPost?.author}
                   </div>
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />
-                    {featuredPost.date}
+                    {featuredPost?.$createdAt &&
+                      new Date(
+                        featuredPost?.$createdAt as string
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
                   </div>
-                  <div>{featuredPost.readTime}</div>
+                  <div>{featuredPost?.readTime} min</div>
                 </div>
-                <Link href={`/blog/${featuredPost.id}`}>
+                <Link href={`/blog/${featuredPost?.id}`}>
                   <Button className="bg-navy hover:bg-navy/90 text-white">
                     Read Full Article
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -260,7 +200,13 @@ export default function BlogPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-sm text-gray-500">
                     <Calendar className="h-4 w-4 mr-1" />
-                    {post.date}
+                    {new Date(
+                      post.$createdAt as string
+                    ).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                   </div>
                   <Link
                     href={`/blog/${post.id}`}

@@ -5,6 +5,8 @@ import { siteUrl } from "@/lib/utils";
 import { ID, Models } from "appwrite";
 import type React from "react";
 
+import { useRouter, usePathname } from "next/navigation";
+
 import { createContext, useContext, useEffect, useState } from "react";
 
 export interface User {
@@ -97,6 +99,9 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Models.Document | null>(null);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname()
+  const router = useRouter()
+
 
   useEffect(() => {
     // Check for existing session on mount
@@ -121,6 +126,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (pathname.includes("/admin") && !loading && user?.role !== "admin") {
+        router.push("/");
+      }
+    }
+  }, [pathname, loading, user?.role]);
+
 
   const login = async (email: string, password: string) => {
     try {

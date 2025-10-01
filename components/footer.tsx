@@ -57,7 +57,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold">Quick Links</h4>
+            <h4 className="font-semibold">Quick Links</h4>
             <ul className="space-y-2">
               {[
                 { href: "/scholarships", label: "Browse Scholarships" },
@@ -69,7 +69,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 hover:text-gold transition-colors duration-300"
+                    className="text-sm text-gray-300 hover:text-gold transition-colors duration-300"
                   >
                     {link.label}
                   </Link>
@@ -81,7 +81,7 @@ export function Footer() {
           {/* Contact Info */}
           <div className="space-y-4">
             <h4 className="text-lg font-semibold">Contact Info</h4>
-            <ul className="space-y-3">
+            <ul className="space-y-3 text-sm">
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-gold" />
                 <span className="text-gray-300">
