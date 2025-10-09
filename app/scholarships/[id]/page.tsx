@@ -1,5 +1,6 @@
 import { databaseId, databases } from "@/lib/appwrite";
 import ScholarshipDetailMain from "./main";
+import { Query } from "appwrite";
 
 const ScholarshipDetailPage = async ({
   params
@@ -8,7 +9,13 @@ const ScholarshipDetailPage = async ({
 }) => {
   const { id } = await params;
   const response = await databases.getDocument(databaseId, "scholarships", id);
-  return <ScholarshipDetailMain scholarship={response} />;
+  const similarScholarships = await databases.listDocuments(
+    databaseId,
+    "scholarships",
+    [Query.equal("category", response.category), Query.limit(3)]
+  )
+
+  return <ScholarshipDetailMain scholarship={response} similarScholarships={similarScholarships.documents} />;
 };
 
 export default ScholarshipDetailPage

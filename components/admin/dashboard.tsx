@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/auth";
-import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { databaseId, databases } from "@/lib/appwrite";
 import { Models, Query } from "appwrite";
@@ -13,8 +11,6 @@ import BlogPostsTab from "./blog/blog-tabs";
 import UsersTab from "./user-tab";
 
 export default function AdminDashboard() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
   const [dataLoading, setDataLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [scholarships, setScholarships] = useState<Models.Document[]>([]);

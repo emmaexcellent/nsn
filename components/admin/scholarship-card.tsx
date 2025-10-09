@@ -2,8 +2,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, DollarSign, Calendar, Users } from "lucide-react";
-import { Models } from "appwrite";
-import { useState } from "react";
+import { Models, Query } from "appwrite";
+import { useEffect, useState } from "react";
+import { databaseId, databases } from "@/lib/appwrite";
 
 interface ScholarshipCardProps {
   scholarship: Models.Document;
@@ -18,8 +19,22 @@ export default function ScholarshipCard({
   onEdit,
   onDelete,
 }: ScholarshipCardProps) {
+  const [applications, setApplications] = useState(0);
   const [scholarshipToDelete, setScholarshipToDelete] = useState<string | null>(null)
   const showLoading = scholarshipToDelete === scholarship.$id
+
+  useEffect(() => {
+    const getScholarshipApplications = async () => {
+      const response = await databases.listDocuments(
+        databaseId,
+        "saved_scholarships",
+        [Query.equal("scholarship", scholarship.$id), Query.equal("action", "apply")]
+      )
+
+      setApplications(response.total)
+    }
+    getScholarshipApplications();
+  },[scholarship.$id])
 
   return (
     <Card>
@@ -59,11 +74,11 @@ export default function ScholarshipCard({
               </span>
               <span className="flex items-center gap-1">
                 <Users className="h-4 w-4" />
-                {scholarship.applications.length || 0} applications
+                {applications || 0} applications
               </span>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex justify-end gap-2">
             <Button
               variant="outline"
               size="sm"

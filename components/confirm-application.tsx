@@ -32,6 +32,10 @@ export default function ConfirmScholarshipApplication() {
   }, []);
 
   const handleConfirm = async () => {
+    if (!user) {
+      alert("Please log in to confirm your application.");
+      return;
+    }
     if (!scholarship || !user || !user?.$id) return;
 
     setLoading(true);

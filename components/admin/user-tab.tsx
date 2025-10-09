@@ -47,7 +47,7 @@ export default function UsersTab({
         </div>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid md:grid-cols-2 gap-4">
         {filteredUsers.map((user) => (
           <UserCard
             key={user.$id}

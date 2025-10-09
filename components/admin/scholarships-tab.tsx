@@ -40,6 +40,8 @@ export default function ScholarshipsTab({
       s.sponsor?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  console.log(filteredScholarships);
+
   const validateFormData = (data: any) => {
     const requiredFields = [
       "title",
@@ -179,8 +181,8 @@ export default function ScholarshipsTab({
         </Dialog>
       </div>
 
-      <div className="grid gap-4">
-        {filteredScholarships.map((scholarship) => (
+      <div className="grid md:grid-cols-2 gap-4">
+        {filteredScholarships && filteredScholarships.map((scholarship) => (
           <ScholarshipCard
             key={scholarship.$id}
             scholarship={scholarship}

@@ -44,7 +44,7 @@ export default function ScholarshipTabs({
               id: saved.scholarship.$id,
               title: saved.scholarship.title,
               deadline: saved.scholarship.deadline,
-              amount: `${saved.scholarship.currency} ${saved.scholarship.amount}`,
+              amount: `${saved.scholarship.currency || "$"} ${saved.scholarship.amount}`,
               status: "saved",
               daysLeft: saved.scholarship.deadline,
               match: saved.scholarship.match,
@@ -84,7 +84,7 @@ export default function ScholarshipTabs({
               id: applied.scholarship.$id,
               title: applied.scholarship.title,
               deadline: applied.scholarship.deadline,
-              amount: `${applied.scholarship.currency} ${applied.scholarship.amount}`,
+              amount: `${applied.scholarship.currency || "$"} ${applied.scholarship.amount}`,
               status: "applied",
               daysLeft: applied.scholarship.deadline
             }}

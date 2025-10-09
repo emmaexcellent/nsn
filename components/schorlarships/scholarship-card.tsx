@@ -62,13 +62,6 @@ export function ScholarshipCard({
               </Badge>
             )}
           </div>
-          <div className="flex gap-2">            
-            {!isFeatured && (
-              <Button variant="ghost" size="sm">
-                <Share2 className="h-4 w-4 text-gray-400" />
-              </Button>
-            )}
-          </div>
         </div>
         <CardTitle
           className={`group-hover:text-navy dark:group-hover:text-gold transition-colors text-xl`}

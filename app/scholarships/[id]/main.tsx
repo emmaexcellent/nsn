@@ -20,10 +20,13 @@ import { CountdownTimer } from "@/components/countdown-timer";
 import { Separator } from "@/components/ui/separator";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { useAuth } from "@/context/auth";
+import ShareButton from "@/components/schorlarships/share-scholarship";
 
 export default function ScholarshipDetailMain({
+  similarScholarships,
   scholarship,
 }: {
+  similarScholarships?: Models.Document[];
   scholarship: Models.Document;
 }) {
   const { user } = useAuth()
@@ -81,7 +84,16 @@ export default function ScholarshipDetailMain({
                   <Calendar className="h-6 w-6 mx-auto mb-2 text-red-600" />
                   <div className="text-sm text-gray-500">Deadline</div>
                   <div className="font-semibold text-red-600">
-                    {scholarship.deadline}
+                    {scholarship.deadline
+                      ? new Date(scholarship.deadline).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )
+                      : "Not Specified"}
                   </div>
                   <CountdownTimer
                     deadline={scholarship.deadline}
@@ -225,10 +237,7 @@ export default function ScholarshipDetailMain({
                     showLabel={true}
                     className="w-full justify-center"
                   />
-                  <Button variant="outline" className="w-full bg-transparent">
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Share with Friends
-                  </Button>
+                  <ShareButton/>
                 </div>
 
                 <Separator />
@@ -283,7 +292,7 @@ export default function ScholarshipDetailMain({
                 <Link href="/blog">
                   <Button
                     variant="ghost"
-                    className="w-full text-navy dark:text-gold"
+                    className="w-full text-navy dark:text-gold mt-5"
                   >
                     <FileText className="h-4 w-4 mr-2" />
                     More Application Tips
@@ -299,40 +308,26 @@ export default function ScholarshipDetailMain({
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
-                  <Link
-                    href="/scholarships/2"
-                    className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
-                  >
-                    <h4 className="font-medium text-sm">Rhodes Scholarship</h4>
-                    <p className="text-xs text-gray-500">
-                      Full funding for Oxford
-                    </p>
-                  </Link>
-                  <Link
-                    href="/scholarships/3"
-                    className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
-                  >
-                    <h4 className="font-medium text-sm">Fulbright Program</h4>
-                    <p className="text-xs text-gray-500">
-                      International exchange
-                    </p>
-                  </Link>
-                  <Link
-                    href="/scholarships/4"
-                    className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
-                  >
-                    <h4 className="font-medium text-sm">
-                      Chevening Scholarships
-                    </h4>
-                    <p className="text-xs text-gray-500">
-                      UK government funding
-                    </p>
-                  </Link>
+                  {similarScholarships &&
+                    similarScholarships.map((sch) => (
+                      <Link
+                        key={sch.$id}
+                        href={`/scholarships/${sch.$id}`}
+                        className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
+                      >
+                        <h4 className="font-medium text-sm">
+                          {sch.title}
+                        </h4>
+                        <p className="text-xs text-gray-500">
+                          {sch.description}
+                        </p>
+                      </Link>
+                    ))}
                 </div>
                 <Link href="/scholarships">
                   <Button
                     variant="ghost"
-                    className="w-full text-navy dark:text-gold"
+                    className="w-full text-navy dark:text-gold mt-5"
                   >
                     View All Scholarships
                   </Button>

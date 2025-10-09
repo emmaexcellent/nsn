@@ -33,21 +33,9 @@ export default function UserCard({
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <h3 className="text-lg font-semibold">
-                {user.name || "Unnamed User"}
+                {user.firstName}{" "}
+                {user.lastName}
               </h3>
-              <Badge
-                variant={user.status === "active" ? "default" : "secondary"}
-              >
-                {user.status || "unknown"}
-              </Badge>
-              <Badge
-                variant="outline"
-                className={
-                  profileComplete >= 80 ? "bg-green-50" : "bg-yellow-50"
-                }
-              >
-                {profileComplete}% complete
-              </Badge>
             </div>
             <p className="text-muted-foreground mb-2 flex items-center gap-1">
               <Mail className="h-4 w-4" />
@@ -65,18 +53,9 @@ export default function UserCard({
                 <GraduationCap className="h-4 w-4" />
                 {user.applications || 0} applications
               </span>
-              <span className="flex items-center gap-1">
-                <UserCheck className="h-4 w-4" />
-                Last active: {user.lastActive || "Unknown"}
-              </span>
             </div>
-            {user.bio && (
-              <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                {user.bio}
-              </p>
-            )}
           </div>
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -89,7 +68,7 @@ export default function UserCard({
               <Mail className="h-4 w-4 mr-1" />
               Contact
             </Button>
-          </div>
+          </div> */}
         </div>
       </CardContent>
     </Card>

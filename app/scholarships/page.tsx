@@ -18,7 +18,7 @@ import Loader from "@/components/loader";
 
 
 
-const PAGE_LIMIT = 6;
+const PAGE_LIMIT = 10;
 
 export default function ScholarshipsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -77,7 +77,6 @@ export default function ScholarshipsPage() {
     setLoading(true);
     try {
       const filters = buildFilters();
-      console.log(filters)
       const offset = reset ? 0 : page * PAGE_LIMIT;
 
       const cacheKey = JSON.stringify({ filters, offset });
@@ -126,7 +125,7 @@ export default function ScholarshipsPage() {
 
   return (
     <div className="min-h-screen py-24 lg:py-40">
-      <div className="relative w-full max-w-6xl mx-auto px-4">
+      <div className="relative w-full max-w-5xl mx-auto px-4">
         {/* Header */}
         <div className="text-center space-y-4 mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
