@@ -5,8 +5,6 @@ import { siteUrl } from "@/lib/utils";
 import { ID, Models } from "appwrite";
 import type React from "react";
 
-import { useRouter, usePathname } from "next/navigation";
-
 import { createContext, useContext, useEffect, useState } from "react";
 
 export interface User {
@@ -99,8 +97,6 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Models.Document | null>(null);
   const [loading, setLoading] = useState(true);
-  const pathname = usePathname()
-  const router = useRouter()
 
 
   useEffect(() => {
@@ -127,15 +123,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth();
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (pathname.includes("/admin") && !loading && user?.role !== "admin") {
-        router.push("/");
-      }
-    }
-  }, [pathname, loading, user?.role]);
-
-
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
@@ -148,69 +135,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Mock validation
       if (userProfile) {
-        // const mockUser: User = {
-        //   id: "1",
-        //   email: email,
-        //   firstName: "Sarah",
-        //   lastName: "Johnson",
-        //   avatar: "/placeholder.svg?height=100&width=100",
-        //   dateOfBirth: "1998-05-15",
-        //   phone: "+1 (555) 123-4567",
-        //   address: {
-        //     street: "123 University Ave",
-        //     city: "Boston",
-        //     state: "MA",
-        //     zipCode: "02115",
-        //     country: "USA",
-        //   },
-        //   education: {
-        //     currentLevel: "Graduate",
-        //     institution: "Harvard University",
-        //     major: "Computer Science",
-        //     gpa: 3.8,
-        //     graduationYear: 2025,
-        //   },
-        //   preferences: {
-        //     scholarshipTypes: ["Merit-Based", "Research", "STEM"],
-        //     countries: ["USA", "UK", "Canada"],
-        //     fieldOfStudy: ["Computer Science", "Engineering", "Technology"],
-        //     notifications: {
-        //       email: true,
-        //       sms: false,
-        //       deadlineReminders: true,
-        //       newOpportunities: true,
-        //     },
-        //   },
-        //   profile: {
-        //     bio: "Passionate computer science student with a focus on AI and machine learning. Active in research and community service.",
-        //     achievements: [
-        //       "Dean's List for 3 consecutive semesters",
-        //       "Winner of University Hackathon 2023",
-        //       "Published research paper on ML algorithms",
-        //     ],
-        //     extracurriculars: [
-        //       "President of Computer Science Club",
-        //       "Volunteer at local coding bootcamp",
-        //       "Member of Women in Tech organization",
-        //     ],
-        //     workExperience: [
-        //       "Software Engineering Intern at Google (Summer 2023)",
-        //       "Research Assistant at MIT AI Lab (2022-2023)",
-        //       "Tutor for undergraduate CS courses",
-        //     ],
-        //     languages: [
-        //       "English (Native)",
-        //       "Spanish (Conversational)",
-        //       "Python",
-        //       "JavaScript",
-        //       "Java",
-        //     ],
-        //   },
-        //   createdAt: "2024-01-15T10:00:00Z",
-        //   lastLogin: new Date().toISOString(),
-        //   profileCompletion: 85,
-        // };
-
         setUser(userProfile);
 
         return { success: true };
@@ -218,7 +142,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: false, error: "Invalid email or password" };
       }
     } catch (error) {
-      return { success: false, error: "Login failed. Please try again." };
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Login failed. Please try again.",
+      };
     } finally {
       setLoading(false);
     }

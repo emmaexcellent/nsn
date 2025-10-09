@@ -56,6 +56,11 @@ export function Navigation() {
 
   const logoSource = getLogoSource();
 
+  const handleOpenMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsScrolled(true)
+  }
+
   const handleAuthClick = (view: "login" | "signup") => {
     setAuthModalView(view);
     setIsAuthModalOpen(true);
@@ -80,7 +85,7 @@ export function Navigation() {
             : "bg-white/95 dark:bg-gray-900/95 backdrop-blur-md"
         )}
       >
-        <div className="w-full max-w-6xl mx-auto px-4 py-4">
+        <div className="w-full max-w-6xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             {/* Logo - Consistent rendering */}
             <Link href="/" className="flex items-center space-x-2 group">
@@ -173,7 +178,7 @@ export function Navigation() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={handleOpenMobileMenu}
                 className="lg:hidden"
               >
                 {isMobileMenuOpen ? (
@@ -204,6 +209,63 @@ export function Navigation() {
                     {item.label}
                   </Link>
                 ))}
+
+                <div className="flex items-center space-x-4">
+                  {user ? (
+                    <>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger>
+                          <div className="w-full h-full flex items-center justify-center bg-background p-1 rounded-full">
+                            <User className="h-4 w-4 text-gray-500" />
+                          </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          className="w-56"
+                          align="end"
+                          forceMount
+                        >
+                          <div className="flex items-center justify-start gap-2 p-2">
+                            <div className="flex flex-col space-y-1 leading-none">
+                              <p className="font-medium">
+                                {user.firstName} {user.lastName}
+                              </p>
+                              <p className="w-[200px] truncate text-sm text-muted-foreground">
+                                {user.email}
+                              </p>
+                            </div>
+                          </div>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link href="/dashboard">
+                              <BookOpen className="mr-2 h-4 w-4" />
+                              Dashboard
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href="/profile">
+                              <Settings className="mr-2 h-4 w-4" />
+                              Profile Settings
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={handleLogout}>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Sign Out
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </>
+                  ) : (
+                    !loading && (
+                      <Button
+                        onClick={() => handleAuthClick("signup")}
+                        className="lg:hidden sm:flex bg-navy hover:bg-navy/90 text-white"
+                      >
+                        Sign Up
+                      </Button>
+                    )
+                  )}
+                </div>
               </div>
             </div>
           )}
