@@ -237,7 +237,7 @@ export default function ScholarshipDetailMain({
                     showLabel={true}
                     className="w-full justify-center"
                   />
-                  <ShareButton/>
+                  {/* <ShareButton/> */}
                 </div>
 
                 <Separator />
