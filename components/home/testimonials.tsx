@@ -5,14 +5,15 @@ import { databases, databaseId } from "@/lib/appwrite"; // your Appwrite config
 import { Models, Query } from "appwrite";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, User } from "lucide-react";
-import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 
 const Testimonials = () => {
-  const [testimonials, setTestimonials] = useState<Models.Document[]>([]);
+  const [testimonials, setTestimonials] = useState<Models.DefaultDocument[]>(
+    []
+  );
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -39,7 +40,7 @@ const Testimonials = () => {
             Success Stories
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Hear from scholars who achieved their dreams with NSN's help
+            Hear from scholars who achieved their dreams with NSN&apos;s help
           </p>
         </div>
 
@@ -63,11 +64,14 @@ const Testimonials = () => {
                     ))}
                   </div>
                   <blockquote className="text-gray-700 dark:text-gray-300 italic line-clamp-4">
-                    "{testimonial.comment}"
+                    &quot;{testimonial.comment}&quot;
                   </blockquote>
                   <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center rounded-full w-10 h-10 border"> <User className="h-5 w-5 text-gray-500" /></div>
-                   
+                    <div className="flex items-center justify-center rounded-full w-10 h-10 border">
+                      {" "}
+                      <User className="h-5 w-5 text-gray-500" />
+                    </div>
+
                     <div>
                       <div className="font-semibold text-gray-900 dark:text-white">
                         {testimonial.name}

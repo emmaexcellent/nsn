@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { ID } from "appwrite";
 import { databases, storage, databaseId, bucketId } from "@/lib/appwrite";
+import { BlogFormDataType } from "./post-form";
 
 export default function useBlogPostActions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const validate = (data: any) => {
-    const required = [
+  const validate = (data: BlogFormDataType) => {
+    const required: (keyof BlogFormDataType)[] = [
       "title",
       "excerpt",
       "content",
       "category",
-      "authorName",
+      "author",
       "readTime",
       "status",
     ];
@@ -34,7 +35,7 @@ export default function useBlogPostActions() {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
 
-  const createBlogPost = async (formData: any) => {
+  const createBlogPost = async (formData: BlogFormDataType) => {
     setLoading(true);
     setError("");
 
@@ -62,16 +63,16 @@ export default function useBlogPostActions() {
       );
 
       return response;
-    } catch (err: any) {
+    } catch (err) {
       console.error("Create error:", err);
-      setError(err.message || "Failed to create blog post.");
+      setError(err instanceof Error ? err.message : "Failed to create blog post.");
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  const updateBlogPost = async (id: string, formData: any) => {
+  const updateBlogPost = async (id: string, formData: BlogFormDataType) => {
     setLoading(true);
     setError("");
 
@@ -103,9 +104,9 @@ export default function useBlogPostActions() {
       );
 
       return response;
-    } catch (err: any) {
+    } catch (err) {
       console.error("Update error:", err);
-      setError(err.message || "Failed to update blog post.");
+      setError(err instanceof Error ? err.message : "Failed to update blog post.");
       return null;
     } finally {
       setLoading(false);
@@ -119,9 +120,9 @@ export default function useBlogPostActions() {
     try {
       await databases.deleteDocument(databaseId, "blogs", id);
       return true;
-    } catch (err: any) {
+    } catch (err) {
       console.error("Delete error:", err);
-      setError(err.message || "Failed to delete blog post.");
+      setError(err instanceof Error ? err.message : "Failed to delete blog post.");
       return false;
     } finally {
       setLoading(false);

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Client, Databases, Query, ID } from "appwrite";
+import { Query, ID } from "appwrite";
 import { databaseId, databases } from "@/lib/appwrite";
 
 interface BookmarkButtonProps {

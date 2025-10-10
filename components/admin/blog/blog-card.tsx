@@ -6,8 +6,8 @@ import { Models } from "appwrite";
 import { useState } from "react";
 
 interface BlogPostCardProps {
-  post: Models.Document;
-  onEdit: (post: Models.Document) => void;
+  post: Models.DefaultDocument;
+  onEdit: (post: Models.DefaultDocument) => void;
   isLoading: boolean;
   onDelete: (id: string) => void;
 }
@@ -18,7 +18,7 @@ export default function BlogPostCard({
   isLoading,
   onDelete,
 }: BlogPostCardProps) {
-  const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null)
+  const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
   const showLoading = postIdToDelete === post.$id;
 
   return (

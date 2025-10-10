@@ -1,13 +1,12 @@
 "use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Users, FileText, Eye } from "lucide-react";
+import { GraduationCap, Users, FileText, Eye, LucideProps } from "lucide-react";
 import { Models } from "appwrite";
 
 interface DashboardOverviewProps {
-  scholarships: Models.Document[];
-  blogPosts: Models.Document[];
-  users: Models.Document[];
+  scholarships: Models.DefaultDocument[];
+  blogPosts: Models.DefaultDocument[];
+  users: Models.DefaultDocument[];
 }
 
 export default function DashboardOverview({
@@ -71,7 +70,17 @@ export default function DashboardOverview({
   );
 }
 
-function StatCard({ title, value, subtitle, icon: Icon }: any) {
+function StatCard({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+}: {
+  title: string;
+  value: number | string;
+  subtitle: string;
+  icon: React.ComponentType<LucideProps>;
+}) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -86,45 +95,8 @@ function StatCard({ title, value, subtitle, icon: Icon }: any) {
   );
 }
 
-function RecentApplications({
-  scholarships,
-}: {
-  scholarships: Models.Document[];
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Applications</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {scholarships.slice(0, 3).map((scholarship) => (
-            <div
-              key={scholarship.$id}
-              className="flex items-center justify-between"
-            >
-              <div>
-                <p className="font-medium">{scholarship.title}</p>
-                <p className="text-sm text-muted-foreground">
-                  {scholarship.applications.length || 0} applications
-                </p>
-              </div>
-              <Badge
-                variant={
-                  scholarship.status === "active" ? "default" : "secondary"
-                }
-              >
-                {scholarship.status}
-              </Badge>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
-function PopularBlogPosts({ blogPosts }: { blogPosts: Models.Document[] }) {
+function PopularBlogPosts({ blogPosts }: { blogPosts: Models.DefaultDocument[] }) {
   const popularPosts = blogPosts
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3);

@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ArrowRight, BookOpen } from "lucide-react"
-import Hero from "@/components/home/hero"
-import Testimonials from "@/components/home/testimonials"
-import { ScholarshipCard } from "@/components/schorlarships/scholarship-card"
-import { Models } from "appwrite"
-import HomeBlogList from "@/components/home/blogs"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import Hero from "@/components/home/hero";
+import Testimonials from "@/components/home/testimonials";
+import { ScholarshipCard } from "@/components/schorlarships/scholarship-card";
+import { Models } from "appwrite";
+import HomeBlogList from "@/components/home/blogs";
 
 type HomePageProps = {
-  featuredScholarships: Models.Document[];
+  featuredScholarships: Models.DefaultDocument[];
 };
 
 export default function HomePageMain({ featuredScholarships }: HomePageProps) {

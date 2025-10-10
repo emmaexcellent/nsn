@@ -1,7 +1,5 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
-
 import type React from "react"
 
 import { useState } from "react"
@@ -89,8 +87,8 @@ export default function ContactPage() {
             Contact Us
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Have questions? We're here to help. Reach out to us and we'll get
-            back to you as soon as possible.
+            Have questions? We&apos;re here to help. Reach out to us and
+            we&apos;ll get back to you as soon as possible.
           </p>
         </div>
 
@@ -137,7 +135,7 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle className="text-2xl">Send Us a Message</CardTitle>
               <CardDescription>
-                Fill out the form below and we'll get back to you within 24
+                Fill out the form below and we&apos;ll get back to you within 24
                 hours.
               </CardDescription>
             </CardHeader>
@@ -350,7 +348,7 @@ export default function ContactPage() {
                   </h4>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
                     Yes, Newton Scholarship Nexus is completely free for
-                    students. We believe that financial barriers shouldn't
+                    students. We believe that financial barriers shouldn&apos;t
                     prevent access to scholarship information.
                   </p>
                 </div>
@@ -371,9 +369,9 @@ export default function ContactPage() {
                     Can you help with my application?
                   </h4>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    While we don't provide individual application assistance,
-                    our blog contains comprehensive guides and tips to help you
-                    create winning applications.
+                    While we don&apos;t provide individual application
+                    assistance, our blog contains comprehensive guides and tips
+                    to help you create winning applications.
                   </p>
                 </div>
                 <div>
@@ -391,9 +389,9 @@ export default function ContactPage() {
                     Do you offer scholarships directly?
                   </h4>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    We don't offer scholarships directly. We're a platform that
-                    connects students with existing scholarship opportunities
-                    from various organizations and institutions.
+                    We don&apos;t offer scholarships directly. We&apos;re a
+                    platform that connects students with existing scholarship
+                    opportunities from various organizations and institutions.
                   </p>
                 </div>
               </div>

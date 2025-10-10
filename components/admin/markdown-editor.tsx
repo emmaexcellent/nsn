@@ -14,8 +14,7 @@ interface MarkdownEditorProps {
 export default function MarkdownEditor({
   label = "Content",
   value,
-  onChange,
-  required = false,
+  onChange
 }: MarkdownEditorProps) {
   return (
     <div>

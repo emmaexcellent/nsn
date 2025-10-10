@@ -16,10 +16,10 @@ import ScholarshipCard from "./scholarship-card";
 import { databaseId, databases } from "@/lib/appwrite";
 
 interface ScholarshipsTabProps {
-  scholarships: Models.Document[];
+  scholarships: Models.DefaultDocument[];
   searchTerm: string;
   onSearchChange: (term: string) => void;
-  onScholarshipsChange: (scholarships: Models.Document[]) => void;
+  onScholarshipsChange: (scholarships: Models.DefaultDocument[]) => void;
 }
 
 export default function ScholarshipsTab({
@@ -30,7 +30,7 @@ export default function ScholarshipsTab({
 }: ScholarshipsTabProps) {
   const [isAddingScholarship, setIsAddingScholarship] = useState(false);
   const [editingScholarship, setEditingScholarship] =
-    useState<Models.Document | null>(null);
+    useState<Models.DefaultDocument | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -42,7 +42,9 @@ export default function ScholarshipsTab({
 
   console.log(filteredScholarships);
 
-  const validateFormData = (data: any) => {
+  const validateFormData = (
+    data: Models.DataWithoutDocumentKeys
+  ) => {
     const requiredFields = [
       "title",
       "description",
@@ -75,7 +77,9 @@ export default function ScholarshipsTab({
     return null;
   };
 
-  const handleAddScholarship = async (formData: any) => {
+  const handleAddScholarship = async (
+    formData: Models.DataWithoutDocumentKeys
+  ) => {
     const validationError = validateFormData(formData);
     if (validationError) {
       setError(validationError);
@@ -93,7 +97,7 @@ export default function ScholarshipsTab({
       onScholarshipsChange([...scholarships, newScholarship]);
       setIsAddingScholarship(false);
       setError("");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error adding scholarship:", error);
       setError("Failed to add scholarship. Please try again.");
     } finally {
@@ -101,14 +105,16 @@ export default function ScholarshipsTab({
     }
   };
 
-  const handleUpdateScholarship = async (formData: any) => {
+  const handleUpdateScholarship = async (
+    formData: Models.DataWithoutDocumentKeys
+  ) => {
     const validationError = validateFormData(formData);
     if (validationError) {
       setError(validationError);
       return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
       const updatedScholarship = await databases.updateDocument(
         databaseId,
@@ -122,7 +128,7 @@ export default function ScholarshipsTab({
       onScholarshipsChange(updatedList);
       setEditingScholarship(null);
       setError("");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error updating scholarship:", error);
       setError("Failed to update scholarship. Please try again.");
     } finally {
@@ -131,11 +137,11 @@ export default function ScholarshipsTab({
   };
 
   const handleDeleteScholarship = async (id: string) => {
-    setLoading(true)
+    setLoading(true);
     try {
       await databases.deleteDocument(databaseId, "scholarships", id);
       onScholarshipsChange(scholarships.filter((s) => s.$id !== id));
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error deleting scholarship:", error);
       setError("Failed to delete scholarship.");
     } finally {
@@ -182,15 +188,16 @@ export default function ScholarshipsTab({
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        {filteredScholarships && filteredScholarships.map((scholarship) => (
-          <ScholarshipCard
-            key={scholarship.$id}
-            scholarship={scholarship}
-            onEdit={setEditingScholarship}
-            isLoading={loading}
-            onDelete={handleDeleteScholarship}
-          />
-        ))}
+        {filteredScholarships &&
+          filteredScholarships.map((scholarship) => (
+            <ScholarshipCard
+              key={scholarship.$id}
+              scholarship={scholarship}
+              onEdit={setEditingScholarship}
+              isLoading={loading}
+              onDelete={handleDeleteScholarship}
+            />
+          ))}
       </div>
 
       <Dialog

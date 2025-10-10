@@ -12,9 +12,7 @@ import {
   MapPin,
   Users,
   FileText,
-  Clock,
   ExternalLink,
-  Share2,
 } from "lucide-react";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { Separator } from "@/components/ui/separator";
@@ -26,18 +24,19 @@ export default function ScholarshipDetailMain({
   similarScholarships,
   scholarship,
 }: {
-  similarScholarships?: Models.Document[];
-  scholarship: Models.Document;
+  similarScholarships?: Models.DefaultDocument[];
+  scholarship: Models.DefaultDocument;
 }) {
-  const { user } = useAuth()
+  const { user } = useAuth();
   if (!scholarship) return null;
 
-   const handleApplyScholarship = () => {
-    localStorage.setItem("recent_applied_scholarship", JSON.stringify(scholarship))
+  const handleApplyScholarship = () => {
+    localStorage.setItem(
+      "recent_applied_scholarship",
+      JSON.stringify(scholarship)
+    );
     window.open(scholarship.link, "_blank");
-  }
-
-
+  };
 
   return (
     <div className="min-h-screen pt-24 pb-12">
@@ -178,35 +177,6 @@ export default function ScholarshipDetailMain({
               </CardContent>
             </Card>
 
-            {/* Timeline (Optional) */}
-            {scholarship.timeline && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Application Timeline</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {scholarship.timeline.map((item: any, index: number) => (
-                      <div key={index} className="flex items-center space-x-4">
-                        <div className="flex-shrink-0">
-                          <div className="w-8 h-8 bg-navy dark:bg-gold rounded-full flex items-center justify-center">
-                            <Clock className="h-4 w-4 text-white dark:text-navy" />
-                          </div>
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-semibold text-gray-900 dark:text-white">
-                            {item.date}
-                          </div>
-                          <div className="text-gray-600 dark:text-gray-400">
-                            {item.event}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
           {/* Sidebar */}
@@ -216,7 +186,7 @@ export default function ScholarshipDetailMain({
               <CardHeader>
                 <CardTitle>Apply Now</CardTitle>
                 <CardDescription>
-                  Don't miss this opportunity - deadline is approaching!
+                  Don&apos;t miss this opportunity - deadline is approaching!
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -237,7 +207,7 @@ export default function ScholarshipDetailMain({
                     showLabel={true}
                     className="w-full justify-center"
                   />
-                  {/* <ShareButton/> */}
+                  <ShareButton />
                 </div>
 
                 <Separator />
@@ -315,9 +285,7 @@ export default function ScholarshipDetailMain({
                         href={`/scholarships/${sch.$id}`}
                         className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
                       >
-                        <h4 className="font-medium text-sm">
-                          {sch.title}
-                        </h4>
+                        <h4 className="font-medium text-sm">{sch.title}</h4>
                         <p className="text-xs text-gray-500">
                           {sch.description}
                         </p>

@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/select";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Models } from "appwrite";
+import { FormFieldProps, FormMultiInputProps, FormTextareaProps } from "./blog/post-form";
 
 interface ScholarshipFormProps {
   isLoading: boolean;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: Models.DataWithoutDocumentKeys) => void;
   onCancel: () => void;
-  initialData?: Models.Document | null;
+  initialData?: Models.DefaultDocument | null;
 }
 
 function FormField({
@@ -27,7 +28,7 @@ function FormField({
   value,
   onChange,
   required = false,
-}: any) {
+}: FormFieldProps) {
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
@@ -49,7 +50,7 @@ function FormTextarea({
   onChange,
   rows,
   required = false,
-}: any) {
+}: FormTextareaProps) {
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
@@ -64,7 +65,7 @@ function FormTextarea({
   );
 }
 
-function FormMultiInput({ label, id, values, onChange }: any) {
+function FormMultiInput({ label, id, values, onChange }: FormMultiInputProps) {
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
@@ -250,7 +251,6 @@ export default function ScholarshipForm({
             ? "Saving..."
             : `${initialData ? "Update" : "Create"} Scholarship`}
         </Button>
-
       </DialogFooter>
     </form>
   );

@@ -104,7 +104,8 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
         setError(result.error || "Signup failed");
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      console.error("Error:", err);
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }

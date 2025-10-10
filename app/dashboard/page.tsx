@@ -17,12 +17,17 @@ import { useAuth } from "@/context/auth";
 import { Models, Query } from "appwrite";
 import { databaseId, databases } from "@/lib/appwrite";
 
-
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [savedScholarships, setSavedScholarships] = useState<Models.Document[]>([]);
-  const [applications, setApplications] = useState<Models.Document[]>([]);
-  const [recommendations, setRecommendations] = useState<Models.Document[]>([]);
+  const [savedScholarships, setSavedScholarships] = useState<
+    Models.DefaultDocument[]
+  >([]);
+  const [applications, setApplications] = useState<Models.DefaultDocument[]>(
+    []
+  );
+  const [recommendations, setRecommendations] = useState<
+    Models.DefaultDocument[]
+  >([]);
 
   useEffect(() => {
     if (!user?.$id) return;

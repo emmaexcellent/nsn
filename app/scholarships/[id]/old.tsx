@@ -9,7 +9,7 @@ import { ArrowLeft, Calendar, DollarSign, MapPin, Users, FileText, ExternalLink,
 import { CountdownTimer } from "@/components/countdown-timer"
 import { BookmarkButton } from "@/components/bookmark-button"
 
-export default function ScholarshipDetailPage({ params }: { params: { id: string } }) {  
+export default function ScholarshipDetailPage() {  
 
   return (
     <div className="min-h-screen pt-24 pb-12">
@@ -17,7 +17,10 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
         {/* Back Button */}
         <div className="mb-6">
           <Link href="/scholarships">
-            <Button variant="ghost" className="text-navy dark:text-gold hover:bg-navy/10 dark:hover:bg-gold/10">
+            <Button
+              variant="ghost"
+              className="text-navy dark:text-gold hover:bg-navy/10 dark:hover:bg-gold/10"
+            >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Scholarships
             </Button>
@@ -30,14 +33,21 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
             {/* Header */}
             <div className="space-y-4">
               <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="bg-navy/10 text-navy dark:bg-gold/10 dark:text-gold">
+                <Badge
+                  variant="secondary"
+                  className="bg-navy/10 text-navy dark:bg-gold/10 dark:text-gold"
+                >
                   {scholarship.category}
                 </Badge>
                 <Badge variant="outline">{scholarship.level}</Badge>
                 <Badge variant="outline">{scholarship.country}</Badge>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">{scholarship.title}</h1>
-              <p className="text-lg text-gray-600 dark:text-gray-400">{scholarship.description}</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                {scholarship.title}
+              </h1>
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                {scholarship.description}
+              </p>
             </div>
 
             {/* Quick Stats */}
@@ -46,15 +56,22 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
                 <CardContent className="p-4 text-center space-y-2">
                   <Calendar className="h-6 w-6 mx-auto mb-2 text-red-600" />
                   <div className="text-sm text-gray-500">Deadline</div>
-                  <div className="font-semibold text-red-600">{scholarship.deadline}</div>
-                  <CountdownTimer deadline={scholarship.deadline} variant="badge" />
+                  <div className="font-semibold text-red-600">
+                    {scholarship.deadline}
+                  </div>
+                  <CountdownTimer
+                    deadline={scholarship.deadline}
+                    variant="badge"
+                  />
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="p-4 text-center">
                   <DollarSign className="h-6 w-6 mx-auto mb-2 text-green-600" />
                   <div className="text-sm text-gray-500">Amount</div>
-                  <div className="font-semibold text-green-600">{scholarship.amount}</div>
+                  <div className="font-semibold text-green-600">
+                    {scholarship.amount}
+                  </div>
                 </CardContent>
               </Card>
               <Card>
@@ -95,7 +112,9 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
                   {scholarship.requirements.map((requirement, index) => (
                     <li key={index} className="flex items-start space-x-2">
                       <div className="w-2 h-2 bg-navy dark:bg-gold rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-700 dark:text-gray-300">{requirement}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {requirement}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -112,7 +131,9 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
                   {scholarship.documents.map((document, index) => (
                     <li key={index} className="flex items-center space-x-2">
                       <FileText className="h-4 w-4 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">{document}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {document}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -134,8 +155,12 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
                         </div>
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-900 dark:text-white">{item.date}</div>
-                        <div className="text-gray-600 dark:text-gray-400">{item.event}</div>
+                        <div className="font-semibold text-gray-900 dark:text-white">
+                          {item.date}
+                        </div>
+                        <div className="text-gray-600 dark:text-gray-400">
+                          {item.event}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -150,11 +175,19 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
             <Card className="sticky top-24">
               <CardHeader>
                 <CardTitle>Apply Now</CardTitle>
-                <CardDescription>Don't miss this opportunity - deadline is approaching!</CardDescription>
+                <CardDescription>
+                  Don&apos;t miss this opportunity - deadline is approaching!
+                </CardDescription>
+                <CardDescription>
+                  Dont miss this opportunity - deadline is approaching!
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Button className="w-full bg-navy hover:bg-navy/90 text-white" size="lg">
+                  <Button
+                    className="w-full bg-navy hover:bg-navy/90 text-white"
+                    size="lg"
+                  >
                     <ExternalLink className="h-4 w-4 mr-2" />
                     Apply on Official Website
                   </Button>
@@ -202,23 +235,29 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
                 <div className="space-y-2">
                   <h4 className="font-semibold">Start Early</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Begin your application at least 2-3 months before the deadline to ensure quality.
+                    Begin your application at least 2-3 months before the
+                    deadline to ensure quality.
                   </p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-semibold">Personal Statement</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Write a compelling personal statement that showcases your unique story and aspirations.
+                    Write a compelling personal statement that showcases your
+                    unique story and aspirations.
                   </p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-semibold">Letters of Recommendation</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Choose recommenders who know you well and can speak to your achievements and potential.
+                    Choose recommenders who know you well and can speak to your
+                    achievements and potential.
                   </p>
                 </div>
                 <Link href="/blog">
-                  <Button variant="ghost" className="w-full text-navy dark:text-gold">
+                  <Button
+                    variant="ghost"
+                    className="w-full text-navy dark:text-gold"
+                  >
                     <FileText className="h-4 w-4 mr-2" />
                     More Application Tips
                   </Button>
@@ -233,21 +272,41 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
-                  <Link href="/scholarships/2" className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded">
+                  <Link
+                    href="/scholarships/2"
+                    className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
+                  >
                     <h4 className="font-medium text-sm">Rhodes Scholarship</h4>
-                    <p className="text-xs text-gray-500">Full funding for Oxford</p>
+                    <p className="text-xs text-gray-500">
+                      Full funding for Oxford
+                    </p>
                   </Link>
-                  <Link href="/scholarships/3" className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded">
+                  <Link
+                    href="/scholarships/3"
+                    className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
+                  >
                     <h4 className="font-medium text-sm">Fulbright Program</h4>
-                    <p className="text-xs text-gray-500">International exchange</p>
+                    <p className="text-xs text-gray-500">
+                      International exchange
+                    </p>
                   </Link>
-                  <Link href="/scholarships/4" className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded">
-                    <h4 className="font-medium text-sm">Chevening Scholarships</h4>
-                    <p className="text-xs text-gray-500">UK government funding</p>
+                  <Link
+                    href="/scholarships/4"
+                    className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
+                  >
+                    <h4 className="font-medium text-sm">
+                      Chevening Scholarships
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      UK government funding
+                    </p>
                   </Link>
                 </div>
                 <Link href="/scholarships">
-                  <Button variant="ghost" className="w-full text-navy dark:text-gold">
+                  <Button
+                    variant="ghost"
+                    className="w-full text-navy dark:text-gold"
+                  >
                     View All Scholarships
                   </Button>
                 </Link>
@@ -257,5 +316,5 @@ export default function ScholarshipDetailPage({ params }: { params: { id: string
         </div>
       </div>
     </div>
-  )
+  );
 }

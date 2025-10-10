@@ -22,7 +22,6 @@ import {
   Award,
   Globe,
 } from "lucide-react";
-import Image from "next/image";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -62,7 +61,7 @@ export default function ProfilePage() {
                 Sign In to Continue
               </Button>
               <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-                Don't have an account? Sign up to get started with your
+                Don&apos;t have an account? Sign up to get started with your
                 scholarship search.
               </p>
             </CardContent>

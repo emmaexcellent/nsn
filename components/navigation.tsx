@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Moon, Sun, Menu, X, BookOpen, LogOut, Settings, User } from "lucide-react";
+import { Menu, X, BookOpen, LogOut, Settings, User } from "lucide-react";
 // import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import Image from "next/image";

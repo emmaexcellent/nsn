@@ -1,21 +1,33 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import { Models, Query } from "appwrite";
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Link from "next/link"
-import Image from "next/image"
-import { Search, Calendar, User, ArrowRight } from "lucide-react"
-import { NewsletterSubscription } from "@/components/newsletter-subscription"
-import { databaseId, databases } from "@/lib/appwrite"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Link from "next/link";
+import Image from "next/image";
+import { Search, Calendar, User, ArrowRight } from "lucide-react";
+import { NewsletterSubscription } from "@/components/newsletter-subscription";
+import { databaseId, databases } from "@/lib/appwrite";
 
 export default function BlogPage() {
-  const [blogPosts, setBlogPosts] = useState<Models.Document[]>([]);
-  const [featuredPost, setFeaturedPost] = useState<Models.Document | null>(null);
+  const [blogPosts, setBlogPosts] = useState<Models.DefaultDocument[]>([]);
+  const [featuredPost, setFeaturedPost] =
+    useState<Models.DefaultDocument | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -200,13 +212,14 @@ export default function BlogPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-sm text-gray-500">
                     <Calendar className="h-4 w-4 mr-1" />
-                    {new Date(
-                      post.$createdAt as string
-                    ).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {new Date(post.$createdAt as string).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
                   </div>
                   <Link
                     href={`/blog/${post.id}`}

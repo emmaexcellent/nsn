@@ -47,7 +47,7 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
         setError(result.error || "Password reset failed");
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -62,14 +62,14 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
           </div>
           <CardTitle className="text-2xl">Check Your Email</CardTitle>
           <CardDescription>
-            We've sent password reset instructions to {email}
+            We&apos;ve sent password reset instructions to {email}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-center text-sm text-gray-600 dark:text-gray-400">
             <p>
-              If you don't see the email in your inbox, please check your spam
-              folder. The link will expire in 24 hours.
+              If you don&apos;t see the email in your inbox, please check your
+              spam folder. The link will expire in 24 hours.
             </p>
           </div>
           <Button
@@ -90,7 +90,7 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Reset Password</CardTitle>
         <CardDescription>
-          Enter your email address and we'll send you a link to reset your
+          Enter your email address and we&apos;ll send you a link to reset your
           password
         </CardDescription>
       </CardHeader>

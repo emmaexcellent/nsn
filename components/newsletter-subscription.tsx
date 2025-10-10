@@ -68,16 +68,18 @@ export function NewsletterSubscription({ variant = "footer", className = "" }: N
           <Check className="h-8 w-8 text-green-600" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Successfully Subscribed!</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Successfully Subscribed!
+          </h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            You'll receive your first newsletter within 24 hours.
+            You&apos;ll receive your first newsletter within 24 hours.
           </p>
         </div>
         <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
           Welcome to NSN Community!
         </Badge>
       </div>
-    )
+    );
   }
 
   if (variant === "footer") {
@@ -107,7 +109,8 @@ export function NewsletterSubscription({ variant = "footer", className = "" }: N
           </div>
           <CardTitle className="text-2xl">Stay Informed</CardTitle>
           <CardDescription>
-            Get the latest scholarship opportunities and application tips delivered to your inbox
+            Get the latest scholarship opportunities and application tips
+            delivered to your inbox
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -127,7 +130,9 @@ export function NewsletterSubscription({ variant = "footer", className = "" }: N
             </div>
 
             <div className="space-y-4">
-              <label className="text-sm font-medium">Subscription Preferences</label>
+              <label className="text-sm font-medium">
+                Subscription Preferences
+              </label>
               {subscriptionTypes.map((type) => (
                 <div
                   key={type.id}
@@ -137,34 +142,47 @@ export function NewsletterSubscription({ variant = "footer", className = "" }: N
                     id={type.id}
                     checked={preferences[type.id as keyof typeof preferences]}
                     onCheckedChange={(checked) =>
-                      setPreferences((prev) => ({ ...prev, [type.id]: checked as boolean }))
+                      setPreferences((prev) => ({
+                        ...prev,
+                        [type.id]: checked as boolean,
+                      }))
                     }
                     className="mt-1"
                   />
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
                       <type.icon className={`h-4 w-4 ${type.color}`} />
-                      <label htmlFor={type.id} className="font-medium text-sm cursor-pointer">
+                      <label
+                        htmlFor={type.id}
+                        className="font-medium text-sm cursor-pointer"
+                      >
                         {type.label}
                       </label>
                     </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{type.description}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                      {type.description}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <Button type="submit" className="w-full bg-navy hover:bg-navy/90 text-white" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full bg-navy hover:bg-navy/90 text-white"
+              disabled={isLoading}
+            >
               {isLoading ? "Subscribing..." : "Subscribe to Newsletter"}
             </Button>
 
             <p className="text-xs text-gray-500 text-center">
-              You can unsubscribe at any time. We respect your privacy and won't spam you.
+              You can unsubscribe at any time. We respect your privacy and
+              won&apos;t spam you.
             </p>
           </form>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return null

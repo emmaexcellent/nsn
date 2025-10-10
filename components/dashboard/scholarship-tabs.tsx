@@ -5,19 +5,17 @@ import Link from "next/link";
 import ScholarshipCard from "./scholarship-card";
 import { Models } from "appwrite";
 
-
 interface ScholarshipTabsProps {
-  savedScholarships: Models.Document[];
-  recommendations: Models.Document[];
-  applications: Models.Document[];
+  savedScholarships: Models.DefaultDocument[];
+  recommendations: Models.DefaultDocument[];
+  applications: Models.DefaultDocument[];
 }
 export default function ScholarshipTabs({
   savedScholarships,
   recommendations,
-  applications
+  applications,
 }: ScholarshipTabsProps) {
-
-  console.log(savedScholarships)
+  console.log(savedScholarships);
 
   return (
     <Tabs defaultValue="saved" className="w-full overflow-x-auto">
@@ -44,7 +42,9 @@ export default function ScholarshipTabs({
               id: saved.scholarship.$id,
               title: saved.scholarship.title,
               deadline: saved.scholarship.deadline,
-              amount: `${saved.scholarship.currency || "$"} ${saved.scholarship.amount}`,
+              amount: `${saved.scholarship.currency || "$"} ${
+                saved.scholarship.amount
+              }`,
               status: "saved",
               daysLeft: saved.scholarship.deadline,
               match: saved.scholarship.match,
@@ -84,9 +84,11 @@ export default function ScholarshipTabs({
               id: applied.scholarship.$id,
               title: applied.scholarship.title,
               deadline: applied.scholarship.deadline,
-              amount: `${applied.scholarship.currency || "$"} ${applied.scholarship.amount}`,
+              amount: `${applied.scholarship.currency || "$"} ${
+                applied.scholarship.amount
+              }`,
               status: "applied",
-              daysLeft: applied.scholarship.deadline
+              daysLeft: applied.scholarship.deadline,
             }}
             showCountdown={true}
           />

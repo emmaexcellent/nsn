@@ -4,7 +4,6 @@ import {
   MapPin,
   Users,
   ArrowRight,
-  Share2,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -20,7 +19,7 @@ import CountdownTimer from "./countdown-timer";
 import { Models } from "appwrite";
 
 interface ScholarshipCardProps {
-  scholarship: Models.Document,
+  scholarship: Models.DefaultDocument;
   variant?: "default" | "featured";
   animationDelay?: number;
   className?: string;
@@ -34,7 +33,6 @@ export function ScholarshipCard({
 }: ScholarshipCardProps) {
   const isFeatured = variant === "featured";
 
- 
   return (
     <Card
       className={`group border shadow hover:shadow-lg dark:shadow-white/50 dark:hover:shadow-white/50 transition-all duration-300 ${

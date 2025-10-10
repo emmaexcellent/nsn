@@ -4,7 +4,7 @@ import { User2 } from "lucide-react";
 import { Models } from "appwrite";
 
 interface UserProfileCardProps {
-  user: Models.Document | null;
+  user: Models.DefaultDocument | null;
 }
 
 export default function UserProfileCard({ user }: UserProfileCardProps) {

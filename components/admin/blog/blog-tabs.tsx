@@ -11,15 +11,15 @@ import {
 import { Plus } from "lucide-react";
 import { Models } from "appwrite";
 import SearchBar from "../search";
-import BlogPostForm from "./post-form";
+import BlogPostForm, { BlogFormDataType } from "./post-form";
 import BlogPostCard from "./blog-card";
 import useSubmitBlogPost from "./submit-blog";
 
 interface BlogPostsTabProps {
-  blogPosts: Models.Document[];
+  blogPosts: Models.DefaultDocument[];
   searchTerm: string;
   onSearchChange: (term: string) => void;
-  onBlogPostsChange: (blogPosts: Models.Document[]) => void;
+  onBlogPostsChange: (blogPosts: Models.DefaultDocument[]) => void;
 }
 
 export default function BlogPostsTab({
@@ -30,9 +30,16 @@ export default function BlogPostsTab({
 }: BlogPostsTabProps) {
   const [isAddingBlogPost, setIsAddingBlogPost] = useState(false);
   const [editingBlogPost, setEditingBlogPost] =
-    useState<Models.Document | null>(null);
-  
-  const { createBlogPost, updateBlogPost, deleteBlogPost, loading, setError, error } = useSubmitBlogPost();
+    useState<Models.DefaultDocument | null>(null);
+
+  const {
+    createBlogPost,
+    updateBlogPost,
+    deleteBlogPost,
+    loading,
+    setError,
+    error,
+  } = useSubmitBlogPost();
 
   const filteredBlogPosts = blogPosts.filter(
     (p) =>
@@ -40,13 +47,13 @@ export default function BlogPostsTab({
       (p.author && p.author.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const handleAddBlogPost = async (formData: any) => {
+  const handleAddBlogPost = async (formData: BlogFormDataType) => {
     const newPost = await createBlogPost(formData);
     if (newPost) {
       onBlogPostsChange([...blogPosts, newPost]);
       setIsAddingBlogPost(false);
       setError("");
-    }   
+    }
   };
 
   const handleDeleteBlogPost = async (id: string) => {
@@ -55,7 +62,7 @@ export default function BlogPostsTab({
     setError("");
   };
 
-  const handleUpdateBlogPost = async (formData: any) => {
+  const handleUpdateBlogPost = async (formData: BlogFormDataType) => {
     console.log("editing...", editingBlogPost);
     if (editingBlogPost) {
       const result = await updateBlogPost(editingBlogPost.$id, formData);

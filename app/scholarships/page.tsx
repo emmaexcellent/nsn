@@ -16,8 +16,6 @@ import { databaseId, databases } from "@/lib/appwrite";
 import { Models, Query } from "appwrite";
 import Loader from "@/components/loader";
 
-
-
 const PAGE_LIMIT = 10;
 
 export default function ScholarshipsPage() {
@@ -25,12 +23,14 @@ export default function ScholarshipsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [selectedLevel, setSelectedLevel] = useState("all");
-  const [scholarships, setScholarships] = useState<Models.Document[]>([]);
+  const [scholarships, setScholarships] = useState<Models.DefaultDocument[]>(
+    []
+  );
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const cache = useRef<Map<string, any>>(new Map());
+  const cache = useRef<Map<string, Models.DefaultDocument[]>>(new Map());
 
   const categories = [
     "all",
@@ -50,7 +50,6 @@ export default function ScholarshipsPage() {
     "Global",
   ];
   const levels = ["all", "Undergraduate", "Graduate", "PhD", "Postdoc"];
-  
 
   const buildFilters = () => {
     const filters = [];
@@ -84,10 +83,10 @@ export default function ScholarshipsPage() {
       if (cache.current.has(cacheKey)) {
         const cachedData = cache.current.get(cacheKey);
         const newScholarships = reset
-          ? cachedData
-          : [...scholarships, ...cachedData];
+          ? cachedData ?? []
+          : [...scholarships, ...(cachedData ?? [])];
         setScholarships(newScholarships);
-        setHasMore(cachedData.length === PAGE_LIMIT);
+        setHasMore(cachedData?.length === PAGE_LIMIT);
         if (reset) setPage(1);
         else setPage((prev) => prev + 1);
         setLoading(false);
@@ -116,12 +115,11 @@ export default function ScholarshipsPage() {
     }
   };
 
-
   useEffect(() => {
     fetchScholarships(true);
   }, []);
 
-  if(loading) return <Loader />
+  if (loading) return <Loader />;
 
   return (
     <div className="min-h-screen py-24 lg:py-40">

@@ -1,13 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, GraduationCap, UserCheck, Mail, Eye } from "lucide-react";
 import { Models } from "appwrite";
 import SearchBar from "./search";
 import UserCard from "./user-card";
 
 interface UsersTabProps {
-  users: Models.Document[];
+  users: Models.DefaultDocument[];
   searchTerm: string;
   onSearchChange: (term: string) => void;
 }
@@ -23,16 +20,6 @@ export default function UsersTab({
       (u.email && u.email.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const handleContactUser = (user: Models.Document) => {
-    // Implement contact functionality
-    window.location.href = `mailto:${user.email}`;
-  };
-
-  const handleViewProfile = (user: Models.Document) => {
-    // Implement view profile functionality
-    console.log("View profile:", user);
-    // router.push(`/profile/${user.$id}`);
-  };
 
   return (
     <div className="space-y-6">
@@ -52,8 +39,6 @@ export default function UsersTab({
           <UserCard
             key={user.$id}
             user={user}
-            onContact={handleContactUser}
-            onViewProfile={handleViewProfile}
           />
         ))}
       </div>

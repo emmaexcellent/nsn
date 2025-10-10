@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,20 +23,14 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth, type User } from "@/context/auth";
-import {
-  Save,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
-import Image from "next/image";
+import { useAuth } from "@/context/auth";
+import { Save, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Models } from "appwrite";
 
 export function ProfileForm() {
   const { user, updateProfile } = useAuth();
-  const [formData, setFormData] = useState<Partial<Models.Document>>(
-    user as Models.Document
+  const [formData, setFormData] = useState<Partial<Models.DefaultDocument>>(
+    user as Models.DefaultDocument
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{
@@ -50,7 +44,7 @@ export function ProfileForm() {
   if (!user) return null;
 
   // Calculate profile completion percentage
-  const calculateCompletion = (data: Partial<Models.Document>) => {
+  const calculateCompletion = (data: Partial<Models.DefaultDocument>) => {
     const requiredFields = [
       "firstName",
       "lastName",
@@ -66,9 +60,8 @@ export function ProfileForm() {
       "bio",
     ];
 
-
     let completedCount = 0;
-    let totalWeight = requiredFields.length * 2; // Required fields have higher weight
+    const totalWeight = requiredFields.length * 2; // Required fields have higher weight
 
     // Check required fields
     requiredFields.forEach((field) => {
@@ -85,7 +78,7 @@ export function ProfileForm() {
     return percentage;
   };
 
-  console.log(completionPercentage)
+  console.log(completionPercentage);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,13 +104,14 @@ export function ProfileForm() {
         setMessage({ type: "error", text: result.error || "Update failed" });
       }
     } catch (err) {
+      console.error("Error:", err);
       setMessage({ type: "error", text: "An unexpected error occurred" });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (message) setMessage(null);
   };

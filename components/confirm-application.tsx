@@ -15,7 +15,9 @@ import { useAuth } from "@/context/auth";
 
 export default function ConfirmScholarshipApplication() {
   const { user } = useAuth();
-  const [scholarship, setScholarship] = useState<Models.Document | null>(null);
+  const [scholarship, setScholarship] = useState<Models.DefaultDocument | null>(
+    null
+  );
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -77,7 +79,9 @@ export default function ConfirmScholarshipApplication() {
           <Button variant="outline" onClick={handleCancel}>
             No
           </Button>
-          <Button onClick={handleConfirm} disabled={loading}>{loading ? "Confirming..." : "Yes, Confirm"}</Button>
+          <Button onClick={handleConfirm} disabled={loading}>
+            {loading ? "Confirming..." : "Yes, Confirm"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

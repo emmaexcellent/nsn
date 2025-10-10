@@ -13,9 +13,11 @@ import UsersTab from "./user-tab";
 export default function AdminDashboard() {
   const [dataLoading, setDataLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
-  const [scholarships, setScholarships] = useState<Models.Document[]>([]);
-  const [blogPosts, setBlogPosts] = useState<Models.Document[]>([]);
-  const [users, setUsers] = useState<Models.Document[]>([]);
+  const [scholarships, setScholarships] = useState<Models.DefaultDocument[]>(
+    []
+  );
+  const [blogPosts, setBlogPosts] = useState<Models.DefaultDocument[]>([]);
+  const [users, setUsers] = useState<Models.DefaultDocument[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {

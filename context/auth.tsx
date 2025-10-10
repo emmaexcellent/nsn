@@ -53,7 +53,7 @@ export interface User {
 }
 
 interface AuthContextType {
-  user: Models.Document | null;
+  user: Models.DefaultDocument | null;
   loading: boolean;
   login: (
     email: string,
@@ -64,7 +64,7 @@ interface AuthContextType {
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   updateProfile: (
-    updates: Partial<Models.Document>
+    updates: Partial<Models.DefaultDocument>
   ) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (
     email: string
@@ -95,7 +95,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<Models.Document | null>(null);
+  const [user, setUser] = useState<Models.DefaultDocument | null>(null);
   const [loading, setLoading] = useState(true);
 
 
@@ -202,13 +202,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
-  const updateProfile = async (updates: Partial<Models.Document>) => {
+  const updateProfile = async (
+    updates: Partial<Models.DefaultDocument>
+  ) => {
     try {
       if (!user) return { success: false, error: "Not authenticated" };
 
-      await databases.updateDocument(databaseId, "profile", updates.$id as string, updates)
+      // Omit Appwrite document keys from updates
+      const { $id, $createdAt, $updatedAt, $permissions, ...safeUpdates } = updates as Partial<Models.DataWithoutDocumentKeys>
 
-      const updatedUser = { ...user, ...updates };
+      await databases.updateDocument(
+        databaseId,
+        "profile",
+        user.$id,
+        safeUpdates
+      );
+
+      const updatedUser = { ...user, ...safeUpdates };
 
       setUser(updatedUser);
 

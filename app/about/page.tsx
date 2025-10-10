@@ -87,15 +87,20 @@ export default function AboutPage() {
       <section className="py-24 lg:py-40 bg-gradient-to-br from-navy to-navy/90 text-white">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center space-y-8">
-            <h1 className="text-4xl md:text-6xl font-bold">About Newton Scholarship Nexus</h1>
+            <h1 className="text-4xl md:text-6xl font-bold">
+              About Newton Scholarship Nexus
+            </h1>
             <p className="text-xl md:text-2xl text-gray-200">
-              Bridging the gap between talented students and life-changing scholarship opportunities
+              Bridging the gap between talented students and life-changing
+              scholarship opportunities
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
                   <stat.icon className="h-8 w-8 mx-auto mb-2 text-gold" />
-                  <div className="text-2xl md:text-3xl font-bold text-gold">{stat.value}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-gold">
+                    {stat.value}
+                  </div>
                   <div className="text-sm text-gray-300">{stat.label}</div>
                 </div>
               ))}
@@ -109,16 +114,22 @@ export default function AboutPage() {
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Our Mission</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                Our Mission
+              </h2>
               <p className="text-lg text-gray-600 dark:text-gray-400">
-                Newton Scholarship Nexus was founded on the belief that every talented student, regardless of their
-                background, deserves access to quality higher education. We exist to eliminate the information gap that
-                prevents deserving students from discovering and securing scholarship opportunities.
+                Newton Scholarship Nexus was founded on the belief that every
+                talented student, regardless of their background, deserves
+                access to quality higher education. We exist to eliminate the
+                information gap that prevents deserving students from
+                discovering and securing scholarship opportunities.
               </p>
               <p className="text-lg text-gray-600 dark:text-gray-400">
-                Named after Sir Isaac Newton, who once said "If I have seen further it is by standing on the shoulders
-                of Giants," we believe in empowering the next generation of scholars to build upon the knowledge and
-                achievements of those who came before them.
+                Named after Sir Isaac Newton, who once said &quot;If I have seen
+                further it is by standing on the shoulders of Giants,&quot; we
+                believe in empowering the next generation of scholars to build
+                upon the knowledge and achievements of those who came before
+                them.
               </p>
             </div>
             <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
@@ -137,7 +148,9 @@ export default function AboutPage() {
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Our Vision & Values</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              Our Vision & Values
+            </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               The principles that guide everything we do
             </p>
@@ -153,8 +166,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  A world where every student with potential has the opportunity to pursue higher education, regardless
-                  of their economic circumstances.
+                  A world where every student with potential has the opportunity
+                  to pursue higher education, regardless of their economic
+                  circumstances.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -168,8 +182,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  We make scholarship information accessible to all students, breaking down barriers of geography,
-                  language, and socioeconomic status.
+                  We make scholarship information accessible to all students,
+                  breaking down barriers of geography, language, and
+                  socioeconomic status.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -183,8 +198,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  We empower students with the knowledge, resources, and confidence they need to successfully navigate
-                  the scholarship application process.
+                  We empower students with the knowledge, resources, and
+                  confidence they need to successfully navigate the scholarship
+                  application process.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -198,8 +214,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  We foster a supportive community where scholars can connect, share experiences, and support each
-                  other's educational journeys.
+                  We foster a supportive community where scholars can connect,
+                  share experiences, and support each other&apos;s educational
+                  journeys.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -213,7 +230,8 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  We maintain the highest standards in our research, platform development, and student support services.
+                  We maintain the highest standards in our research, platform
+                  development, and student support services.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -227,7 +245,8 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  We work to create positive change on a global scale, connecting students with opportunities worldwide.
+                  We work to create positive change on a global scale,
+                  connecting students with opportunities worldwide.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -239,10 +258,12 @@ export default function AboutPage() {
       <section className="py-20 bg-white dark:bg-gray-800">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Meet Our Team</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              Meet Our Team
+            </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Passionate educators, former scholarship recipients, and technology experts working together to make a
-              difference
+              Passionate educators, former scholarship recipients, and
+              technology experts working together to make a difference
             </p>
           </div>
 
@@ -268,15 +289,25 @@ export default function AboutPage() {
                   </Badge>
                 </CardHeader>
                 <CardContent className="text-center space-y-4">
-                  <CardDescription className="text-gray-600 dark:text-gray-400">{member.bio}</CardDescription>
+                  <CardDescription className="text-gray-600 dark:text-gray-400">
+                    {member.bio}
+                  </CardDescription>
                   <div className="flex justify-center space-x-4">
                     <Button variant="ghost" size="sm" asChild>
-                      <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={member.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <Linkedin className="h-4 w-4" />
                       </a>
                     </Button>
                     <Button variant="ghost" size="sm" asChild>
-                      <a href={member.twitter} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={member.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <Twitter className="h-4 w-4" />
                       </a>
                     </Button>
@@ -297,9 +328,12 @@ export default function AboutPage() {
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Our Partners</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              Our Partners
+            </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Working together with leading organizations to expand scholarship access
+              Working together with leading organizations to expand scholarship
+              access
             </p>
           </div>
 
@@ -328,12 +362,16 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-3xl md:text-4xl font-bold">Join Our Mission</h2>
             <p className="text-xl text-gray-200">
-              Whether you're a student seeking opportunities, an educator wanting to help, or an organization looking to
-              partner with us, there's a place for you in our community.
+              Whether you&apos;re a student seeking opportunities, an educator
+              wanting to help, or an organization looking to partner with us,
+              there&apos;s a place for you in our community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/scholarships">
-                <Button size="lg" className="bg-gold hover:bg-gold/90 text-navy font-semibold text-lg px-8 py-4">
+                <Button
+                  size="lg"
+                  className="bg-gold hover:bg-gold/90 text-navy font-semibold text-lg px-8 py-4"
+                >
                   Find Scholarships
                 </Button>
               </Link>
@@ -352,5 +390,5 @@ export default function AboutPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

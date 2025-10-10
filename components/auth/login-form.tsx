@@ -51,6 +51,7 @@ export function LoginForm({
         setError(result.error || "Login failed");
       }
     } catch (err) {
+      console.error("Error:", err)
       setError("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
@@ -178,7 +179,7 @@ export function LoginForm({
 
           <div className="text-center text-sm">
             <span className="text-gray-600 dark:text-gray-400">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
             </span>
             <button
               type="button"

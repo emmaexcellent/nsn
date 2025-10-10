@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import { databaseId, databases } from "@/lib/appwrite";
 
 interface ScholarshipCardProps {
-  scholarship: Models.Document;
+  scholarship: Models.DefaultDocument;
   isLoading: boolean;
-  onEdit: (scholarship: Models.Document) => void;
+  onEdit: (scholarship: Models.DefaultDocument) => void;
   onDelete: (id: string) => void;
 }
 
@@ -20,21 +20,26 @@ export default function ScholarshipCard({
   onDelete,
 }: ScholarshipCardProps) {
   const [applications, setApplications] = useState(0);
-  const [scholarshipToDelete, setScholarshipToDelete] = useState<string | null>(null)
-  const showLoading = scholarshipToDelete === scholarship.$id
+  const [scholarshipToDelete, setScholarshipToDelete] = useState<string | null>(
+    null
+  );
+  const showLoading = scholarshipToDelete === scholarship.$id;
 
   useEffect(() => {
     const getScholarshipApplications = async () => {
       const response = await databases.listDocuments(
         databaseId,
         "saved_scholarships",
-        [Query.equal("scholarship", scholarship.$id), Query.equal("action", "apply")]
-      )
+        [
+          Query.equal("scholarship", scholarship.$id),
+          Query.equal("action", "apply"),
+        ]
+      );
 
-      setApplications(response.total)
-    }
+      setApplications(response.total);
+    };
     getScholarshipApplications();
-  },[scholarship.$id])
+  }, [scholarship.$id]);
 
   return (
     <Card>

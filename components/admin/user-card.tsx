@@ -1,30 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, GraduationCap, UserCheck, Mail, Eye } from "lucide-react";
+import { Calendar, GraduationCap,  Mail } from "lucide-react";
 import { Models } from "appwrite";
 
 interface UserCardProps {
-  user: Models.Document;
-  onContact: (user: Models.Document) => void;
-  onViewProfile: (user: Models.Document) => void;
+  user: Models.DefaultDocument;
 }
 
 export default function UserCard({
-  user,
-  onContact,
-  onViewProfile,
+  user
 }: UserCardProps) {
-  // Calculate profile completion percentage
-  const calculateProfileCompletion = (user: Models.Document) => {
-    const fields = ["name", "email", "bio", "education", "interests"];
-    const completedFields = fields.filter(
-      (field) => user[field] && user[field].toString().trim() !== ""
-    );
-    return Math.round((completedFields.length / fields.length) * 100);
-  };
-
-  const profileComplete = calculateProfileCompletion(user);
 
   return (
     <Card>
@@ -33,8 +17,7 @@ export default function UserCard({
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <h3 className="text-lg font-semibold">
-                {user.firstName}{" "}
-                {user.lastName}
+                {user.firstName} {user.lastName}
               </h3>
             </div>
             <p className="text-muted-foreground mb-2 flex items-center gap-1">

@@ -15,13 +15,13 @@ import { Models } from "appwrite";
 import MarkdownEditor from "../markdown-editor";
 
 interface BlogPostFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: BlogFormDataType) => void;
   isLoading: boolean;
   onCancel: () => void;
-  initialData?: Models.Document | null;
+  initialData?: Models.DefaultDocument | null;
 }
 
-interface BlogFormDataType  {
+export interface BlogFormDataType {
   title: string;
   excerpt: string;
   content: string;
@@ -35,6 +35,15 @@ interface BlogFormDataType  {
   status: string;
 }
 
+export type FormFieldProps = {
+  label: string;
+  id: string;
+  type?: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+}
+
 function FormField({
   label,
   id,
@@ -42,7 +51,7 @@ function FormField({
   value,
   onChange,
   required = false,
-}: any) {
+}: FormFieldProps) {
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
@@ -57,6 +66,16 @@ function FormField({
   );
 }
 
+export type FormTextareaProps = {
+  label: string;
+  id: string;
+  value: string;  
+  onChange: (value: string) => void;
+  rows: number;
+  required?: boolean;
+  placeholder?: string;
+}
+
 function FormTextarea({
   label,
   id,
@@ -65,7 +84,7 @@ function FormTextarea({
   rows,
   required = false,
   placeholder,
-}: any) {
+}: FormTextareaProps) {
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
@@ -81,7 +100,14 @@ function FormTextarea({
   );
 }
 
-function FormMultiInput({ label, id, values, onChange }: any) {
+export type FormMultiInputProps = {
+  label: string;
+  id: string;
+  values: string[];
+  onChange: (values: string[]) => void;
+}
+
+function FormMultiInput({ label, id, values, onChange }: FormMultiInputProps) {
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
@@ -268,7 +294,11 @@ export default function BlogPostForm({
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading}>{ isLoading ? "Loading..." : `${initialData ? "Update" : "Create"} Post`}</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading
+            ? "Loading..."
+            : `${initialData ? "Update" : "Create"} Post`}
+        </Button>
       </DialogFooter>
     </form>
   );
