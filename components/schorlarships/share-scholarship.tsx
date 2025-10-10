@@ -14,7 +14,7 @@ const ShareButton: React.FC = () => {
 
   useEffect(() => {
     const pageUrl = encodeURIComponent(window.location.href);
-    const pageTitle = encodeURIComponent(document.title);
+    const pageTitle = encodeURIComponent(window.document.title);
 
     setShareLinks({
       whatsapp: `https://wa.me/?text=${pageTitle}%20${pageUrl}`,
