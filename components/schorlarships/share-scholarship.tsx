@@ -1,24 +1,34 @@
-import React, { useState } from "react";
+"use client"
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Facebook, Linkedin, MessageCircleCode, Share2, TwitterIcon } from "lucide-react";
 
 const ShareButton: React.FC = () => {
   const [copied, setCopied] = useState(false);
-  const pageUrl = encodeURIComponent(window.location.href);
-  const pageTitle = encodeURIComponent(document.title);
+  const [shareLinks, setShareLinks] = useState({
+    whatsapp: "#",
+    facebook: "#",
+    twitter: "#",
+    linkedin: "#",
+  });
 
-  const shareLinks = {
-    whatsapp: `https://wa.me/?text=${pageTitle}%20${pageUrl}`,
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`,
-    twitter: `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`,
-    linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${pageTitle}`,
-  };
+  useEffect(() => {
+    const pageUrl = encodeURIComponent(window.location.href);
+    const pageTitle = encodeURIComponent(document.title);
+
+    setShareLinks({
+      whatsapp: `https://wa.me/?text=${pageTitle}%20${pageUrl}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`,
+      twitter: `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`,
+      linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${pageTitle}`,
+    });
+  }, []);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -37,22 +47,22 @@ const ShareButton: React.FC = () => {
       <div className="grid grid-cols-2 gap-2">
         <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer">
           <Button variant="outline" className="w-full">
-           <MessageCircleCode className="text-green-600"/> WhatsApp
+            <MessageCircleCode className="text-green-600" /> WhatsApp
           </Button>
         </a>
         <a href={shareLinks.facebook} target="_blank" rel="noopener noreferrer">
           <Button variant="outline" className="w-full">
-             <Facebook className="text-blue-600"/> Facebook
+            <Facebook className="text-blue-600" /> Facebook
           </Button>
         </a>
         <a href={shareLinks.twitter} target="_blank" rel="noopener noreferrer">
           <Button variant="outline" className="w-full">
-            <TwitterIcon className="text-blue-600"/> Twitter
+            <TwitterIcon className="text-blue-600" /> Twitter
           </Button>
         </a>
         <a href={shareLinks.linkedin} target="_blank" rel="noopener noreferrer">
           <Button variant="outline" className="w-full">
-            <Linkedin className="text-blue-600"/> LinkedIn
+            <Linkedin className="text-blue-600" /> LinkedIn
           </Button>
         </a>
       </div>
