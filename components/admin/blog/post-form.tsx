@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,12 @@ import {
 } from "@/components/ui/select";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Models } from "appwrite";
-import MarkdownEditor from "../markdown-editor";
+import dynamic from "next/dynamic";
+
+
+// import MarkdownEditor from "../markdown-editor";
+
+const MarkdownEditor = dynamic(() => import("../markdown-editor"), { ssr: false });
 
 interface BlogPostFormProps {
   onSubmit: (data: BlogFormDataType) => void;
