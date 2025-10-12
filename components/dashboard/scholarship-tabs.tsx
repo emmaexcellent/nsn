@@ -15,7 +15,6 @@ export default function ScholarshipTabs({
   recommendations,
   applications,
 }: ScholarshipTabsProps) {
-  console.log(savedScholarships);
 
   return (
     <Tabs defaultValue="saved" className="w-full overflow-x-auto">

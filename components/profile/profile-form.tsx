@@ -78,8 +78,6 @@ export function ProfileForm() {
     return percentage;
   };
 
-  console.log(completionPercentage);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);

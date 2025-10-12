@@ -65,10 +65,8 @@ export default function BlogPostsTab({
   };
 
   const handleUpdateBlogPost = async (formData: BlogFormDataType) => {
-    console.log("editing...", editingBlogPost);
     if (editingBlogPost) {
       const result = await updateBlogPost(editingBlogPost.$id, formData);
-      console.log(result);
       if (result) {
         const updatedList = blogPosts.map((p) =>
           p.$id === result.$id ? result : p

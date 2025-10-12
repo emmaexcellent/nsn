@@ -25,7 +25,6 @@ export default function ConfirmScholarshipApplication() {
     const recent_scholarship = localStorage.getItem(
       "recent_applied_scholarship"
     );
-    console.log(recent_scholarship);
     if (recent_scholarship) {
       const scholarship_data = JSON.parse(recent_scholarship);
       setScholarship(scholarship_data);

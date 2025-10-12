@@ -107,6 +107,7 @@ export default function ScholarshipForm({
     link: initialData?.link || "",
     sponsor: initialData?.sponsor || "",
     category: initialData?.category || "",
+    deadline: initialData?.deadline || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -199,6 +200,16 @@ export default function ScholarshipForm({
             </SelectContent>
           </Select>
         </div>
+        <FormField
+          label="Deadline"
+          id="deadline"
+          type="date"
+          value={new Date(formData.deadline).toISOString().split("T")[0]}
+          onChange={(value: string) =>
+            setFormData({ ...formData, deadline: value })
+          }
+          required
+        />
       </div>
 
       <FormTextarea

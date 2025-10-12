@@ -40,8 +40,6 @@ export default function ScholarshipsTab({
       s.sponsor?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log(filteredScholarships);
-
   const validateFormData = (
     data: Models.DataWithoutDocumentKeys
   ) => {
@@ -58,6 +56,7 @@ export default function ScholarshipsTab({
       "link",
       "sponsor",
       "category",
+      "deadline"
     ];
 
     for (const field of requiredFields) {

@@ -50,17 +50,22 @@ export default function useBlogPostActions() {
       const imageUrl = await uploadImage(formData.imageFile);
       const slug = generateSlug(formData.title);
 
+      const { imageFile, ...cleanFormData } = formData;
+
+      console.log(imageUrl)
+
       const response = await databases.createDocument(
         databaseId,
         "blogs",
         ID.unique(),
         {
-          ...formData,
+          ...cleanFormData,
           imageUrl,
           slug,
           readTime: parseInt(formData.readTime),
         }
       );
+
 
       return response;
     } catch (err) {
