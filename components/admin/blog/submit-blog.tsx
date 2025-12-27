@@ -52,7 +52,6 @@ export default function useBlogPostActions() {
 
       const { imageFile, ...cleanFormData } = formData;
 
-      console.log(imageUrl)
 
       const response = await databases.createDocument(
         databaseId,

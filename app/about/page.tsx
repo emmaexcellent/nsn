@@ -2,10 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import Image from "next/image"
-import { Users, Award, Globe, Heart, Target, Eye, ArrowRight, Linkedin, Twitter, Mail } from "lucide-react"
+import { Users, Award, Globe, Heart, Target, Eye, ArrowRight } from "lucide-react"
 
 export default function AboutPage() {
   const stats = [
@@ -15,71 +14,71 @@ export default function AboutPage() {
     { icon: Heart, label: "Success Stories", value: "500+", description: "Dreams turned into reality" },
   ]
 
-  const team = [
-    {
-      name: "Dr. Sarah Johnson",
-      role: "Founder & Executive Director",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Former scholarship recipient with a PhD in Education Policy. Passionate about breaking down barriers to higher education.",
-      linkedin: "#",
-      twitter: "#",
-      email: "sarah@newtonscholarshipnexus.org",
-    },
-    {
-      name: "Michael Rodriguez",
-      role: "Director of Programs",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Rhodes Scholar and education advocate with 10+ years of experience in scholarship program management.",
-      linkedin: "#",
-      twitter: "#",
-      email: "michael@newtonscholarshipnexus.org",
-    },
-    {
-      name: "Dr. Aisha Patel",
-      role: "Research & Analytics Director",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Data scientist specializing in educational analytics. Helps optimize our scholarship matching algorithms.",
-      linkedin: "#",
-      twitter: "#",
-      email: "aisha@newtonscholarshipnexus.org",
-    },
-    {
-      name: "David Chen",
-      role: "Technology Director",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Full-stack developer and former Gates Scholar. Builds the technology that powers our platform.",
-      linkedin: "#",
-      twitter: "#",
-      email: "david@newtonscholarshipnexus.org",
-    },
-    {
-      name: "Lisa Thompson",
-      role: "Community Outreach Manager",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Connects with schools, organizations, and communities to spread awareness about scholarship opportunities.",
-      linkedin: "#",
-      twitter: "#",
-      email: "lisa@newtonscholarshipnexus.org",
-    },
-    {
-      name: "James Wilson",
-      role: "Content & Communications",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Former journalist and Fulbright Scholar. Creates educational content and manages our communications.",
-      linkedin: "#",
-      twitter: "#",
-      email: "james@newtonscholarshipnexus.org",
-    },
-  ]
+  // const team = [
+  //   {
+  //     name: "Dr. Sarah Johnson",
+  //     role: "Founder & Executive Director",
+  //     image: "/placeholder.svg?height=300&width=300",
+  //     bio: "Former scholarship recipient with a PhD in Education Policy. Passionate about breaking down barriers to higher education.",
+  //     linkedin: "#",
+  //     twitter: "#",
+  //     email: "sarah@newtonscholarshipnexus.org",
+  //   },
+  //   {
+  //     name: "Michael Rodriguez",
+  //     role: "Director of Programs",
+  //     image: "/placeholder.svg?height=300&width=300",
+  //     bio: "Rhodes Scholar and education advocate with 10+ years of experience in scholarship program management.",
+  //     linkedin: "#",
+  //     twitter: "#",
+  //     email: "michael@newtonscholarshipnexus.org",
+  //   },
+  //   {
+  //     name: "Dr. Aisha Patel",
+  //     role: "Research & Analytics Director",
+  //     image: "/placeholder.svg?height=300&width=300",
+  //     bio: "Data scientist specializing in educational analytics. Helps optimize our scholarship matching algorithms.",
+  //     linkedin: "#",
+  //     twitter: "#",
+  //     email: "aisha@newtonscholarshipnexus.org",
+  //   },
+  //   {
+  //     name: "David Chen",
+  //     role: "Technology Director",
+  //     image: "/placeholder.svg?height=300&width=300",
+  //     bio: "Full-stack developer and former Gates Scholar. Builds the technology that powers our platform.",
+  //     linkedin: "#",
+  //     twitter: "#",
+  //     email: "david@newtonscholarshipnexus.org",
+  //   },
+  //   {
+  //     name: "Lisa Thompson",
+  //     role: "Community Outreach Manager",
+  //     image: "/placeholder.svg?height=300&width=300",
+  //     bio: "Connects with schools, organizations, and communities to spread awareness about scholarship opportunities.",
+  //     linkedin: "#",
+  //     twitter: "#",
+  //     email: "lisa@newtonscholarshipnexus.org",
+  //   },
+  //   {
+  //     name: "James Wilson",
+  //     role: "Content & Communications",
+  //     image: "/placeholder.svg?height=300&width=300",
+  //     bio: "Former journalist and Fulbright Scholar. Creates educational content and manages our communications.",
+  //     linkedin: "#",
+  //     twitter: "#",
+  //     email: "james@newtonscholarshipnexus.org",
+  //   },
+  // ]
 
-  const partners = [
-    { name: "Gates Foundation", logo: "/placeholder.svg?height=80&width=160" },
-    { name: "Ford Foundation", logo: "/placeholder.svg?height=80&width=160" },
-    { name: "Rhodes Trust", logo: "/placeholder.svg?height=80&width=160" },
-    { name: "Fulbright Program", logo: "/placeholder.svg?height=80&width=160" },
-    { name: "College Board", logo: "/placeholder.svg?height=80&width=160" },
-    { name: "UNCF", logo: "/placeholder.svg?height=80&width=160" },
-  ]
+  // const partners = [
+  //   { name: "Gates Foundation", logo: "/placeholder.svg?height=80&width=160" },
+  //   { name: "Ford Foundation", logo: "/placeholder.svg?height=80&width=160" },
+  //   { name: "Rhodes Trust", logo: "/placeholder.svg?height=80&width=160" },
+  //   { name: "Fulbright Program", logo: "/placeholder.svg?height=80&width=160" },
+  //   { name: "College Board", logo: "/placeholder.svg?height=80&width=160" },
+  //   { name: "UNCF", logo: "/placeholder.svg?height=80&width=160" },
+  // ]
 
   return (
     <div className="min-h-screen pb-12">
@@ -117,19 +116,16 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                 Our Mission
               </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
-                Newton Scholarship Nexus was founded on the belief that every
-                talented student, regardless of their background, deserves
-                access to quality higher education. We exist to eliminate the
-                information gap that prevents deserving students from
-                discovering and securing scholarship opportunities.
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400">
+                Mission At NSN, our mission is to empower prospective
+                undergraduates to achieve academic excellence and access global
+                scholarship opportunities, guided by the values of diligence,
+                intelligence, and excellence.
               </p>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
-                Named after Sir Isaac Newton, who once said &quot;If I have seen
-                further it is by standing on the shoulders of Giants,&quot; we
-                believe in empowering the next generation of scholars to build
-                upon the knowledge and achievements of those who came before
-                them.
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400">
+                We strive to provide research- driven guidance, support and
+                advocacy to help students succeed in their academic and
+                professional pursuits.
               </p>
             </div>
             <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
@@ -166,9 +162,10 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  A world where every student with potential has the opportunity
-                  to pursue higher education, regardless of their economic
-                  circumstances.
+                  Our vision is to become a leading global platform for
+                  scholarship opportunities, research and advocacy, enabling
+                  students from diverse backgrounds to access quality education
+                  and achieve their full potential.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -245,8 +242,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  We work to create positive change on a global scale,
-                  connecting students with opportunities worldwide.
+                  We envision a world where every student has the opportunity to
+                  succeed, regardless of their geographical location or
+                  financial means.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -255,7 +253,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 bg-white dark:bg-gray-800">
+      {/* <section className="py-20 bg-white dark:bg-gray-800">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
@@ -322,10 +320,10 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Partners Section */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-900">
+      {/* <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
@@ -354,7 +352,7 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-20 bg-navy dark:bg-gray-800 text-white">
