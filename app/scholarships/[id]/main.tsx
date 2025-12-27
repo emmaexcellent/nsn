@@ -1,8 +1,14 @@
 "use client";
 
-import {  Models } from "appwrite";
+import { Models } from "appwrite";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {
@@ -24,8 +30,8 @@ export default function ScholarshipDetailMain({
   similarScholarships,
   scholarship,
 }: {
-  similarScholarships?: Models.DefaultDocument[];
-  scholarship: Models.DefaultDocument;
+  similarScholarships?: Models.Document[];
+  scholarship: Models.Document;
 }) {
   const { user } = useAuth();
   if (!scholarship) return null;
@@ -176,7 +182,6 @@ export default function ScholarshipDetailMain({
                 </ul>
               </CardContent>
             </Card>
-
           </div>
 
           {/* Sidebar */}

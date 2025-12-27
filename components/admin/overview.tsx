@@ -1,12 +1,12 @@
-"use client"
+"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraduationCap, Users, FileText, Eye, LucideProps } from "lucide-react";
 import { Models } from "appwrite";
 
 interface DashboardOverviewProps {
-  scholarships: Models.DefaultDocument[];
-  blogPosts: Models.DefaultDocument[];
-  users: Models.DefaultDocument[];
+  scholarships: Models.Document[];
+  blogPosts: Models.Document[];
+  users: Models.Document[];
 }
 
 export default function DashboardOverview({
@@ -95,8 +95,7 @@ function StatCard({
   );
 }
 
-
-function PopularBlogPosts({ blogPosts }: { blogPosts: Models.DefaultDocument[] }) {
+function PopularBlogPosts({ blogPosts }: { blogPosts: Models.Document[] }) {
   const popularPosts = blogPosts
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3);

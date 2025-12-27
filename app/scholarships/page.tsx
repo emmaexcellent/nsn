@@ -23,14 +23,12 @@ export default function ScholarshipsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [selectedLevel, setSelectedLevel] = useState("all");
-  const [scholarships, setScholarships] = useState<Models.DefaultDocument[]>(
-    []
-  );
+  const [scholarships, setScholarships] = useState<Models.Document[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const cache = useRef<Map<string, Models.DefaultDocument[]>>(new Map());
+  const cache = useRef<Map<string, Models.Document[]>>(new Map());
 
   const categories = [
     "all",

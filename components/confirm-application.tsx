@@ -15,9 +15,7 @@ import { useAuth } from "@/context/auth";
 
 export default function ConfirmScholarshipApplication() {
   const { user } = useAuth();
-  const [scholarship, setScholarship] = useState<Models.DefaultDocument | null>(
-    null
-  );
+  const [scholarship, setScholarship] = useState<Models.Document | null>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 

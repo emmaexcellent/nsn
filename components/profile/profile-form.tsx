@@ -29,8 +29,8 @@ import { Models } from "appwrite";
 
 export function ProfileForm() {
   const { user, updateProfile } = useAuth();
-  const [formData, setFormData] = useState<Partial<Models.DefaultDocument>>(
-    user as Models.DefaultDocument
+  const [formData, setFormData] = useState<Partial<Models.Document>>(
+    user as Models.Document
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{
@@ -44,7 +44,7 @@ export function ProfileForm() {
   if (!user) return null;
 
   // Calculate profile completion percentage
-  const calculateCompletion = (data: Partial<Models.DefaultDocument>) => {
+  const calculateCompletion = (data: Partial<Models.Document>) => {
     const requiredFields = [
       "firstName",
       "lastName",

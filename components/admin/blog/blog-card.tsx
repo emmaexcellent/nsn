@@ -4,10 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Edit, BookOpen, Eye, Calendar } from "lucide-react";
 import { Models } from "appwrite";
 import { useState } from "react";
+import Image from "next/image";
 
 interface BlogPostCardProps {
-  post: Models.DefaultDocument;
-  onEdit: (post: Models.DefaultDocument) => void;
+  post: Models.Document;
+  onEdit: (post: Models.Document) => void;
   isLoading: boolean;
   onDelete: (id: string) => void;
 }
@@ -21,13 +22,24 @@ export default function BlogPostCard({
   const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
   const showLoading = postIdToDelete === post.$id;
 
+  console.log("BlogPostCard render:", post?.imageUrl && post.imageUrl);
+
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <CardContent className="p-3 flex items-center justify-stretch gap-3">
+        <Image
+          src={post.imageUrl || "/default-image.jpg"}
+          alt={post.title}
+          width={300}
+          height={300}
+          className="w-20 h-20 object-cover rounded-lg"
+        />
+        <div className="flex-1 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-lg font-semibold">{post.title}</h3>
+              <h3 className="text-lg font-semibold line-clamp-2">
+                {post.title}
+              </h3>
               <Badge
                 variant={post.status === "published" ? "default" : "secondary"}
               >

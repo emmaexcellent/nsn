@@ -18,11 +18,9 @@ export default function AdminDashboard() {
   const { user, loading: authLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
-  const [scholarships, setScholarships] = useState<Models.DefaultDocument[]>(
-    []
-  );
-  const [blogPosts, setBlogPosts] = useState<Models.DefaultDocument[]>([]);
-  const [users, setUsers] = useState<Models.DefaultDocument[]>([]);
+  const [scholarships, setScholarships] = useState<Models.Document[]>([]);
+  const [blogPosts, setBlogPosts] = useState<Models.Document[]>([]);
+  const [users, setUsers] = useState<Models.Document[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [accessDenied, setAccessDenied] = useState(false);
   const router = useRouter();

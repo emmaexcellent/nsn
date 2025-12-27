@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -18,10 +18,10 @@ import BlogPostCard from "./blog-card";
 import useSubmitBlogPost from "./submit-blog";
 
 interface BlogPostsTabProps {
-  blogPosts: Models.DefaultDocument[];
+  blogPosts: Models.Document[];
   searchTerm: string;
   onSearchChange: (term: string) => void;
-  onBlogPostsChange: (blogPosts: Models.DefaultDocument[]) => void;
+  onBlogPostsChange: (blogPosts: Models.Document[]) => void;
 }
 
 export default function BlogPostsTab({
@@ -32,14 +32,14 @@ export default function BlogPostsTab({
 }: BlogPostsTabProps) {
   const [isAddingBlogPost, setIsAddingBlogPost] = useState(false);
   const [editingBlogPost, setEditingBlogPost] =
-    useState<Models.DefaultDocument | null>(null);
+    useState<Models.Document | null>(null);
 
   const {
     createBlogPost,
     updateBlogPost,
     deleteBlogPost,
     loading,
-    setError,
+    clearError,
     error,
   } = useSubmitBlogPost();
 
@@ -52,16 +52,16 @@ export default function BlogPostsTab({
   const handleAddBlogPost = async (formData: BlogFormDataType) => {
     const newPost = await createBlogPost(formData);
     if (newPost) {
-      onBlogPostsChange([...blogPosts, newPost]);
+      onBlogPostsChange([...blogPosts, newPost as Models.Document]);
       setIsAddingBlogPost(false);
-      setError("");
+      clearError();
     }
   };
 
   const handleDeleteBlogPost = async (id: string) => {
     await deleteBlogPost(id);
     onBlogPostsChange(blogPosts.filter((p) => p.$id !== id));
-    setError("");
+    clearError();
   };
 
   const handleUpdateBlogPost = async (formData: BlogFormDataType) => {

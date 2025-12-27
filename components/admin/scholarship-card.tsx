@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import { databaseId, databases } from "@/lib/appwrite";
 
 interface ScholarshipCardProps {
-  scholarship: Models.DefaultDocument;
+  scholarship: Models.Document;
   isLoading: boolean;
-  onEdit: (scholarship: Models.DefaultDocument) => void;
+  onEdit: (scholarship: Models.Document) => void;
   onDelete: (id: string) => void;
 }
 

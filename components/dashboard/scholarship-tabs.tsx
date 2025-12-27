@@ -6,16 +6,15 @@ import ScholarshipCard from "./scholarship-card";
 import { Models } from "appwrite";
 
 interface ScholarshipTabsProps {
-  savedScholarships: Models.DefaultDocument[];
-  recommendations: Models.DefaultDocument[];
-  applications: Models.DefaultDocument[];
+  savedScholarships: Models.Document[];
+  recommendations: Models.Document[];
+  applications: Models.Document[];
 }
 export default function ScholarshipTabs({
   savedScholarships,
   recommendations,
   applications,
 }: ScholarshipTabsProps) {
-
   return (
     <Tabs defaultValue="saved" className="w-full overflow-x-auto">
       <TabsList className="flex w-full overflow-x-auto whitespace-nowrap scrollbar-hide gap-3 md:gap-8 !px-5">

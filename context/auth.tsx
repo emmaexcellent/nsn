@@ -53,7 +53,7 @@ export interface User {
 }
 
 interface AuthContextType {
-  user: Models.DefaultDocument | null;
+  user: Models.Document | null;
   loading: boolean;
   login: (
     email: string,
@@ -64,7 +64,7 @@ interface AuthContextType {
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   updateProfile: (
-    updates: Partial<Models.DefaultDocument>
+    updates: Partial<Models.Document>
   ) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (
     email: string
@@ -95,9 +95,8 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<Models.DefaultDocument | null>(null);
+  const [user, setUser] = useState<Models.Document | null>(null);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     // Check for existing session on mount
@@ -106,7 +105,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const authAccount = await account.get();
         if (authAccount) {
           // In a real app, validate token with backend
-          const userData = await databases.getDocument(databaseId, "profile", authAccount.$id);
+          const userData = await databases.getDocument(
+            databaseId,
+            "profile",
+            authAccount.$id
+          );
           if (userData) {
             setUser(userData);
           }
@@ -130,8 +133,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await account.createEmailPasswordSession(email, password);
       const authUser = await account.get();
 
-      const userProfile = await databases.getDocument(databaseId, "profile", authUser.$id);
-
+      const userProfile = await databases.getDocument(
+        databaseId,
+        "profile",
+        authUser.$id
+      );
 
       // Mock validation
       if (userProfile) {
@@ -196,20 +202,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-
   const logout = async () => {
-    await account.deleteSession("current")    
+    await account.deleteSession("current");
     setUser(null);
   };
 
-  const updateProfile = async (
-    updates: Partial<Models.DefaultDocument>
-  ) => {
+  const updateProfile = async (updates: Partial<Models.Document>) => {
     try {
       if (!user) return { success: false, error: "Not authenticated" };
 
       // Omit Appwrite document keys from updates
-      const { $id, $createdAt, $updatedAt, $permissions, ...safeUpdates } = updates as Partial<Models.DataWithoutDocumentKeys>
+      const { $id, $createdAt, $updatedAt, $permissions, ...safeUpdates } =
+        updates as Partial<Models.Document>;
 
       await databases.updateDocument(
         databaseId,
@@ -233,10 +237,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const recoveryUrl = `${siteUrl}?mode=recover-password`;
 
     try {
-     await account.createRecovery(email, recoveryUrl);
+      await account.createRecovery(email, recoveryUrl);
       return { success: true };
     } catch (error) {
-      console.error(error)
+      console.error(error);
       return { success: false, error: "Password reset failed" };
     }
   };

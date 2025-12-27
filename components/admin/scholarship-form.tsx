@@ -12,13 +12,17 @@ import {
 } from "@/components/ui/select";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Models } from "appwrite";
-import { FormFieldProps, FormMultiInputProps, FormTextareaProps } from "./blog/post-form";
+import {
+  FormFieldProps,
+  FormMultiInputProps,
+  FormTextareaProps,
+} from "./blog/post-form";
 
 interface ScholarshipFormProps {
   isLoading: boolean;
   onSubmit: (data: Models.DataWithoutDocumentKeys) => void;
   onCancel: () => void;
-  initialData?: Models.DefaultDocument | null;
+  initialData?: Models.Document | null;
 }
 
 function FormField({

@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, BookOpen } from "lucide-react";
 
 const HomeBlogList = () => {
-  const [blogPosts, setBlogPosts] = useState<Models.DefaultDocument[]>([]);
+  const [blogPosts, setBlogPosts] = useState<Models.Document[]>([]);
 
   useEffect(() => {
     const fetchPosts = async () => {

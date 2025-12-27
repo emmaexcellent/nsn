@@ -25,9 +25,9 @@ import { NewsletterSubscription } from "@/components/newsletter-subscription";
 import { databaseId, databases } from "@/lib/appwrite";
 
 export default function BlogPage() {
-  const [blogPosts, setBlogPosts] = useState<Models.DefaultDocument[]>([]);
+  const [blogPosts, setBlogPosts] = useState<Models.Document[]>([]);
   const [featuredPost, setFeaturedPost] =
-    useState<Models.DefaultDocument | null>(null);
+    useState<Models.Document | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -182,7 +182,7 @@ export default function BlogPage() {
             >
               <div className="relative h-48 overflow-hidden">
                 <Image
-                  src={post.image || "/placeholder.svg"}
+                  src={post.imageUrl || "/placeholder.svg"}
                   alt={post.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -222,7 +222,7 @@ export default function BlogPage() {
                     )}
                   </div>
                   <Link
-                    href={`/blog/${post.id}`}
+                    href={`/blog/${post?.slug}`}
                     className="inline-flex items-center text-navy dark:text-gold hover:underline font-medium"
                   >
                     Read More

@@ -16,10 +16,10 @@ import ScholarshipCard from "./scholarship-card";
 import { databaseId, databases } from "@/lib/appwrite";
 
 interface ScholarshipsTabProps {
-  scholarships: Models.DefaultDocument[];
+  scholarships: Models.Document[];
   searchTerm: string;
   onSearchChange: (term: string) => void;
-  onScholarshipsChange: (scholarships: Models.DefaultDocument[]) => void;
+  onScholarshipsChange: (scholarships: Models.Document[]) => void;
 }
 
 export default function ScholarshipsTab({
@@ -30,7 +30,7 @@ export default function ScholarshipsTab({
 }: ScholarshipsTabProps) {
   const [isAddingScholarship, setIsAddingScholarship] = useState(false);
   const [editingScholarship, setEditingScholarship] =
-    useState<Models.DefaultDocument | null>(null);
+    useState<Models.Document | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,9 +40,7 @@ export default function ScholarshipsTab({
       s.sponsor?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const validateFormData = (
-    data: Models.DataWithoutDocumentKeys
-  ) => {
+  const validateFormData = (data: Models.DataWithoutDocumentKeys) => {
     const requiredFields = [
       "title",
       "description",
@@ -56,7 +54,7 @@ export default function ScholarshipsTab({
       "link",
       "sponsor",
       "category",
-      "deadline"
+      "deadline",
     ];
 
     for (const field of requiredFields) {

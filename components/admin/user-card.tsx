@@ -1,15 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, GraduationCap,  Mail } from "lucide-react";
+import { Calendar, GraduationCap, Mail } from "lucide-react";
 import { Models } from "appwrite";
 
 interface UserCardProps {
-  user: Models.DefaultDocument;
+  user: Models.Document;
 }
 
-export default function UserCard({
-  user
-}: UserCardProps) {
-
+export default function UserCard({ user }: UserCardProps) {
   return (
     <Card>
       <CardContent className="p-6">

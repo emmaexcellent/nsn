@@ -1,10 +1,4 @@
-import {
-  Calendar,
-  DollarSign,
-  MapPin,
-  Users,
-  ArrowRight,
-} from "lucide-react";
+import { Calendar, DollarSign, MapPin, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import {
@@ -19,7 +13,7 @@ import CountdownTimer from "./countdown-timer";
 import { Models } from "appwrite";
 
 interface ScholarshipCardProps {
-  scholarship: Models.DefaultDocument;
+  scholarship: Models.Document;
   variant?: "default" | "featured";
   animationDelay?: number;
   className?: string;

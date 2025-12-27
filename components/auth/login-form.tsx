@@ -128,18 +128,18 @@ export function LoginForm({
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <div className="text-sm">
               <button
                 type="button"
-                onClick={onForgotPassword}
+              onClick={onForgotPassword}
                 className="text-navy dark:text-gold hover:underline"
                 disabled={isSubmitting}
               >
                 Forgot password?
               </button>
             </div>
-          </div>
+          </div> */}
 
           <Button
             type="submit"
@@ -155,27 +155,6 @@ export function LoginForm({
               "Sign In"
             )}
           </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator className="w-full" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Demo Account
-              </span>
-            </div>
-          </div>
-
-          <div className="text-center text-sm bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-            <p className="text-blue-800 dark:text-blue-200">
-              <strong>Demo Credentials:</strong>
-              <br />
-              Email: demo@example.com
-              <br />
-              Password: password123
-            </p>
-          </div>
 
           <div className="text-center text-sm">
             <span className="text-gray-600 dark:text-gray-400">

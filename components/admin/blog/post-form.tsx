@@ -24,7 +24,7 @@ interface BlogPostFormProps {
   onSubmit: (data: BlogFormDataType) => void;
   isLoading: boolean;
   onCancel: () => void;
-  initialData?: Models.DefaultDocument | null;
+  initialData?: Models.Document | null;
 }
 
 export interface BlogFormDataType {
@@ -35,6 +35,7 @@ export interface BlogFormDataType {
   tags: string[];
   imageFile: File | null;
   imageUrl: string;
+  imageFileId?: string;
   slug: string;
   author: string;
   readTime: string;
@@ -48,6 +49,7 @@ export type FormFieldProps = {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  disabled?: boolean; 
 }
 
 function FormField({
@@ -57,6 +59,7 @@ function FormField({
   value,
   onChange,
   required = false,
+  disabled = false,
 }: FormFieldProps) {
   return (
     <div>
@@ -67,6 +70,7 @@ function FormField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
+        disabled={disabled}
       />
     </div>
   );
@@ -80,6 +84,7 @@ export type FormTextareaProps = {
   rows: number;
   required?: boolean;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 function FormTextarea({
@@ -90,6 +95,7 @@ function FormTextarea({
   rows,
   required = false,
   placeholder,
+  disabled = false,
 }: FormTextareaProps) {
   return (
     <div>
@@ -101,6 +107,7 @@ function FormTextarea({
         rows={rows}
         required={required}
         placeholder={placeholder}
+        disabled={disabled}
       />
     </div>
   );
@@ -150,6 +157,7 @@ export default function BlogPostForm({
     tags: initialData?.tags || [""],
     imageFile: null,
     imageUrl: initialData?.imageUrl || "",
+    imageFileId: initialData?.imageFileId || "",
     slug: initialData?.slug || "",
     author: initialData?.author || "",
     readTime: initialData?.readTime || "",
@@ -180,8 +188,10 @@ export default function BlogPostForm({
             setFormData({ ...formData, title: value })
           }
           required
+          disabled={isLoading}
         />
         <FormField
+          disabled={isLoading}
           label="Author Name"
           id="author"
           value={formData.author}
@@ -191,6 +201,7 @@ export default function BlogPostForm({
           required
         />
         <FormField
+          disabled={isLoading}
           label="Read Time (mins)"
           id="readTime"
           type="number"
@@ -207,6 +218,7 @@ export default function BlogPostForm({
             onValueChange={(value: string) =>
               setFormData({ ...formData, category: value })
             }
+            disabled={isLoading}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
@@ -228,6 +240,7 @@ export default function BlogPostForm({
             onValueChange={(value: string) =>
               setFormData({ ...formData, status: value })
             }
+            disabled={isLoading}
           >
             <SelectTrigger>
               <SelectValue />
@@ -249,6 +262,7 @@ export default function BlogPostForm({
         }
         rows={2}
         placeholder="Brief summary of the post"
+        disabled={isLoading}
       />
       <MarkdownEditor
         label="Content (Markdown)"
@@ -275,12 +289,13 @@ export default function BlogPostForm({
           onChange={(e) =>
             setFormData({ ...formData, imageFile: e.target.files?.[0] || null })
           }
+          disabled={isLoading}
         />
-        {formData.imageFile && (
+        {(formData.imageFile || formData.imageUrl) && (
           <p className="text-sm mt-1">
             {/* eslint-disable @next/next/no-img-element */}
             <img
-              src={URL.createObjectURL(formData.imageFile)}
+              src={formData.imageUrl ? formData.imageUrl : URL.createObjectURL(formData.imageFile!)}
               alt="Image Preview"
               className="mt-2 max-h-40 object-cover rounded"
             />
@@ -294,6 +309,7 @@ export default function BlogPostForm({
         value={formData.slug}
         onChange={(value: string) => setFormData({ ...formData, slug: value })}
         required
+        disabled={true}
       />
 
       <DialogFooter>

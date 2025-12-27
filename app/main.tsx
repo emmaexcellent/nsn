@@ -10,7 +10,7 @@ import { Models } from "appwrite";
 import HomeBlogList from "@/components/home/blogs";
 
 type HomePageProps = {
-  featuredScholarships: Models.DefaultDocument[];
+  featuredScholarships: Models.Document[];
 };
 
 export default function HomePageMain({ featuredScholarships }: HomePageProps) {
