@@ -33,6 +33,7 @@ export default function BlogPostCard({
           width={300}
           height={300}
           className="w-20 h-20 object-cover rounded-lg"
+          priority
         />
         <div className="flex-1 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex-1">

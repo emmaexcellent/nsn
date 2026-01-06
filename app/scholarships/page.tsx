@@ -94,7 +94,7 @@ export default function ScholarshipsPage() {
       const response = await databases.listDocuments(
         databaseId,
         "scholarships",
-        [...filters, Query.limit(PAGE_LIMIT), Query.offset(offset)]
+        [...filters, Query.limit(PAGE_LIMIT), Query.offset(offset), Query.orderDesc("$createdAt")]
       );
 
       cache.current.set(cacheKey, response.documents);
@@ -198,11 +198,11 @@ export default function ScholarshipsPage() {
             </Button>
           </div>
 
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          {/* <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {scholarships.length} scholarships found
             </p>
-          </div>
+          </div> */}
         </div>
         {/* Scholarships Grid or Loader */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-5 sm:px-3">

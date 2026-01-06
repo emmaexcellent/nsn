@@ -14,6 +14,7 @@ import SearchBar from "./search";
 import ScholarshipForm from "./scholarship-form";
 import ScholarshipCard from "./scholarship-card";
 import { databaseId, databases } from "@/lib/appwrite";
+import useBlogPostActions from "./blog/submit-blog";
 
 interface ScholarshipsTabProps {
   scholarships: Models.Document[];
@@ -34,13 +35,15 @@ export default function ScholarshipsTab({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const {uploadImage,deleteImage} = useBlogPostActions()
+
   const filteredScholarships = scholarships.filter(
     (s) =>
       s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       s.sponsor?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const validateFormData = (data: Models.DataWithoutDocumentKeys) => {
+  const validateFormData = (data: Partial<Models.Document>) => {
     const requiredFields = [
       "title",
       "description",
@@ -74,22 +77,28 @@ export default function ScholarshipsTab({
     return null;
   };
 
-  const handleAddScholarship = async (
-    formData: Models.DataWithoutDocumentKeys
-  ) => {
+  const handleAddScholarship = async (formData: Partial<Models.Document>) => {
     const validationError = validateFormData(formData);
     if (validationError) {
       setError(validationError);
       return;
     }
-
+    
     setLoading(true);
     try {
+      if (formData.imageFile) {
+        const uploadResult = await uploadImage(formData.imageFile);
+        formData.imageUrl = uploadResult.imageUrl;
+        formData.imageFileId = uploadResult.fileId;
+      }
+
+      const { imageFile, ...rest } = formData;
+
       const newScholarship = await databases.createDocument(
         databaseId,
         "scholarships",
         ID.unique(),
-        { ...formData, amount: parseInt(formData.amount) }
+        { ...rest, amount: parseInt(formData.amount) }
       );
       onScholarshipsChange([...scholarships, newScholarship]);
       setIsAddingScholarship(false);
@@ -103,7 +112,7 @@ export default function ScholarshipsTab({
   };
 
   const handleUpdateScholarship = async (
-    formData: Models.DataWithoutDocumentKeys
+    formData: Partial<Models.Document>
   ) => {
     const validationError = validateFormData(formData);
     if (validationError) {
@@ -113,11 +122,32 @@ export default function ScholarshipsTab({
 
     setLoading(true);
     try {
+      let oldImageFileId = formData.imageFileId;
+
+      // Handle image update
+      if (formData.imageFile) {
+        try {
+          const uploadResult = await uploadImage(formData.imageFile);
+          formData.imageUrl = uploadResult.imageUrl;
+          formData.imageFileId = uploadResult.fileId;
+
+          // Delete old image if it exists
+          if (oldImageFileId && oldImageFileId !== formData.imageFileId) {
+            await deleteImage(oldImageFileId);
+          }
+        } catch (err) {
+          setError("Failed to upload new image. Please try again.");
+          return null;
+        }
+      }
+
+      const { imageFile, ...rest } = formData;
+
       const updatedScholarship = await databases.updateDocument(
         databaseId,
         "scholarships",
         editingScholarship!.$id,
-        { ...formData, amount: parseInt(formData.amount) }
+        { ...rest, amount: parseInt(formData.amount) }
       );
       const updatedList = scholarships.map((s) =>
         s.$id === updatedScholarship.$id ? updatedScholarship : s
@@ -135,8 +165,30 @@ export default function ScholarshipsTab({
 
   const handleDeleteScholarship = async (id: string) => {
     setLoading(true);
+
     try {
-      await databases.deleteDocument(databaseId, "scholarships", id);
+      // Fetch scholarship document
+      const { imageFileId = "" } = await databases.getDocument(
+        databaseId,
+        "scholarships",
+        id
+      );
+
+      // Delete image if it exists (run in parallel with document deletion)
+      const deleteImagePromise = imageFileId
+        ? deleteImage(imageFileId)
+        : Promise.resolve();
+
+      const deleteDocPromise = databases.deleteDocument(
+        databaseId,
+        "scholarships",
+        id
+      );
+
+      // Run both deletions concurrently for efficiency
+      await Promise.all([deleteImagePromise, deleteDocPromise]);
+
+      // Update state after successful deletion
       onScholarshipsChange(scholarships.filter((s) => s.$id !== id));
     } catch (error) {
       console.error("Error deleting scholarship:", error);
@@ -145,6 +197,7 @@ export default function ScholarshipsTab({
       setLoading(false);
     }
   };
+
 
   return (
     <div className="space-y-6">
@@ -164,7 +217,7 @@ export default function ScholarshipsTab({
               Add Scholarship
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-3xl">
             <DialogHeader>
               <DialogTitle>Add New Scholarship</DialogTitle>
               <DialogDescription>
@@ -201,7 +254,7 @@ export default function ScholarshipsTab({
         open={!!editingScholarship}
         onOpenChange={() => setEditingScholarship(null)}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Edit Scholarship</DialogTitle>
             <DialogDescription>Update scholarship details</DialogDescription>

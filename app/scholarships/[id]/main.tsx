@@ -25,6 +25,7 @@ import { Separator } from "@/components/ui/separator";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { useAuth } from "@/context/auth";
 import ShareButton from "@/components/schorlarships/share-scholarship";
+import Image from "next/image";
 
 export default function ScholarshipDetailMain({
   similarScholarships,
@@ -74,6 +75,7 @@ export default function ScholarshipDetailMain({
                 <Badge variant="outline">{scholarship.level}</Badge>
                 <Badge variant="outline">{scholarship.location}</Badge>
               </div>
+              {scholarship.imageUrl && <Image src={scholarship.imageUrl} alt="Scholarship Image" width={500} height={500} className="w-full aspect-video max-h-[400px]"/>}
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                 {scholarship.title}
               </h1>

@@ -18,6 +18,8 @@ interface BlogPostActions {
     formData: BlogFormDataType
   ) => Promise<Models.Document | null>;
   deleteBlogPost: (id: string) => Promise<boolean>;
+  uploadImage: (file: File | null) => Promise<UploadResult>;
+  deleteImage: (fileId: string) => Promise<void>;
   loading: boolean;
   error: string;
   clearError: () => void;
@@ -327,6 +329,8 @@ export default function useBlogPostActions(): BlogPostActions {
     createBlogPost,
     updateBlogPost,
     deleteBlogPost,
+    uploadImage,
+    deleteImage,
     loading,
     error,
     clearError,
