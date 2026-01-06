@@ -1,57 +1,33 @@
-const featuredScholarships = [
-  {
-    id: 1,
-    title: "Gates Millennium Scholars Program",
-    description:
-      "Full scholarship for outstanding minority students pursuing undergraduate and graduate degrees.",
-    deadline: "January 15, 2025",
-    amount: "$50,000+",
-    category: "Graduate",
-    country: "USA",
-  },
-  {
-    id: 2,
-    title: "Rhodes Scholarship",
-    description:
-      "Prestigious scholarship for international study at the University of Oxford.",
-    deadline: "October 1, 2024",
-    amount: "Full Funding",
-    category: "Graduate",
-    country: "UK",
-  },
-  {
-    id: 3,
-    title: "Fulbright Program",
-    description:
-      "Cultural exchange program for international educational exchange.",
-    deadline: "March 31, 2025",
-    amount: "$30,000",
-    category: "Research",
-    country: "Global",
-  },
-];
+
 
 const testimonials = [
   {
-    name: "Sarah Johnson",
-    role: "Gates Scholar",
-    image: "/placeholder.svg?height=80&width=80",
-    quote:
-      "NSN helped me discover the Gates Scholarship. Their resources and guidance were invaluable in my application process.",
+    name: "AKINSEHINWA OLUWAFUNMILAYO PEACE.",
+    role: "Shinoluwe Foundation Scholarship",
+    image: "/images/testimonials/AKINSEHINWA.jpg",
+    comment:
+      "I’m grateful to the Newton Scholarship Nexus for the transformative mentorship class I’ve been part of. 🙏 Thanks to this program and God’s grace, I’ve seen life from a new perspective. The strategies and support shared have been invaluable  as they pushed me to excel. Mr. Dave Newton would always say, “If success is achievable, why settle for less?”, and honestly these words sparked something in me and I achieved my first-ever 5.0 CGPA!",
   },
   {
-    name: "Miguel Rodriguez",
-    role: "Fulbright Scholar",
-    image: "/placeholder.svg?height=80&width=80",
-    quote:
-      "The comprehensive database and application tips on NSN made all the difference in securing my Fulbright scholarship.",
+    name: "AKINSEHINWA OLUWAFUNMILAYO PEACE.",
+    role: "Shinoluwe Foundation Scholarship",
+    image: "/images/testimonials/AKINSEHINWA.jpg",
+    comment:
+      "By God’s grace, I also secured two scholarships, the Shinoluwe Foundation Scholarship and one from my hometown, Ondo State (awaiting disbursement). And I received a ₦19,000 bursary, which I actually don’t know the source.Next, I aim to keep pushing boundaries, maintain top grades, take on leadership roles, and chase growth opportunities employing every lesson and values learnt here at NSN.🙌",
   },
   {
-    name: "Aisha Patel",
-    role: "Rhodes Scholar",
-    image: "/placeholder.svg?height=80&width=80",
-    quote:
-      "Thanks to NSN's mentorship program, I was able to craft a winning application for the Rhodes Scholarship.",
+    name: "Olakunle Emmanuel",
+    role: "Two scholarships",
+    image: "/images/testimonials/olakunle.jpg",
+    comment:
+      "What I’m about to express is just a fraction of the impact,and that’s factual. The Newton Scholarship Nexus (NSN) has played a truly transformative role in my scholarship journey since 100 level. Beyond promoting academic excellence, NSN has shaped my mindset; teaching me persistence, hope, and the power of consistency, even after multiple rejections.",
+  },
+  {
+    name: "Olakunle Emmanuel",
+    role: "Two scholarships",
+    image: "/images/testimonials/olakunle.jpg",
+    comment:
+      " 400 level …boom! I finally secured not one, but two scholarships, after years of trying!This was no coincidence,it was preparation meeting opportunity, backed by NSN’s influence and God’s Grace. And I know this is just the beginning. NSN has taught us not to settle for mediocrity but to chase excellence relentlessly. Thank you, NSN, for shaping my journey and creating real impact in my life and many others",
   },
 ];
 
@@ -82,5 +58,5 @@ const blogPosts = [
   },
 ];
 
-export { featuredScholarships, testimonials, blogPosts };
+export { testimonials, blogPosts };
 

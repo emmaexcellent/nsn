@@ -9,26 +9,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
+import Image from "next/image";
+import { testimonials } from "@/public/constants";
 
 const Testimonials = () => {
-  const [testimonials, setTestimonials] = useState<Models.Document[]>([]);
-
-  useEffect(() => {
-    const fetchTestimonials = async () => {
-      try {
-        const response = await databases.listDocuments(
-          databaseId,
-          "testimonials",
-          [Query.limit(10)] // adjust limit as needed
-        );
-        setTestimonials(response.documents);
-      } catch (error) {
-        console.error("Error fetching testimonials:", error);
-      }
-    };
-
-    fetchTestimonials();
-  }, []);
 
   return (
     <section className="w-full max-w-6xl mx-auto py-20 bg-white dark:bg-gray-800">
@@ -55,23 +39,24 @@ const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <SwiperSlide key={index}>
               <Card className="border shadow-sm hover:shadow transition-all duration-300 mx-3 my-8">
-                <CardContent className="p-6 space-y-4  !h-[250px] flex flex-col justify-between">
+                <CardContent className="p-6 space-y-4  !h-500px] flex flex-col justify-between">
                   <div className="flex items-center space-x-1">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-gold text-gold" />
                     ))}
                   </div>
-                  <blockquote className="text-gray-700 dark:text-gray-300 italic line-clamp-4">
+                  <blockquote className="text-gray-700 dark:text-gray-300 italic line-clamp-8">
                     &quot;{testimonial.comment}&quot;
                   </blockquote>
                   <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center rounded-full w-10 h-10 border">
-                      {" "}
-                      <User className="h-5 w-5 text-gray-500" />
+                    <div className="flex items-center justify-center rounded-full border">
+                      {/* {" "}
+                      <User className="h-5 w-5 text-gray-500" /> */}
+                      <Image src={testimonial.image} width={50} height={50} alt="testimonial" className="w-15 h-15 object-cover rounded-full" />
                     </div>
 
                     <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">
+                      <div className="font-semibold text-gray-900 dark:text-white text-xs">
                         {testimonial.name}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">

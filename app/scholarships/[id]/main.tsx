@@ -75,7 +75,7 @@ export default function ScholarshipDetailMain({
                 <Badge variant="outline">{scholarship.level}</Badge>
                 <Badge variant="outline">{scholarship.location}</Badge>
               </div>
-              {scholarship.imageUrl && <Image src={scholarship.imageUrl} alt="Scholarship Image" width={500} height={500} className="w-full aspect-video max-h-[400px]"/>}
+              {scholarship.imageUrl && <Image src={scholarship.imageUrl} alt="Scholarship Image" width={500} height={500} priority className="w-full aspect-video max-h-[400px]" />}
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                 {scholarship.title}
               </h1>

@@ -117,7 +117,7 @@ export default function AdminDashboard() {
         <DashboardHeader />
         <div className="mt-8">
           <Tabs>
-            <TabsList className="grid w-full grid-cols-4 opacity-50 pointer-events-none">
+            <TabsList className="flex items-center gap-5 opacity-50 pointer-events-none overflow-x-auto ">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="scholarships">Scholarships</TabsTrigger>
               <TabsTrigger value="blog">Blog Posts</TabsTrigger>
@@ -147,7 +147,7 @@ export default function AdminDashboard() {
         onValueChange={setActiveTab}
         className="space-y-6"
       >
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="flex items-center gap-2">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="scholarships">Scholarships</TabsTrigger>
           <TabsTrigger value="blog">Blog Posts</TabsTrigger>

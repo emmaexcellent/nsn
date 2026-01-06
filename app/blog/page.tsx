@@ -85,7 +85,7 @@ export default function BlogPage() {
 
         {/* Featured Article */}
         <Card className="mb-12 overflow-hidden hover:shadow-xl transition-all duration-300">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
+          <div className="grid gPrid-cols-1 lg:grid-cols-2">
             <div className="relative h-64 lg:h-auto">
               <Image
                 src={featuredPost?.image || "/placeholder.svg"}
@@ -176,7 +176,7 @@ export default function BlogPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredPosts.map((post, index) => (
             <Card
-              key={post.id}
+              key={post.$id}
               className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg overflow-hidden animate-fade-in"
               style={{ animationDelay: `${index * 100}ms` }}
             >
