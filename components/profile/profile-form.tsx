@@ -24,79 +24,42 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/context/auth";
+import {
+  calculateProfileCompletion,
+  type ProfileDocument,
+} from "@/lib/documents";
 import { Save, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { Models } from "appwrite";
 
 export function ProfileForm() {
   const { user, updateProfile } = useAuth();
-  const [formData, setFormData] = useState<Partial<Models.Document>>(
-    user as Models.Document
+  const [formData, setFormData] = useState<Partial<ProfileDocument>>(
+    (user as ProfileDocument) ?? {}
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
-  const [completionPercentage, setCompletionPercentage] = useState(
-    user?.profileCompletion
-  );
 
   if (!user) return null;
-
-  // Calculate profile completion percentage
-  const calculateCompletion = (data: Partial<Models.Document>) => {
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "phone",
-      "dateOfBirth",
-      "state",
-      "country",
-      "currentLevel",
-      "institution",
-      "courseOfStudy",
-      "graduationYear",
-      "gpa",
-      "bio",
-    ];
-
-    let completedCount = 0;
-    const totalWeight = requiredFields.length * 2; // Required fields have higher weight
-
-    // Check required fields
-    requiredFields.forEach((field) => {
-      if (data[field] && data[field] !== "") {
-        completedCount += 2; // Each required field is worth 2 points
-      }
-    });
-
-    // Calculate percentage (max 100%)
-    const percentage = Math.min(
-      Math.round((completedCount / totalWeight) * 100),
-      100
-    );
-    return percentage;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setMessage(null);
 
-    setCompletionPercentage(calculateCompletion(formData));
-
+    const nextCompletion = calculateProfileCompletion(formData);
     try {
-      // Include completion percentage in the data to be submitted
       const dataToSubmit = {
         ...formData,
-        profileCompletion: completionPercentage,
+        profileCompletion: nextCompletion,
       };
 
       const result = await updateProfile(dataToSubmit);
       if (result.success) {
         setMessage({
           type: "success",
-          text: `Profile updated successfully! Completion: ${completionPercentage}%`,
+          text: `Profile updated successfully. Completion: ${nextCompletion}%`,
         });
       } else {
         setMessage({ type: "error", text: result.error || "Update failed" });

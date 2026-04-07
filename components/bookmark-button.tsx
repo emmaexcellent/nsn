@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Query, ID } from "appwrite";
+import { Query } from "appwrite";
 import { databaseId, databases } from "@/lib/appwrite";
+import { apiRequest } from "@/lib/api-client";
 
 interface BookmarkButtonProps {
   scholarshipId: string;
@@ -26,7 +27,6 @@ export function BookmarkButton({
   className = "",
 }: BookmarkButtonProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [documentId, setDocumentId] = useState("")
   const [isLoading, setIsLoading] = useState(false);
 
   const actionType = variant === "heart" ? "like" : "save";
@@ -48,7 +48,6 @@ export function BookmarkButton({
 
         if (response.documents.length > 0) {
           setIsBookmarked(true);
-          setDocumentId(response.documents[0].$id);
         }
       } catch (error) {
         console.error("Error checking interaction:", error);
@@ -67,22 +66,23 @@ export function BookmarkButton({
 
     try {
       if (!isBookmarked) {
-        await databases.createDocument(
-          databaseId,
-          "saved_scholarships",
-          ID.unique(),
-          {
-            profile: profileId,
-            scholarship: scholarshipId,
+        await apiRequest("/api/user/bookmarks", {
+          method: "POST",
+          body: JSON.stringify({
+            profileId,
+            scholarshipId,
             action: actionType,
-          }
-        );
+          }),
+        });
       } else {
-        await databases.deleteDocument(
-          databaseId,
-          "saved_scholarships",
-          documentId
-        )
+        await apiRequest("/api/user/bookmarks", {
+          method: "DELETE",
+          body: JSON.stringify({
+            profileId,
+            scholarshipId,
+            action: actionType,
+          }),
+        });
       }
       setIsBookmarked(!isBookmarked);
     } catch (error) {

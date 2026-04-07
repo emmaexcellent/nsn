@@ -114,8 +114,8 @@ export default function ContactPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <Card className="overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+        <div className="max-w-2xl mx-auto gap-12">
+          {/* <Card className="overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
             <CardContent className="p-0">
               <div className="flex items-center justify-center">
                 <div className="text-center space-y-2">
@@ -129,7 +129,7 @@ export default function ContactPage() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
           {/* Contact Form */}
           <Card className="shadow-xl">
             <CardHeader>

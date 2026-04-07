@@ -9,12 +9,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ID, Models } from "appwrite";
-import { databaseId, databases } from "@/lib/appwrite";
+import { Models } from "appwrite";
 import { useAuth } from "@/context/auth";
+import { apiRequest } from "@/lib/api-client";
+import Loader from "./loader";
 
 export default function ConfirmScholarshipApplication() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [scholarship, setScholarship] = useState<Models.Document | null>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,16 +40,12 @@ export default function ConfirmScholarshipApplication() {
 
     setLoading(true);
     try {
-      await databases.createDocument(
-        databaseId,
-        "saved_scholarships",
-        ID.unique(),
-        {
-          profile: user.$id,
-          scholarship: scholarship.$id,
-          action: "apply",
-        }
-      );
+      await apiRequest("/api/user/applications", {
+        method: "POST",
+        body: JSON.stringify({
+          scholarshipId: scholarship.$id,
+        }),
+      });
       localStorage.removeItem("recent_applied_scholarship");
       setShowDialog(false);
     } catch (error) {
@@ -66,20 +63,27 @@ export default function ConfirmScholarshipApplication() {
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogContent className="!rounded">
-        <DialogHeader>
-          <DialogTitle>Confirm Application</DialogTitle>
-        </DialogHeader>
-        <p>
-          Did you just apply for <strong>{scholarship?.title}</strong>?
-        </p>
-        <DialogFooter className="flex justify-end gap-4 mt-4">
-          <Button variant="outline" onClick={handleCancel}>
-            No
-          </Button>
-          <Button onClick={handleConfirm} disabled={loading}>
-            {loading ? "Confirming..." : "Yes, Confirm"}
-          </Button>
-        </DialogFooter>
+        {authLoading ? (
+          <div className="w-full flex items-center justify-center"><div className="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-navy dark:border-gold"></div></div>
+
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>Confirm Application</DialogTitle>
+            </DialogHeader>
+            <p>
+              Did you just apply for <strong>{scholarship?.title}</strong>?
+            </p>
+            <DialogFooter className="flex justify-end gap-4 mt-4">
+              <Button variant="outline" onClick={handleCancel}>
+                No
+              </Button>
+              <Button onClick={handleConfirm} disabled={loading || authLoading}>
+                {loading ? "Confirming..." : "Yes, Confirm"}
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

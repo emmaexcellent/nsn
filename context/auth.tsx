@@ -1,6 +1,8 @@
 "use client";
 
-import { account, databases, databaseId } from "@/lib/appwrite";
+import { account } from "@/lib/appwrite";
+import { apiRequest } from "@/lib/api-client";
+import { normalizeProfile } from "@/lib/documents";
 import { siteUrl } from "@/lib/utils";
 import { ID, Models } from "appwrite";
 import type React from "react";
@@ -104,14 +106,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const authAccount = await account.get();
         if (authAccount) {
-          // In a real app, validate token with backend
-          const userData = await databases.getDocument(
-            databaseId,
-            "profile",
-            authAccount.$id
-          );
+          const userData = await apiRequest<Models.Document>("/api/user/profile");
           if (userData) {
-            setUser(userData);
+            setUser(normalizeProfile(userData));
           }
         }
       } catch (error) {
@@ -131,17 +128,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
 
       await account.createEmailPasswordSession(email, password);
-      const authUser = await account.get();
+      const userProfile = await apiRequest<Models.Document>("/api/user/profile");
 
-      const userProfile = await databases.getDocument(
-        databaseId,
-        "profile",
-        authUser.$id
-      );
-
-      // Mock validation
       if (userProfile) {
-        setUser(userProfile);
+        setUser(normalizeProfile(userProfile));
 
         return { success: true };
       } else {
@@ -171,24 +161,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userData.password
       );
 
-      // Prepare profile data
-      const newUser = {
-        email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        dateOfBirth: userData.dateOfBirth,
-        profileCompletion: 25,
-      };
-
-      // Create profile document
-      const userProfile = await databases.createDocument(
-        databaseId,
-        "profile",
-        userAccount.$id,
-        newUser
+      await account.createEmailPasswordSession(
+        userData.email,
+        userData.password
       );
 
-      setUser(userProfile);
+      const newUserProfile = await apiRequest<Models.Document>(
+        "/api/user/profile",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            dateOfBirth: userData.dateOfBirth,
+          }),
+        }
+      );
+
+      setUser(normalizeProfile({ ...newUserProfile, $id: userAccount.$id }));
 
       return { success: true };
     } catch (error: any) {
@@ -211,29 +201,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       if (!user) return { success: false, error: "Not authenticated" };
 
-      // Omit Appwrite document keys from updates
-      const { $id, $createdAt, $updatedAt, $permissions, ...safeUpdates } =
-        updates as Partial<Models.Document>;
+      const {
+        $id,
+        $createdAt,
+        $updatedAt,
+        $permissions,
+        ...safeUpdates
+      } = updates as Partial<Models.Document>;
 
-      await databases.updateDocument(
-        databaseId,
-        "profile",
-        user.$id,
-        safeUpdates
-      );
+      const updatedUser = await apiRequest<Models.Document>("/api/user/profile", {
+        method: "PATCH",
+        body: JSON.stringify(safeUpdates),
+      });
 
-      const updatedUser = { ...user, ...safeUpdates };
-
-      setUser(updatedUser);
+      setUser(normalizeProfile(updatedUser));
 
       return { success: true };
     } catch (error) {
-      return { success: false, error: "Profile update failed" };
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Profile update failed",
+      };
     }
   };
 
   const resetPassword = async (email: string) => {
-    console.log(email, siteUrl);
     const recoveryUrl = `${siteUrl}?mode=recover-password`;
 
     try {
@@ -250,11 +243,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     newPassword: string
   ) => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await account.updatePassword(newPassword, currentPassword);
       return { success: true };
     } catch (error) {
-      return { success: false, error: "Password change failed" };
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Password change failed",
+      };
     }
   };
 

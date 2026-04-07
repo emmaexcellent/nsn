@@ -13,7 +13,7 @@ export default function SearchBar({
   onChange,
 }: SearchBarProps) {
   return (
-    <div className="flex-1 max-w-sm">
+    <div className="w-full max-w-sm flex-1">
       <div className="relative">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input

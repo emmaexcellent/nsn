@@ -1,10 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { databases, databaseId } from "@/lib/appwrite"; // your Appwrite config
-import { Models, Query } from "appwrite";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, User } from "lucide-react";
+import { Star } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -13,7 +10,6 @@ import Image from "next/image";
 import { testimonials } from "@/public/constants";
 
 const Testimonials = () => {
-
   return (
     <section className="w-full max-w-6xl mx-auto py-20 bg-white dark:bg-gray-800">
       <div className="container mx-auto px-4">
@@ -38,7 +34,7 @@ const Testimonials = () => {
         >
           {testimonials.map((testimonial, index) => (
             <SwiperSlide key={index}>
-              <Card className="border shadow-sm hover:shadow transition-all duration-300 mx-3 my-8">
+              <Card className="border shadow-sm hover:shadow transition-all duration-300 mx-3 mb-8">
                 <CardContent className="p-6 space-y-4  !h-500px] flex flex-col justify-between">
                   <div className="flex items-center space-x-1">
                     {[...Array(5)].map((_, i) => (
@@ -52,7 +48,7 @@ const Testimonials = () => {
                     <div className="flex items-center justify-center rounded-full border">
                       {/* {" "}
                       <User className="h-5 w-5 text-gray-500" /> */}
-                      <Image src={testimonial.image} width={50} height={50} alt="testimonial" className="w-15 h-15 object-cover rounded-full" />
+                      <Image src={testimonial.image} width={50} height={30} alt="testimonial" className="w-15 h-15 object-cover rounded-full" />
                     </div>
 
                     <div>

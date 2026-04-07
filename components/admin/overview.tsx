@@ -96,7 +96,7 @@ function StatCard({
 }
 
 function PopularBlogPosts({ blogPosts }: { blogPosts: Models.Document[] }) {
-  const popularPosts = blogPosts
+  const popularPosts = [...blogPosts]
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3);
 

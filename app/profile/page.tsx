@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/context/auth";
 import { ProfileForm } from "@/components/profile/profile-form";
+import { normalizeProfile, type ProfileDocument } from "@/lib/documents";
 import {
   Card,
   CardContent,
@@ -25,6 +26,7 @@ import {
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
+  const normalizedUser = user ? normalizeProfile(user as ProfileDocument) : null;
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   if (loading) {
@@ -38,7 +40,7 @@ export default function ProfilePage() {
     );
   }
 
-  if (!user) {
+  if (!normalizedUser) {
     return (
       <>
         <div className="min-h-screen pt-24 pb-12 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -97,38 +99,38 @@ export default function ProfilePage() {
               <div className="flex-1 space-y-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {user.firstName} {user.lastName}
+                    {normalizedUser.firstName} {normalizedUser.lastName}
                   </h2>
                   <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center">
                       <Mail className="h-4 w-4 mr-1" />
-                      {user.email}
+                      {normalizedUser.email}
                     </div>
-                    {user.phone && (
+                    {normalizedUser.phone && (
                       <div className="flex items-center">
                         <Phone className="h-4 w-4 mr-1" />
-                        {user.phone}
+                        {normalizedUser.phone}
                       </div>
                     )}
-                    {user.address?.city && (
+                    {normalizedUser.state && normalizedUser.country && (
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-1" />
-                        {user.state}, {user.country}
+                        {normalizedUser.state}, {normalizedUser.country}
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {user.education && (
+                  {normalizedUser.currentLevel && (
                     <div className="flex items-center space-x-2">
                       <GraduationCap className="h-5 w-5 text-blue-600" />
                       <div>
                         <p className="font-medium text-sm">
-                          {user.currentLevel}
+                          {normalizedUser.currentLevel}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {user.institution}
+                          {normalizedUser.institution}
                         </p>
                       </div>
                     </div>
@@ -137,19 +139,19 @@ export default function ProfilePage() {
                   <div className="flex items-center space-x-2">
                     <Award className="h-5 w-5 text-gold" />
                     <div>
-                      <p className="font-medium text-sm">Profile Completion</p>
-                      <p className="text-xs text-gray-500">
-                        {user.profileCompletion}% Complete
-                      </p>
+                        <p className="font-medium text-sm">Profile Completion</p>
+                        <p className="text-xs text-gray-500">
+                          {normalizedUser.profileCompletion}% Complete
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
                   <div className="flex items-center space-x-2">
                     <Globe className="h-5 w-5 text-green-600" />
                     <div>
                       <p className="font-medium text-sm">Member Since</p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(user.$createdAt).toLocaleDateString()}
+                        <p className="text-xs text-gray-500">
+                        {new Date(normalizedUser.$createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -161,11 +163,14 @@ export default function ProfilePage() {
                       Profile Completion
                     </span>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {user.profileCompletion}%
+                      {normalizedUser.profileCompletion}%
                     </span>
                   </div>
-                  <Progress value={user.profileCompletion} className="h-2" />
-                  {user.profileCompletion < 100 && (
+                  <Progress
+                    value={normalizedUser.profileCompletion}
+                    className="h-2"
+                  />
+                  {normalizedUser.profileCompletion < 100 && (
                     <p className="text-xs text-gray-500">
                       Complete your profile to get better scholarship
                       recommendations
@@ -178,12 +183,14 @@ export default function ProfilePage() {
         </Card>
 
         {/* Quick Stats */}
-        {user.profile && (
+        {normalizedUser && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-2xl font-bold text-blue-600">
-                  {user.profile.achievements?.length || 0}
+                  {Array.isArray(normalizedUser.achievements)
+                    ? normalizedUser.achievements.length
+                    : 0}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
                   Achievements
@@ -193,7 +200,9 @@ export default function ProfilePage() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {user.profile.languages?.length || 0}
+                  {Array.isArray(normalizedUser.languages)
+                    ? normalizedUser.languages.length
+                    : 0}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
                   Languages
@@ -203,7 +212,9 @@ export default function ProfilePage() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-2xl font-bold text-purple-600">
-                  {user.preferences?.scholarshipTypes?.length || 0}
+                  {Array.isArray(normalizedUser.scholarshipTypes)
+                    ? normalizedUser.scholarshipTypes.length
+                    : 0}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
                   Preferred Types

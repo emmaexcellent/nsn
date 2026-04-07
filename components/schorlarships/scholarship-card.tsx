@@ -1,4 +1,5 @@
-import { Calendar, DollarSign, MapPin, Users, ArrowRight } from "lucide-react";
+"use client"
+import { Calendar, Coins, MapPin, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import {
@@ -10,10 +11,13 @@ import {
 } from "../ui/card";
 import { Badge } from "../ui/badge";
 import CountdownTimer from "./countdown-timer";
-import { Models } from "appwrite";
+import {
+  normalizeScholarship,
+  type ScholarshipDocument,
+} from "@/lib/documents";
 
 interface ScholarshipCardProps {
-  scholarship: Models.Document;
+  scholarship: ScholarshipDocument;
   variant?: "default" | "featured";
   animationDelay?: number;
   className?: string;
@@ -25,6 +29,7 @@ export function ScholarshipCard({
   animationDelay = 0,
   className = "",
 }: ScholarshipCardProps) {
+  const normalizedScholarship = normalizeScholarship(scholarship);
   const isFeatured = variant === "featured";
 
   return (
@@ -45,12 +50,12 @@ export function ScholarshipCard({
             </Badge>
             {!isFeatured && scholarship.level && (
               <Badge variant="outline" className="text-xs">
-                {scholarship.level}
+                {normalizedScholarship.level}
               </Badge>
             )}
             {isFeatured && (
               <Badge variant="outline" className="text-xs">
-                {scholarship.location}
+                {normalizedScholarship.location}
               </Badge>
             )}
           </div>
@@ -95,11 +100,11 @@ export function ScholarshipCard({
             </div>
             <div className="flex items-center justify-between text-sm pb-2">
               <span className="flex items-center text-gray-500">
-                <DollarSign className="h-4 w-4 mr-1" />
+                <Coins className="h-4 w-4 mr-1" />
                 Award Amount
               </span>
               <span className="font-semibold text-green-600">
-                {scholarship.currency || "NGN"} {scholarship.amount}
+                {normalizedScholarship.currency} {normalizedScholarship.amount}
               </span>
             </div>
           </div>
@@ -135,12 +140,14 @@ export function ScholarshipCard({
               </div>
             </div>
             <div className="flex items-center text-gray-500">
-              <DollarSign className="h-4 w-4 mr-2" />
+              <Coins className="h-4 w-4 mr-2" />
               <div>
                 <div className="font-medium text-gray-900 dark:text-white">
-                  Amount
+                  Award
                 </div>
-                <div className="text-green-600">{scholarship.amount}</div>
+                <div className="text-green-600">
+                  {normalizedScholarship.amount}
+                </div>
               </div>
             </div>
             <div className="flex items-center text-gray-500">
@@ -149,7 +156,7 @@ export function ScholarshipCard({
                 <div className="font-medium text-gray-900 dark:text-white">
                   Country
                 </div>
-                <div>{scholarship.country}</div>
+                <div>{normalizedScholarship.location}</div>
               </div>
             </div>
             <div className="flex items-center text-gray-500">
@@ -168,7 +175,7 @@ export function ScholarshipCard({
           {!isFeatured && (
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
               <span className="font-medium">Eligibility:</span>{" "}
-              {scholarship.eligibility}
+              {normalizedScholarship.eligibility.join(", ")}
             </p>
           )}
           <Link href={`/scholarships/${scholarship.$id}`}>

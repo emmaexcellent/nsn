@@ -1,10 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, DollarSign, Calendar, Users } from "lucide-react";
-import { Models, Query } from "appwrite";
-import { useEffect, useState } from "react";
-import { databaseId, databases } from "@/lib/appwrite";
+import { Edit, DollarSign, Calendar, Users, Trash2, Coins } from "lucide-react";
+import { Models } from "appwrite";
 
 interface ScholarshipCardProps {
   scholarship: Models.Document;
@@ -19,34 +17,12 @@ export default function ScholarshipCard({
   onEdit,
   onDelete,
 }: ScholarshipCardProps) {
-  const [applications, setApplications] = useState(0);
-  const [scholarshipToDelete, setScholarshipToDelete] = useState<string | null>(
-    null
-  );
-  const showLoading = scholarshipToDelete === scholarship.$id;
-
-  useEffect(() => {
-    const getScholarshipApplications = async () => {
-      const response = await databases.listDocuments(
-        databaseId,
-        "saved_scholarships",
-        [
-          Query.equal("scholarship", scholarship.$id),
-          Query.equal("action", "apply"),
-        ]
-      );
-
-      setApplications(response.total);
-    };
-    getScholarshipApplications();
-  }, [scholarship.$id]);
-
   return (
     <Card>
       <CardContent className="p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex-1 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-lg font-semibold">{scholarship.title}</h3>
               <Badge
                 variant={
@@ -59,13 +35,18 @@ export default function ScholarshipCard({
               >
                 {scholarship.status}
               </Badge>
+              {scholarship.category ? (
+                <Badge variant="outline">{scholarship.category}</Badge>
+              ) : null}
             </div>
-            <p className="text-muted-foreground mb-2">{scholarship.provider}</p>
+            <p className="text-sm text-muted-foreground">
+              {scholarship.sponsor || scholarship.provider}
+            </p>
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
-                <DollarSign className="h-4 w-4" />
-                {scholarship.currency || "NGN"}{" "}
-                {scholarship.amount?.toLocaleString()}
+                <Coins className="h-4 w-4" />
+                {scholarship.currency || "USD"}{" "}
+                {Number(scholarship.amount || 0).toLocaleString()}
               </span>
               <span className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
@@ -79,7 +60,7 @@ export default function ScholarshipCard({
               </span>
               <span className="flex items-center gap-1">
                 <Users className="h-4 w-4" />
-                {applications || 0} applications
+                {scholarship.applicationCount || 0} applications
               </span>
             </div>
           </div>
@@ -88,19 +69,25 @@ export default function ScholarshipCard({
               variant="outline"
               size="sm"
               onClick={() => onEdit(scholarship)}
+              disabled={isLoading}
             >
               <Edit className="h-4 w-4" />
             </Button>
             <Button
               variant="destructive"
               size="sm"
+              disabled={isLoading}
               onClick={() => {
-                setScholarshipToDelete(scholarship.$id);
-                onDelete(scholarship.$id);
+                const confirmed = window.confirm(
+                  `Delete scholarship "${scholarship.title}"? This cannot be undone.`
+                );
+
+                if (confirmed) {
+                  onDelete(scholarship.$id);
+                }
               }}
-              disabled={isLoading && showLoading}
             >
-              {isLoading && showLoading ? "Deleting..." : "Delete"}
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>

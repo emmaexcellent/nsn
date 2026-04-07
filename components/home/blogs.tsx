@@ -13,6 +13,10 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, BookOpen } from "lucide-react";
+import {
+  normalizeBlogPost,
+  type BlogPostDocument,
+} from "@/lib/documents";
 
 const HomeBlogList = () => {
   const [blogPosts, setBlogPosts] = useState<Models.Document[]>([]);
@@ -21,10 +25,15 @@ const HomeBlogList = () => {
     const fetchPosts = async () => {
       try {
         const response = await databases.listDocuments(databaseId, "blogs", [
+          Query.equal("status", "published"),
           Query.limit(6),
           Query.orderDesc("$createdAt"),
         ]);
-        setBlogPosts(response.documents);
+        setBlogPosts(
+          response.documents.map((document) =>
+            normalizeBlogPost(document as BlogPostDocument)
+          )
+        );
       } catch (error) {
         console.error("Error fetching blog posts:", error);
       }
@@ -32,6 +41,7 @@ const HomeBlogList = () => {
 
     fetchPosts();
   }, []);
+
 
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-900">
@@ -54,7 +64,7 @@ const HomeBlogList = () => {
             >
               <div className="relative h-48 overflow-hidden">
                 <Image
-                  src={post.image || "/placeholder.svg"}
+                  src={post.imageUrl || "/placeholder.svg"}
                   alt={post.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -65,7 +75,13 @@ const HomeBlogList = () => {
               </div>
               <CardContent className="p-6 space-y-3">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {post.date}
+                  {post.publishedAt
+                    ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : ""}
                 </div>
                 <CardTitle className="text-xl group-hover:text-navy dark:group-hover:text-gold transition-colors line-clamp-2">
                   {post.title}

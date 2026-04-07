@@ -34,16 +34,16 @@ export default function ScholarshipCard({
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardContent className="p-6">
-        <div className="flex flex-col md:flex-row items-start justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="w-full">
-            <div className="flex items-center gap-3 space-x-2 mb-2">
-              <h4 className="w-full font-semibold text-gray-900 dark:text-white line-clamp-2">
+            <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <h4 className="w-full font-semibold text-gray-900 dark:text-white line-clamp-2 sm:w-auto">
                 {scholarship.title}
               </h4>
               <StatusBadge status={scholarship.status} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-xs py-3">
+            <div className="grid grid-cols-1 gap-3 py-3 text-xs sm:grid-cols-2">
               <div className="flex items-center text-gray-600 dark:text-gray-400">
                 <Calendar className="h-3 w-3 mr-2" />
                 {displayDaysLeft === 0
@@ -63,18 +63,22 @@ export default function ScholarshipCard({
             )}
           </div>
 
-          <div className="w-full flex justify-end space-x-2 mt-5 md:mt-0">
-            <Link href={`/scholarships/${scholarship.id}`}>
-              <Button variant="outline" size="sm">
+          <div className="flex w-full flex-col gap-2 sm:flex-row md:mt-0 md:w-auto">
+            <Link href={`/scholarships/${scholarship.id}`} className="w-full">
+              <Button variant="outline" size="sm" className="w-full">
                 View Details
               </Button>
             </Link>
             {scholarship.status !== "applied" && (
-              <Button size="sm" className="bg-navy hover:bg-navy/90 text-white">
-                Apply Now
-              </Button>
+              <Link href={`/scholarships/${scholarship.id}`} className="w-full">
+                <Button
+                  size="sm"
+                  className="w-full bg-navy hover:bg-navy/90 text-white"
+                >
+                  Apply Now
+                </Button>
+              </Link>
             )}
-            
           </div>
         </div>
       </CardContent>

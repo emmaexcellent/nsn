@@ -33,6 +33,7 @@ export default function BlogPostsTab({
   const [isAddingBlogPost, setIsAddingBlogPost] = useState(false);
   const [editingBlogPost, setEditingBlogPost] =
     useState<Models.Document | null>(null);
+  const [statusMessage, setStatusMessage] = useState("");
 
   const {
     createBlogPost,
@@ -44,70 +45,107 @@ export default function BlogPostsTab({
   } = useSubmitBlogPost();
 
   const filteredBlogPosts = blogPosts.filter(
-    (p) =>
-      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (p.author && p.author.toLowerCase().includes(searchTerm.toLowerCase()))
+    (post) =>
+      post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.author?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const resetMessages = () => {
+    clearError();
+    setStatusMessage("");
+  };
 
   const handleAddBlogPost = async (formData: BlogFormDataType) => {
     const newPost = await createBlogPost(formData);
     if (newPost) {
-      onBlogPostsChange([...blogPosts, newPost as Models.Document]);
+      onBlogPostsChange([newPost, ...blogPosts]);
       setIsAddingBlogPost(false);
       clearError();
+      setStatusMessage("Blog post created successfully.");
     }
   };
 
   const handleDeleteBlogPost = async (id: string) => {
-    await deleteBlogPost(id);
-    onBlogPostsChange(blogPosts.filter((p) => p.$id !== id));
-    clearError();
+    const success = await deleteBlogPost(id);
+    if (success) {
+      onBlogPostsChange(blogPosts.filter((post) => post.$id !== id));
+      clearError();
+      setStatusMessage("Blog post deleted successfully.");
+    }
   };
 
   const handleUpdateBlogPost = async (formData: BlogFormDataType) => {
-    if (editingBlogPost) {
-      const result = await updateBlogPost(editingBlogPost.$id, formData);
-      if (result) {
-        const updatedList = blogPosts.map((p) =>
-          p.$id === result.$id ? result : p
-        );
-        onBlogPostsChange(updatedList);
-        setEditingBlogPost(null);
-      }
+    if (!editingBlogPost) {
+      return;
+    }
+
+    const result = await updateBlogPost(editingBlogPost.$id, formData);
+    if (result) {
+      onBlogPostsChange(
+        blogPosts.map((post) => (post.$id === result.$id ? result : post))
+      );
+      setEditingBlogPost(null);
+      clearError();
+      setStatusMessage("Blog post updated successfully.");
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <SearchBar
           placeholder="Search blog posts..."
           value={searchTerm}
           onChange={onSearchChange}
         />
-        <Dialog open={isAddingBlogPost} onOpenChange={setIsAddingBlogPost}>
+        <Dialog
+          open={isAddingBlogPost}
+          onOpenChange={(open) => {
+            setIsAddingBlogPost(open);
+            if (!open) resetMessages();
+          }}
+        >
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button className="w-full sm:w-auto">
+              <Plus className="mr-2 h-4 w-4" />
               Add Blog Post
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Blog Post</DialogTitle>
-              <DialogDescription>Create a new blog post</DialogDescription>
+              <DialogDescription>Create a new blog post.</DialogDescription>
             </DialogHeader>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
             <BlogPostForm
               onSubmit={handleAddBlogPost}
               isLoading={loading}
-              onCancel={() => setIsAddingBlogPost(false)}
+              onCancel={() => {
+                setIsAddingBlogPost(false);
+                resetMessages();
+              }}
             />
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      {statusMessage ? (
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          {statusMessage}
+        </div>
+      ) : null}
+      {error ? (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      ) : null}
+
+      <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <span>{filteredBlogPosts.length} blog posts</span>
+        {searchTerm ? <span>Filtered by &quot;{searchTerm}&quot;</span> : null}
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
         {filteredBlogPosts.map((post) => (
           <BlogPostCard
             key={post.$id}
@@ -119,21 +157,34 @@ export default function BlogPostsTab({
         ))}
       </div>
 
-      {/* Edit Blog Post Dialog */}
+      {filteredBlogPosts.length === 0 ? (
+        <div className="rounded-lg border border-dashed px-6 py-12 text-center text-sm text-muted-foreground">
+          No blog posts match the current search.
+        </div>
+      ) : null}
+
       <Dialog
         open={!!editingBlogPost}
-        onOpenChange={() => setEditingBlogPost(null)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingBlogPost(null);
+            resetMessages();
+          }
+        }}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Blog Post</DialogTitle>
-            <DialogDescription>Update blog post details</DialogDescription>
+            <DialogDescription>Update blog post details.</DialogDescription>
           </DialogHeader>
           <BlogPostForm
             initialData={editingBlogPost}
             isLoading={loading}
             onSubmit={handleUpdateBlogPost}
-            onCancel={() => setEditingBlogPost(null)}
+            onCancel={() => {
+              setEditingBlogPost(null);
+              resetMessages();
+            }}
           />
         </DialogContent>
       </Dialog>

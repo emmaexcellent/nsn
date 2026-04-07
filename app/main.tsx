@@ -6,11 +6,11 @@ import { ArrowRight } from "lucide-react";
 import Hero from "@/components/home/hero";
 import Testimonials from "@/components/home/testimonials";
 import { ScholarshipCard } from "@/components/schorlarships/scholarship-card";
-import { Models } from "appwrite";
 import HomeBlogList from "@/components/home/blogs";
+import type { ScholarshipDocument } from "@/lib/documents";
 
 type HomePageProps = {
-  featuredScholarships: Models.Document[];
+  featuredScholarships: ScholarshipDocument[];
 };
 
 export default function HomePageMain({ featuredScholarships }: HomePageProps) {

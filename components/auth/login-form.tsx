@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/context/auth";
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
@@ -27,7 +26,6 @@ interface LoginFormProps {
 export function LoginForm({
   onSuccess,
   onSwitchToSignup,
-  onForgotPassword,
 }: LoginFormProps) {
   const { login, loading } = useAuth();
   const [formData, setFormData] = useState({
@@ -64,7 +62,7 @@ export function LoginForm({
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full border-0 max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Welcome Back</CardTitle>
         <CardDescription>

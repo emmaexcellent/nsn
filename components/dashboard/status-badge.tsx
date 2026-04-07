@@ -52,9 +52,10 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
   };
 
   return (
-    <Badge className={getStatusColor(status)}>
+    <div><Badge className={getStatusColor(status)}>
       {getStatusIcon(status)}
       <span className="ml-1 capitalize">{status}</span>
-    </Badge>
+    </Badge></div>
+    
   );
 }

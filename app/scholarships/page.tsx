@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +15,10 @@ import { ScholarshipCard } from "@/components/schorlarships/scholarship-card";
 import { databaseId, databases } from "@/lib/appwrite";
 import { Models, Query } from "appwrite";
 import Loader from "@/components/loader";
+import {
+  normalizeScholarship,
+  type ScholarshipDocument,
+} from "@/lib/documents";
 
 const PAGE_LIMIT = 10;
 
@@ -27,6 +31,7 @@ export default function ScholarshipsPage() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const cache = useRef<Map<string, Models.Document[]>>(new Map());
 
@@ -49,7 +54,7 @@ export default function ScholarshipsPage() {
   ];
   const levels = ["all", "Undergraduate", "Graduate", "PhD", "Postdoc"];
 
-  const buildFilters = () => {
+  const buildFilters = useCallback(() => {
     const filters = [];
 
     if (selectedCategory !== "all")
@@ -68,10 +73,11 @@ export default function ScholarshipsPage() {
     }
 
     return filters;
-  };
+  }, [searchTerm, selectedCategory, selectedCountry, selectedLevel]);
 
-  const fetchScholarships = async (reset = true) => {
+  const fetchScholarships = useCallback(async (reset = true) => {
     setLoading(true);
+    setErrorMessage("");
     try {
       const filters = buildFilters();
       const offset = reset ? 0 : page * PAGE_LIMIT;
@@ -80,10 +86,9 @@ export default function ScholarshipsPage() {
 
       if (cache.current.has(cacheKey)) {
         const cachedData = cache.current.get(cacheKey);
-        const newScholarships = reset
-          ? cachedData ?? []
-          : [...scholarships, ...(cachedData ?? [])];
-        setScholarships(newScholarships);
+        setScholarships((current) =>
+          reset ? cachedData ?? [] : [...current, ...(cachedData ?? [])]
+        );
         setHasMore(cachedData?.length === PAGE_LIMIT);
         if (reset) setPage(1);
         else setPage((prev) => prev + 1);
@@ -97,30 +102,34 @@ export default function ScholarshipsPage() {
         [...filters, Query.limit(PAGE_LIMIT), Query.offset(offset), Query.orderDesc("$createdAt")]
       );
 
-      cache.current.set(cacheKey, response.documents);
+      const normalizedDocuments = response.documents.map((document) =>
+        normalizeScholarship(document as ScholarshipDocument)
+      );
 
-      const newScholarships = reset
-        ? response.documents
-        : [...scholarships, ...response.documents];
-      setScholarships(newScholarships);
-      setHasMore(response.documents.length === PAGE_LIMIT);
+      cache.current.set(cacheKey, normalizedDocuments);
+
+      setScholarships((current) =>
+        reset ? normalizedDocuments : [...current, ...normalizedDocuments]
+      );
+      setHasMore(normalizedDocuments.length === PAGE_LIMIT);
       if (reset) setPage(1);
       else setPage((prev) => prev + 1);
     } catch (error) {
       console.error("Error fetching scholarships:", error);
+      setErrorMessage("Unable to load scholarships right now. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [buildFilters, page]);
 
   useEffect(() => {
-    fetchScholarships(true);
-  }, []);
+    void fetchScholarships(true);
+  }, [fetchScholarships]);
 
-  if (loading) return <Loader />;
+  if (loading && scholarships.length === 0) return <Loader />;
 
   return (
-    <div className="min-h-screen py-24 lg:py-40">
+    <div className="min-h-screen py-24 lg:py-32">
       <div className="relative w-full max-w-5xl mx-auto px-4">
         {/* Header */}
         <div className="text-center space-y-4 mb-12">
@@ -134,8 +143,8 @@ export default function ScholarshipsPage() {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8 border">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-8 border">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             {/* Search */}
             <div className="lg:col-span-2 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -192,18 +201,38 @@ export default function ScholarshipsPage() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex justify-end mt-5">
-            <Button onClick={() => fetchScholarships()} disabled={loading}>
-              Apply Filters
-            </Button>
-          </div>
-
-          {/* <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {scholarships.length} scholarships found
+              {scholarships.length} scholarship
+              {scholarships.length === 1 ? "" : "s"} shown
             </p>
-          </div> */}
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("all");
+                  setSelectedCountry("all");
+                  setSelectedLevel("all");
+                  cache.current.clear();
+                  setScholarships([]);
+                  setPage(0);
+                }}
+                disabled={loading}
+              >
+                Reset
+              </Button>
+              <Button onClick={() => fetchScholarships(true)} disabled={loading}>
+                {loading ? "Applying..." : "Apply Filters"}
+              </Button>
+            </div>
+          </div>
         </div>
+        {errorMessage ? (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errorMessage}
+          </div>
+        ) : null}
         {/* Scholarships Grid or Loader */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-5 sm:px-3">
           {scholarships.map((scholarship, index) => (
@@ -214,9 +243,19 @@ export default function ScholarshipsPage() {
             />
           ))}
         </div>
+        {!loading && scholarships.length === 0 ? (
+          <div className="mt-8 rounded-xl border border-dashed bg-white p-8 text-center dark:bg-gray-800">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              No scholarships match these filters
+            </h2>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Try broader filters or reset the search to explore more opportunities.
+            </p>
+          </div>
+        ) : null}
 
         {/* Load More */}
-        {hasMore && (
+        {hasMore && scholarships.length > 0 && (
           <div className="text-center mt-12">
             <Button
               size="lg"

@@ -1,5 +1,6 @@
-"use client"
-import { useState, useEffect } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,11 +15,11 @@ import {
 import { DialogFooter } from "@/components/ui/dialog";
 import { Models } from "appwrite";
 import dynamic from "next/dynamic";
+import { Loader2, Plus, X } from "lucide-react";
 
-
-// import MarkdownEditor from "../markdown-editor";
-
-const MarkdownEditor = dynamic(() => import("../markdown-editor"), { ssr: false });
+const MarkdownEditor = dynamic(() => import("../markdown-editor"), {
+  ssr: false,
+});
 
 interface BlogPostFormProps {
   onSubmit: (data: BlogFormDataType) => void;
@@ -49,8 +50,8 @@ export type FormFieldProps = {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
-  disabled?: boolean; 
-}
+  disabled?: boolean;
+};
 
 function FormField({
   label,
@@ -62,13 +63,13 @@ function FormField({
   disabled = false,
 }: FormFieldProps) {
   return (
-    <div>
+    <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       <Input
         id={id}
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         required={required}
         disabled={disabled}
       />
@@ -79,13 +80,13 @@ function FormField({
 export type FormTextareaProps = {
   label: string;
   id: string;
-  value: string;  
+  value: string;
   onChange: (value: string) => void;
   rows: number;
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
-}
+};
 
 function FormTextarea({
   label,
@@ -98,12 +99,12 @@ function FormTextarea({
   disabled = false,
 }: FormTextareaProps) {
   return (
-    <div>
+    <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       <Textarea
         id={id}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         rows={rows}
         required={required}
         placeholder={placeholder}
@@ -118,30 +119,69 @@ export type FormMultiInputProps = {
   id: string;
   values: string[];
   onChange: (values: string[]) => void;
-}
+};
 
 function FormMultiInput({ label, id, values, onChange }: FormMultiInputProps) {
+  const safeValues = values.length > 0 ? values : [""];
+
   return (
-    <div>
+    <div className="space-y-3">
       <Label htmlFor={id}>{label}</Label>
-      {values.map((val: string, index: number) => (
-        <Input
-          key={index}
-          value={val}
-          onChange={(e) => {
-            const updated = [...values];
-            updated[index] = e.target.value;
-            onChange(updated);
-          }}
-          className="mb-2"
-        />
+      {safeValues.map((value: string, index: number) => (
+        <div key={`${id}-${index}`} className="flex items-center gap-2">
+          <Input
+            value={value}
+            onChange={(event) => {
+              const updated = [...safeValues];
+              updated[index] = event.target.value;
+              onChange(updated);
+            }}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              onChange(safeValues.filter((_, itemIndex) => itemIndex !== index))
+            }
+            disabled={safeValues.length === 1}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       ))}
-      <Button type="button" onClick={() => onChange([...values, ""])}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => onChange([...safeValues, ""])}
+      >
+        <Plus className="mr-2 h-4 w-4" />
         Add Tag
       </Button>
     </div>
   );
 }
+
+const createInitialFormData = (
+  initialData: Models.Document | null | undefined
+): BlogFormDataType => ({
+  title: initialData?.title || "",
+  excerpt: initialData?.excerpt || "",
+  content: initialData?.content || "",
+  category: initialData?.category || "",
+  tags: Array.isArray(initialData?.tags) ? initialData.tags : [""],
+  imageFile: null,
+  imageUrl: initialData?.imageUrl || "",
+  imageFileId: initialData?.imageFileId || "",
+  slug: initialData?.slug || "",
+  author: initialData?.author || "",
+  readTime:
+    typeof initialData?.readTime === "number"
+      ? String(initialData.readTime)
+      : initialData?.readTime || "",
+  status: initialData?.status || "draft",
+});
 
 export default function BlogPostForm({
   onSubmit,
@@ -149,43 +189,42 @@ export default function BlogPostForm({
   onCancel,
   initialData = null,
 }: BlogPostFormProps) {
-  const [formData, setFormData] = useState<BlogFormDataType>({
-    title: initialData?.title || "",
-    excerpt: initialData?.excerpt || "",
-    content: initialData?.content || "",
-    category: initialData?.category || "",
-    tags: initialData?.tags || [""],
-    imageFile: null,
-    imageUrl: initialData?.imageUrl || "",
-    imageFileId: initialData?.imageFileId || "",
-    slug: initialData?.slug || "",
-    author: initialData?.author || "",
-    readTime: initialData?.readTime || "",
-    status: initialData?.status || "draft",
-  });
+  const [formData, setFormData] = useState<BlogFormDataType>(
+    createInitialFormData(initialData)
+  );
+
+  useEffect(() => {
+    setFormData(createInitialFormData(initialData));
+  }, [initialData]);
 
   useEffect(() => {
     const slugified = formData.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-    setFormData((prev) => ({ ...prev, slug: slugified }));
+
+    setFormData((prev) =>
+      prev.slug === slugified ? prev : { ...prev, slug: slugified }
+    );
   }, [formData.title]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({ ...formData });
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    onSubmit({
+      ...formData,
+      tags: formData.tags.filter((tag) => tag.trim()),
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField
           label="Title"
           id="title"
           value={formData.title}
           onChange={(value: string) =>
-            setFormData({ ...formData, title: value })
+            setFormData((prev) => ({ ...prev, title: value }))
           }
           required
           disabled={isLoading}
@@ -196,7 +235,7 @@ export default function BlogPostForm({
           id="author"
           value={formData.author}
           onChange={(value: string) =>
-            setFormData({ ...formData, author: value })
+            setFormData((prev) => ({ ...prev, author: value }))
           }
           required
         />
@@ -207,16 +246,16 @@ export default function BlogPostForm({
           type="number"
           value={formData.readTime}
           onChange={(value: string) =>
-            setFormData({ ...formData, readTime: value })
+            setFormData((prev) => ({ ...prev, readTime: value }))
           }
           required
         />
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="category">Category</Label>
           <Select
             value={formData.category}
             onValueChange={(value: string) =>
-              setFormData({ ...formData, category: value })
+              setFormData((prev) => ({ ...prev, category: value }))
             }
             disabled={isLoading}
           >
@@ -233,12 +272,12 @@ export default function BlogPostForm({
             </SelectContent>
           </Select>
         </div>
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
           <Select
             value={formData.status}
             onValueChange={(value: string) =>
-              setFormData({ ...formData, status: value })
+              setFormData((prev) => ({ ...prev, status: value }))
             }
             disabled={isLoading}
           >
@@ -258,69 +297,90 @@ export default function BlogPostForm({
         id="excerpt"
         value={formData.excerpt}
         onChange={(value: string) =>
-          setFormData({ ...formData, excerpt: value })
+          setFormData((prev) => ({ ...prev, excerpt: value }))
         }
-        rows={2}
+        rows={3}
         placeholder="Brief summary of the post"
         disabled={isLoading}
       />
+
       <MarkdownEditor
         label="Content (Markdown)"
         value={formData.content}
         onChange={(value: string) =>
-          setFormData({ ...formData, content: value })
+          setFormData((prev) => ({ ...prev, content: value }))
         }
         required
       />
+
       <FormMultiInput
         label="Tags"
         id="tags"
         values={formData.tags}
         onChange={(values: string[]) =>
-          setFormData({ ...formData, tags: values })
+          setFormData((prev) => ({ ...prev, tags: values }))
         }
       />
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="image">Upload Image</Label>
         <Input
+          id="image"
           type="file"
           accept="image/*"
-          onChange={(e) =>
-            setFormData({ ...formData, imageFile: e.target.files?.[0] || null })
+          onChange={(event) =>
+            setFormData((prev) => ({
+              ...prev,
+              imageFile: event.target.files?.[0] || null,
+            }))
           }
           disabled={isLoading}
         />
         {(formData.imageFile || formData.imageUrl) && (
-          <p className="text-sm mt-1">
+          <>
             {/* eslint-disable @next/next/no-img-element */}
             <img
-              src={formData.imageUrl ? formData.imageUrl : URL.createObjectURL(formData.imageFile!)}
-              alt="Image Preview"
-              className="mt-2 max-h-40 object-cover rounded"
+              src={
+                formData.imageFile
+                  ? URL.createObjectURL(formData.imageFile)
+                  : formData.imageUrl
+              }
+              alt="Blog cover preview"
+              className="mt-2 max-h-40 rounded border object-cover"
             />
-          </p>
+          </>
         )}
       </div>
 
       <FormField
-        label="Slug (auto-generated)"
+        label="Slug"
         id="slug"
         value={formData.slug}
-        onChange={(value: string) => setFormData({ ...formData, slug: value })}
+        onChange={(value: string) =>
+          setFormData((prev) => ({ ...prev, slug: value }))
+        }
         required
-        disabled={true}
+        disabled
       />
 
-      <DialogFooter>
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading
-            ? "Loading..."
-            : `${initialData ? "Update" : "Create"} Post`}
-        </Button>
+      <DialogFooter className="sticky bottom-0 border-t bg-background pt-4">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-between">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isLoading} className="sm:min-w-36">
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : initialData ? (
+              "Update Post"
+            ) : (
+              "Create Post"
+            )}
+          </Button>
+        </div>
       </DialogFooter>
     </form>
   );

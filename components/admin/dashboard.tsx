@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { databaseId, databases } from "@/lib/appwrite";
-import { Models, Query } from "appwrite";
+import { Models } from "appwrite";
 import Loader from "@/components/loader";
 import DashboardOverview from "./overview";
 import ScholarshipsTab from "./scholarships-tab";
@@ -13,6 +12,7 @@ import { useAuth } from "@/context/auth";
 import { useRouter } from "next/navigation";
 import { ShieldAlert } from "lucide-react";
 import { Button } from "../ui/button";
+import { apiRequest } from "@/lib/api-client";
 
 export default function AdminDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -23,6 +23,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<Models.Document[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [accessDenied, setAccessDenied] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   // Check admin access
@@ -51,26 +52,24 @@ export default function AdminDashboard() {
     if (accessDenied || !user || user.role !== "admin") return;
 
     setDataLoading(true);
+    setErrorMessage("");
     try {
-      const [scholarshipResponse, blogResponse, userResponse] =
-        await Promise.all([
-          databases.listDocuments(databaseId, "scholarships", [
-            Query.orderDesc("$createdAt"),
-          ]),
-          databases.listDocuments(databaseId, "blogs", [
-            Query.orderDesc("$createdAt"),
-          ]),
-          databases.listDocuments(databaseId, "profile", [
-            Query.orderDesc("$createdAt"),
-          ]),
-        ]);
+      const response = await apiRequest<{
+        scholarships: Models.Document[];
+        blogPosts: Models.Document[];
+        users: Models.Document[];
+      }>("/api/admin/dashboard");
 
-      setScholarships(scholarshipResponse.documents);
-      setBlogPosts(blogResponse.documents);
-      setUsers(userResponse.documents);
+      setScholarships(response.scholarships);
+      setBlogPosts(response.blogPosts);
+      setUsers(response.users);
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Optionally show error state to user
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Failed to load the admin dashboard."
+      );
     } finally {
       setDataLoading(false);
     }
@@ -141,13 +140,21 @@ export default function AdminDashboard() {
   return (
     <div className="max-w-6xl w-full mx-auto px-4 py-8 pt-24">
       <DashboardHeader />
+      {errorMessage ? (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </div>
+      ) : null}
 
       <Tabs
         value={activeTab}
-        onValueChange={setActiveTab}
+        onValueChange={(value) => {
+          setActiveTab(value);
+          setSearchTerm("");
+        }}
         className="space-y-6"
       >
-        <TabsList className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-2 gap-2 md:grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="scholarships">Scholarships</TabsTrigger>
           <TabsTrigger value="blog">Blog Posts</TabsTrigger>

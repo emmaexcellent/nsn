@@ -16,7 +16,10 @@ export default function UsersTab({
 }: UsersTabProps) {
   const filteredUsers = users.filter(
     (u) =>
-      (u.name && u.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (`${u.firstName || ""} ${u.lastName || ""}`
+        .trim()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())) ||
       (u.email && u.email.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
@@ -31,6 +34,10 @@ export default function UsersTab({
         <div className="text-sm text-muted-foreground">
           Total users: {users.length}
         </div>
+      </div>
+
+      <div className="text-sm text-muted-foreground">
+        Showing {filteredUsers.length} results
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">

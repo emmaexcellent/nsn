@@ -1,13 +1,7 @@
 import { useState, useCallback } from "react";
-import { ID, Models } from "appwrite";
-import { databases, storage, databaseId, bucketId } from "@/lib/appwrite";
+import { Models } from "appwrite";
 import { BlogFormDataType } from "./post-form";
-
-// Types for better type safety
-interface UploadResult {
-  imageUrl: string;
-  fileId: string;
-}
+import { apiRequest } from "@/lib/api-client";
 
 interface BlogPostActions {
   createBlogPost: (
@@ -18,14 +12,11 @@ interface BlogPostActions {
     formData: BlogFormDataType
   ) => Promise<Models.Document | null>;
   deleteBlogPost: (id: string) => Promise<boolean>;
-  uploadImage: (file: File | null) => Promise<UploadResult>;
-  deleteImage: (fileId: string) => Promise<void>;
   loading: boolean;
   error: string;
   clearError: () => void;
 }
 
-// Constants for validation
 const REQUIRED_FIELDS: (keyof BlogFormDataType)[] = [
   "title",
   "excerpt",
@@ -36,15 +27,12 @@ const REQUIRED_FIELDS: (keyof BlogFormDataType)[] = [
   "status",
 ];
 
-const COLLECTION_ID = "blogs";
-
 export default function useBlogPostActions(): BlogPostActions {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const clearError = useCallback(() => setError(""), []);
 
-  // Validate form data
   const validate = useCallback((data: BlogFormDataType): string | null => {
     for (const field of REQUIRED_FIELDS) {
       if (!data[field]?.toString().trim()) {
@@ -52,8 +40,7 @@ export default function useBlogPostActions(): BlogPostActions {
       }
     }
 
-    // Validate readTime is a positive number
-    const readTimeNum = parseInt(data.readTime.toString());
+    const readTimeNum = parseInt(data.readTime.toString(), 10);
     if (isNaN(readTimeNum) || readTimeNum <= 0) {
       return "Read time must be a positive number";
     }
@@ -61,128 +48,85 @@ export default function useBlogPostActions(): BlogPostActions {
     return null;
   }, []);
 
-  // Generate slug from title
   const generateSlug = useCallback((title: string): string => {
     return title
       .toLowerCase()
-      .normalize("NFD") // Normalize diacritics
-      .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-      .replace(/[^a-z0-9\s-]/g, "") // Remove non-alphanumeric characters except spaces and hyphens
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
       .trim()
-      .replace(/\s+/g, "-") // Replace spaces with hyphens
-      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-      .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
   }, []);
 
-  // Upload image to storage
-  const uploadImage = useCallback(
-    async (file: File | null): Promise<UploadResult> => {
-      if (!file) return { imageUrl: "", fileId: "" };
-
-      try {
-        // Validate file type
+  const toFormData = useCallback(
+    (formData: BlogFormDataType) => {
+      if (formData.imageFile) {
         const validTypes = [
           "image/jpeg",
           "image/png",
           "image/webp",
           "image/gif",
         ];
-        if (!validTypes.includes(file.type)) {
+        if (!validTypes.includes(formData.imageFile.type)) {
           throw new Error(
             "Invalid file type. Please upload an image (JPEG, PNG, WebP, GIF)"
           );
         }
 
-        // Validate file size (max 5MB)
-        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-        if (file.size > maxSize) {
+        const maxSize = 5 * 1024 * 1024;
+        if (formData.imageFile.size > maxSize) {
           throw new Error("File size too large. Maximum size is 5MB");
         }
-
-        const fileId = ID.unique();
-        await storage.createFile(bucketId, fileId, file);
-
-        // Get optimized preview URL with optional transformations
-        const imageUrl = storage.getFileView(bucketId, fileId);
-
-        return { imageUrl, fileId };
-      } catch (err) {
-        console.error("Image upload error:", err);
-        throw err;
       }
+
+      const payload = new FormData();
+      const trimmedTags = (formData.tags ?? []).filter((tag) => tag.trim());
+      const slug = generateSlug(formData.title);
+      const status = formData.status === "published" ? "published" : "draft";
+
+      payload.append("title", formData.title);
+      payload.append("excerpt", formData.excerpt);
+      payload.append("content", formData.content);
+      payload.append("category", formData.category);
+      payload.append("tags", JSON.stringify(trimmedTags));
+      payload.append("imageUrl", formData.imageUrl || "");
+      payload.append("imageFileId", formData.imageFileId || "");
+      payload.append("slug", slug);
+      payload.append("author", formData.author);
+      payload.append("readTime", String(parseInt(formData.readTime.toString(), 10)));
+      payload.append("status", status);
+      payload.append(
+        "publishedAt",
+        status === "published" ? new Date().toISOString() : ""
+      );
+
+      if (formData.imageFile) {
+        payload.append("imageFile", formData.imageFile);
+      }
+
+      return payload;
     },
-    []
+    [generateSlug]
   );
 
-  // Delete image from storage
-  const deleteImage = useCallback(async (fileId: string): Promise<void> => {
-    if (!fileId) return;
-
-    try {
-      await storage.deleteFile(bucketId, fileId);
-    } catch (err) {
-      console.error("Failed to delete image:", err);
-      // Don't throw error here - we don't want to block the main operation
-    }
-  }, []);
-
-  // Clean form data by removing imageFile and converting types
-  const cleanFormData = useCallback((formData: BlogFormDataType) => {
-    const { imageFile, readTime, ...rest } = formData;
-
-    return {
-      ...rest,
-      readTime: parseInt(readTime.toString()),
-      ...(formData.tags && {
-        tags: Array.isArray(formData.tags) ? formData.tags : [],
-      }),
-    };
-  }, []);
-
-  // Create blog post
   const createBlogPost = useCallback(
     async (formData: BlogFormDataType): Promise<Models.Document | null> => {
       setLoading(true);
       clearError();
 
       try {
-        // Validate form data
         const validationError = validate(formData);
         if (validationError) {
           setError(validationError);
           return null;
         }
 
-        // Upload image if present
-        let imageUrl = "";
-        let imageFileId = "";
-        if (formData.imageFile) {
-          const uploadResult = await uploadImage(formData.imageFile);
-          imageUrl = uploadResult.imageUrl;
-          imageFileId = uploadResult.fileId;
-        }
-
-        // Generate slug
-        const slug = generateSlug(formData.title);
-
-        // Clean and prepare data
-        const cleanedData = cleanFormData(formData);
-
-        // Create document
-        const response = await databases.createDocument(
-          databaseId,
-          COLLECTION_ID,
-          ID.unique(),
-          {
-            ...cleanedData,
-            slug,
-            ...(imageUrl && { imageUrl }),
-            ...(imageFileId && { imageFileId }),
-            publishedAt: new Date().toISOString(),
-          }
-        );
-
-        return response;
+        return await apiRequest<Models.Document>("/api/admin/blogs", {
+          method: "POST",
+          body: toFormData(formData),
+        });
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -190,16 +134,14 @@ export default function useBlogPostActions(): BlogPostActions {
             : "Failed to create blog post. Please try again.";
 
         setError(errorMessage);
-        console.error("Create blog post error:", err);
         return null;
       } finally {
         setLoading(false);
       }
     },
-    [validate, uploadImage, generateSlug, cleanFormData, clearError]
+    [clearError, toFormData, validate]
   );
 
-  // Update blog post
   const updateBlogPost = useCallback(
     async (
       id: string,
@@ -209,54 +151,16 @@ export default function useBlogPostActions(): BlogPostActions {
       clearError();
 
       try {
-        // Validate form data
         const validationError = validate(formData);
         if (validationError) {
           setError(validationError);
           return null;
         }
 
-        let imageUrl = formData.imageUrl || "";
-        let imageFileId = formData.imageFileId || "";
-        let oldImageFileId = formData.imageFileId;
-
-        // Handle image update
-        if (formData.imageFile) {
-          try {
-            const uploadResult = await uploadImage(formData.imageFile);
-            imageUrl = uploadResult.imageUrl;
-            imageFileId = uploadResult.fileId;
-
-            // Delete old image if it exists
-            if (oldImageFileId && oldImageFileId !== imageFileId) {
-              await deleteImage(oldImageFileId);
-            }
-          } catch (err) {
-            setError("Failed to upload new image. Please try again.");
-            return null;
-          }
-        }
-
-        // Generate slug (only if title changed)
-        const slug = generateSlug(formData.title);
-
-        // Clean and prepare data
-        const cleanedData = cleanFormData(formData);
-
-        // Update document
-        const response = await databases.updateDocument(
-          databaseId,
-          COLLECTION_ID,
-          id,
-          {
-            ...cleanedData,
-            slug,
-            ...(imageUrl && { imageUrl: imageUrl }),
-            ...(imageFileId && { imageFileId }),
-          }
-        );
-
-        return response;
+        return await apiRequest<Models.Document>(`/api/admin/blogs/${id}`, {
+          method: "PATCH",
+          body: toFormData(formData),
+        });
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -264,49 +168,23 @@ export default function useBlogPostActions(): BlogPostActions {
             : "Failed to update blog post. Please try again.";
 
         setError(errorMessage);
-        console.error("Update blog post error:", err);
         return null;
       } finally {
         setLoading(false);
       }
     },
-    [
-      validate,
-      uploadImage,
-      deleteImage,
-      generateSlug,
-      cleanFormData,
-      clearError,
-    ]
+    [clearError, toFormData, validate]
   );
 
-  // Delete blog post
   const deleteBlogPost = useCallback(
     async (id: string): Promise<boolean> => {
       setLoading(true);
       clearError();
 
       try {
-        // First, try to get the document to delete its image
-        let imageFileId = "";
-        try {
-          const document = await databases.getDocument(
-            databaseId,
-            COLLECTION_ID,
-            id
-          );
-          imageFileId = document.imageFileId || "";
-        } catch (err) {
-          console.warn("Could not fetch document for image cleanup:", err);
-        }
-
-        // Delete the document
-        await databases.deleteDocument(databaseId, COLLECTION_ID, id);
-
-        // Delete associated image if exists
-        if (imageFileId) {
-          await deleteImage(imageFileId);
-        }
+        await apiRequest(`/api/admin/blogs/${id}`, {
+          method: "DELETE",
+        });
 
         return true;
       } catch (err) {
@@ -316,21 +194,18 @@ export default function useBlogPostActions(): BlogPostActions {
             : "Failed to delete blog post. Please try again.";
 
         setError(errorMessage);
-        console.error("Delete blog post error:", err);
         return false;
       } finally {
         setLoading(false);
       }
     },
-    [deleteImage, clearError]
+    [clearError]
   );
 
   return {
     createBlogPost,
     updateBlogPost,
     deleteBlogPost,
-    uploadImage,
-    deleteImage,
     loading,
     error,
     clearError,

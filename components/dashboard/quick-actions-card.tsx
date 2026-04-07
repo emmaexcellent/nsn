@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, FileText, Users } from "lucide-react";
+import { BookOpen, FileText, UserCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function QuickActionsCard() {
@@ -28,13 +28,15 @@ export default function QuickActionsCard() {
             Application Tips
           </Button>
         </Link>
-        <Button
-          variant="outline"
-          className="w-full justify-start bg-transparent"
-        >
-          <Users className="h-3 w-3 mr-2" />
-          Connect with Mentors
-        </Button>
+        <Link href="/profile">
+          <Button
+            variant="outline"
+            className="w-full justify-start bg-transparent"
+          >
+            <UserCircle className="h-3 w-3 mr-2" />
+            Update Profile
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   );

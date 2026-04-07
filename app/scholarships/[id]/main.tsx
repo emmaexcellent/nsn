@@ -1,6 +1,5 @@
 "use client";
 
-import { Models } from "appwrite";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,6 +23,10 @@ import { CountdownTimer } from "@/components/countdown-timer";
 import { Separator } from "@/components/ui/separator";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { useAuth } from "@/context/auth";
+import {
+  normalizeScholarship,
+  type ScholarshipDocument,
+} from "@/lib/documents";
 import ShareButton from "@/components/schorlarships/share-scholarship";
 import Image from "next/image";
 
@@ -31,18 +34,20 @@ export default function ScholarshipDetailMain({
   similarScholarships,
   scholarship,
 }: {
-  similarScholarships?: Models.Document[];
-  scholarship: Models.Document;
+  similarScholarships?: ScholarshipDocument[];
+  scholarship: ScholarshipDocument;
 }) {
   const { user } = useAuth();
   if (!scholarship) return null;
 
+  const normalizedScholarship = normalizeScholarship(scholarship);
+
   const handleApplyScholarship = () => {
     localStorage.setItem(
       "recent_applied_scholarship",
-      JSON.stringify(scholarship)
+      JSON.stringify(normalizedScholarship)
     );
-    window.open(scholarship.link, "_blank");
+    window.open(normalizedScholarship.link, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -72,10 +77,21 @@ export default function ScholarshipDetailMain({
                 >
                   {scholarship.category}
                 </Badge>
-                <Badge variant="outline">{scholarship.level}</Badge>
-                <Badge variant="outline">{scholarship.location}</Badge>
+                <Badge variant="outline">{normalizedScholarship.level}</Badge>
+                <Badge variant="outline">
+                  {normalizedScholarship.location}
+                </Badge>
               </div>
-              {scholarship.imageUrl && <Image src={scholarship.imageUrl} alt="Scholarship Image" width={500} height={500} priority className="w-full aspect-video max-h-[400px]" />}
+              {normalizedScholarship.imageUrl && (
+                <Image
+                  src={normalizedScholarship.imageUrl}
+                  alt="Scholarship Image"
+                  width={500}
+                  height={500}
+                  priority
+                  className="w-full aspect-auto max-h-[400px]"
+                />
+              )}
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                 {scholarship.title}
               </h1>
@@ -103,7 +119,7 @@ export default function ScholarshipDetailMain({
                       : "Not Specified"}
                   </div>
                   <CountdownTimer
-                    deadline={scholarship.deadline}
+                    deadline={normalizedScholarship.deadline}
                     variant="badge"
                   />
                 </CardContent>
@@ -113,7 +129,7 @@ export default function ScholarshipDetailMain({
                   <DollarSign className="h-6 w-6 mx-auto mb-2 text-green-600" />
                   <div className="text-sm text-gray-500">Amount</div>
                   <div className="font-semibold text-green-600">
-                    ${scholarship.amount}
+                    ${normalizedScholarship.amount}
                   </div>
                 </CardContent>
               </Card>
@@ -121,7 +137,9 @@ export default function ScholarshipDetailMain({
                 <CardContent className="p-4 text-center">
                   <MapPin className="h-6 w-6 mx-auto mb-2 text-blue-600" />
                   <div className="text-sm text-gray-500">Location</div>
-                  <div className="font-semibold">{scholarship.location}</div>
+                  <div className="font-semibold">
+                    {normalizedScholarship.location}
+                  </div>
                 </CardContent>
               </Card>
               <Card>
@@ -152,7 +170,7 @@ export default function ScholarshipDetailMain({
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {scholarship.eligibility?.map(
+                  {normalizedScholarship.eligibility.map(
                     (req: string, index: number) => (
                       <li key={index} className="flex items-start space-x-2">
                         <div className="w-2 h-2 bg-navy dark:bg-gold rounded-full mt-2 flex-shrink-0"></div>
@@ -173,14 +191,16 @@ export default function ScholarshipDetailMain({
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {scholarship.required?.map((doc: string, index: number) => (
+                  {normalizedScholarship.required.map(
+                    (doc: string, index: number) => (
                     <li key={index} className="flex items-center space-x-2">
                       <FileText className="h-4 w-4 text-gray-500" />
                       <span className="text-gray-700 dark:text-gray-300">
                         {doc.trim()}
                       </span>
                     </li>
-                  ))}
+                    )
+                  )}
                 </ul>
               </CardContent>
             </Card>
@@ -286,18 +306,25 @@ export default function ScholarshipDetailMain({
               <CardContent className="space-y-3">
                 <div className="space-y-2">
                   {similarScholarships &&
-                    similarScholarships.map((sch) => (
+                    similarScholarships.map((sch) => {
+                      const normalizedSimilarScholarship =
+                        normalizeScholarship(sch);
+
+                      return (
                       <Link
-                        key={sch.$id}
-                        href={`/scholarships/${sch.$id}`}
+                        key={normalizedSimilarScholarship.$id}
+                        href={`/scholarships/${normalizedSimilarScholarship.$id}`}
                         className="block hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded"
                       >
-                        <h4 className="font-medium text-sm">{sch.title}</h4>
+                        <h4 className="font-medium text-sm">
+                          {normalizedSimilarScholarship.title}
+                        </h4>
                         <p className="text-xs text-gray-500">
-                          {sch.description}
+                          {normalizedSimilarScholarship.description}
                         </p>
                       </Link>
-                    ))}
+                      );
+                    })}
                 </div>
                 <Link href="/scholarships">
                   <Button

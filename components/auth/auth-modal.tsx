@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { LoginForm } from "./login-form";
 import { SignupForm } from "./signup-form";
@@ -18,15 +18,21 @@ export function AuthModal({
   onClose,
   defaultView = "login",
 }: AuthModalProps) {
-  const router = useRouter()
+  const router = useRouter();
   const [currentView, setCurrentView] = useState<
     "login" | "signup" | "forgot-password"
   >(defaultView);
 
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentView(defaultView);
+    }
+  }, [defaultView, isOpen]);
+
   const handleSuccess = () => {
     onClose();
     setCurrentView("login");
-    router.push("/profile")
+    router.push("/dashboard");
   };
 
   const renderCurrentView = () => {
@@ -55,7 +61,7 @@ export function AuthModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md p-0 overflow-y-auto max-h-[95%]">
+      <DialogContent className="sm:max-w-lg py-6 border-0 overflow-y-auto max-h-[95%]">
         {renderCurrentView()}
       </DialogContent>
     </Dialog>

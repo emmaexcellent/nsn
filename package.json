@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "appwrite:bootstrap": "node scripts/bootstrap-appwrite.mjs",
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
@@ -51,6 +52,7 @@
     "next": "^15.5.9",
     "next-themes": "latest",
     "nextjs-toploader": "^3.9.17",
+    "node-appwrite": "^23.1.0",
     "react": "^19",
     "react-countup": "^6.5.3",
     "react-day-picker": "9.8.0",

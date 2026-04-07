@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,10 +17,8 @@ import {
   FormMultiInputProps,
   FormTextareaProps,
 } from "./blog/post-form";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, Loader2 } from "lucide-react";
-
 
 export interface ScholarshipFormData {
   title: string;
@@ -29,9 +27,9 @@ export interface ScholarshipFormData {
   amount: string;
   location: string;
   level: string;
-  eligibility: string[];  
-  required: string[];     
-  tags: string[];         
+  eligibility: string[];
+  required: string[];
+  tags: string[];
   link: string;
   sponsor: string;
   category: string;
@@ -39,8 +37,9 @@ export interface ScholarshipFormData {
   imageFile: File | null;
   imageUrl: string;
   imageFileId: string;
+  currency: string;
+  status: string;
 }
-
 
 interface ScholarshipFormProps {
   isLoading: boolean;
@@ -63,14 +62,14 @@ function FormField({
     <div className="space-y-2">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="ml-1 text-red-500">*</span>}
       </Label>
-      {description && <p className="text-xs text-gray-500">{description}</p>}
+      {description ? <p className="text-xs text-gray-500">{description}</p> : null}
       <Input
         id={id}
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         required={required}
         placeholder={placeholder}
         className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
@@ -93,13 +92,13 @@ function FormTextarea({
     <div className="space-y-2">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="ml-1 text-red-500">*</span>}
       </Label>
-      {description && <p className="text-xs text-gray-500">{description}</p>}
+      {description ? <p className="text-xs text-gray-500">{description}</p> : null}
       <Textarea
         id={id}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         rows={rows}
         required={required}
         placeholder={placeholder}
@@ -117,20 +116,7 @@ function FormMultiInput({
   placeholder = "Add item...",
   description,
 }: FormMultiInputProps & { placeholder?: string; description?: string }) {
-  const addItem = () => {
-    onChange([...values, ""]);
-  };
-
-  const updateItem = (index: number, value: string) => {
-    const updated = [...values];
-    updated[index] = value;
-    onChange(updated);
-  };
-
-  const removeItem = (index: number) => {
-    const updated = values.filter((_, i) => i !== index);
-    onChange(updated.length ? updated : [""]);
-  };
+  const safeValues = values.length > 0 ? values : [""];
 
   return (
     <div className="space-y-3">
@@ -138,17 +124,19 @@ function FormMultiInput({
         <Label htmlFor={id} className="text-sm font-medium">
           {label}
         </Label>
-        {description && (
-          <p className="text-xs text-gray-500 mt-1">{description}</p>
-        )}
+        {description ? <p className="mt-1 text-xs text-gray-500">{description}</p> : null}
       </div>
 
       <div className="space-y-2">
-        {values.map((val: string, index: number) => (
-          <div key={index} className="flex gap-2 items-center">
+        {safeValues.map((value: string, index: number) => (
+          <div key={`${id}-${index}`} className="flex items-center gap-2">
             <Input
-              value={val}
-              onChange={(e) => updateItem(index, e.target.value)}
+              value={value}
+              onChange={(event) => {
+                const updated = [...safeValues];
+                updated[index] = event.target.value;
+                onChange(updated);
+              }}
               placeholder={placeholder}
               className="flex-1"
             />
@@ -156,9 +144,11 @@ function FormMultiInput({
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => removeItem(index)}
+              onClick={() =>
+                onChange(safeValues.filter((_, itemIndex) => itemIndex !== index))
+              }
               className="h-9 w-9 text-gray-500 hover:text-red-500"
-              disabled={values.length <= 1}
+              disabled={safeValues.length <= 1}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -166,19 +156,41 @@ function FormMultiInput({
         ))}
       </div>
 
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={addItem}
-        className="mt-2"
-      >
-        <Plus className="h-4 w-4 mr-2" />
+      <Button type="button" variant="outline" size="sm" onClick={() => onChange([...safeValues, ""])}>
+        <Plus className="mr-2 h-4 w-4" />
         Add Another
       </Button>
     </div>
   );
 }
+
+const createInitialFormData = (
+  initialData: Models.Document | null | undefined
+): ScholarshipFormData => ({
+  title: initialData?.title || "",
+  description: initialData?.description || "",
+  about: initialData?.about || "",
+  amount:
+    typeof initialData?.amount === "number"
+      ? String(initialData.amount)
+      : initialData?.amount || "",
+  location: initialData?.location || "",
+  level: initialData?.level || "",
+  eligibility: Array.isArray(initialData?.eligibility)
+    ? initialData.eligibility
+    : [""],
+  required: Array.isArray(initialData?.required) ? initialData.required : [""],
+  tags: Array.isArray(initialData?.tags) ? initialData.tags : [""],
+  link: initialData?.link || "",
+  sponsor: initialData?.sponsor || "",
+  category: initialData?.category || "",
+  deadline: initialData?.deadline || "",
+  imageFile: null,
+  imageUrl: initialData?.imageUrl || "",
+  imageFileId: initialData?.imageFileId || "",
+  currency: initialData?.currency || "USD",
+  status: initialData?.status || "active",
+});
 
 export default function ScholarshipForm({
   isLoading,
@@ -186,40 +198,28 @@ export default function ScholarshipForm({
   onCancel,
   initialData = null,
 }: ScholarshipFormProps) {
-  const [formData, setFormData] = useState<ScholarshipFormData>({
-    title: initialData?.title || "",
-    description: initialData?.description || "",
-    about: initialData?.about || "",
-    amount: initialData?.amount || "",
-    location: initialData?.location || "",
-    level: initialData?.level || "",
-    eligibility: initialData?.eligibility || [""],
-    required: initialData?.required || [""],
-    tags: initialData?.tags || [""],
-    link: initialData?.link || "",
-    sponsor: initialData?.sponsor || "",
-    category: initialData?.category || "",
-    deadline: initialData?.deadline || "",
-    imageFile: null,
-    imageUrl: initialData?.imageUrl || "",
-    imageFileId: initialData?.imageFileId || "",
-  });
+  const [formData, setFormData] = useState<ScholarshipFormData>(
+    createInitialFormData(initialData)
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Filter out empty strings from arrays
-    const cleanedData = {
+  useEffect(() => {
+    setFormData(createInitialFormData(initialData));
+  }, [initialData]);
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    onSubmit({
       ...formData,
-      amount: parseInt(formData.amount) || 0,
-      eligibility: formData.eligibility.filter((item: string) => item.trim() !== ""),
-      required: formData.required.filter((item: string) => item.trim() !== ""),
-      tags: formData.tags.filter((item: string) => item.trim() !== ""),
-    };
-    onSubmit(cleanedData);
+      amount: Number.parseInt(formData.amount, 10) || 0,
+      eligibility: formData.eligibility.filter((item) => item.trim() !== ""),
+      required: formData.required.filter((item) => item.trim() !== ""),
+      tags: formData.tags.filter((item) => item.trim() !== ""),
+    });
   };
 
-  // Predefined tag suggestions
   const tagSuggestions = [
+    "featured",
     "Undergraduate",
     "Graduate",
     "International",
@@ -238,33 +238,32 @@ export default function ScholarshipForm({
 
   const addTag = (tag: string) => {
     if (!formData.tags.includes(tag)) {
-      setFormData({
-        ...formData,
-        tags: [...formData.tags.filter((t: string) => t.trim() !== ""), tag],
-      });
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...prev.tags.filter((value) => value.trim() !== ""), tag],
+      }));
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Basic Information Card */}
-        <div className="md:col-span-2 p-0">
-          <div className="pt-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-900">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="lg:col-span-2">
+          <div className="pt-2">
+            <h3 className="mb-4 text-lg font-semibold text-gray-900">
               Basic Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
                 label="Scholarship Title"
                 id="title"
                 value={formData.title}
                 onChange={(value: string) =>
-                  setFormData({ ...formData, title: value })
+                  setFormData((prev) => ({ ...prev, title: value }))
                 }
                 placeholder="e.g., Presidential Leadership Scholarship"
                 required
-                description="Clear, descriptive title for the scholarship"
+                description="Clear, descriptive title for the scholarship."
               />
 
               <FormField
@@ -272,24 +271,24 @@ export default function ScholarshipForm({
                 id="sponsor"
                 value={formData.sponsor}
                 onChange={(value: string) =>
-                  setFormData({ ...formData, sponsor: value })
+                  setFormData((prev) => ({ ...prev, sponsor: value }))
                 }
                 placeholder="e.g., Google, University of XYZ"
                 required
-                description="Organization offering the scholarship"
+                description="Organization offering the scholarship."
               />
 
               <FormField
-                label="Amount ($)"
+                label="Amount"
                 id="amount"
                 type="number"
                 value={formData.amount}
                 onChange={(value: string) =>
-                  setFormData({ ...formData, amount: value })
+                  setFormData((prev) => ({ ...prev, amount: value }))
                 }
                 placeholder="5000"
                 required
-                description="Scholarship amount in USD"
+                description="Scholarship amount."
               />
 
               <FormField
@@ -297,30 +296,28 @@ export default function ScholarshipForm({
                 id="location"
                 value={formData.location}
                 onChange={(value: string) =>
-                  setFormData({ ...formData, location: value })
+                  setFormData((prev) => ({ ...prev, location: value }))
                 }
-                placeholder="e.g., United States, Online, Canada"
+                placeholder="e.g., Nigeria, Remote, Canada"
                 required
               />
 
               <div className="space-y-2">
                 <Label htmlFor="category" className="text-sm font-medium">
                   Category
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="ml-1 text-red-500">*</span>
                 </Label>
                 <Select
                   value={formData.category}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, category: value })
+                    setFormData((prev) => ({ ...prev, category: value }))
                   }
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="STEM">
-                      STEM (Science, Technology, Engineering, Math)
-                    </SelectItem>
+                    <SelectItem value="STEM">STEM</SelectItem>
                     <SelectItem value="Leadership">Leadership</SelectItem>
                     <SelectItem value="Arts">Arts & Humanities</SelectItem>
                     <SelectItem value="Community Service">
@@ -329,9 +326,7 @@ export default function ScholarshipForm({
                     <SelectItem value="Need-Based">Need-Based</SelectItem>
                     <SelectItem value="Merit-Based">Merit-Based</SelectItem>
                     <SelectItem value="Sports">Sports & Athletics</SelectItem>
-                    <SelectItem value="Minority">
-                      Minority & Diversity
-                    </SelectItem>
+                    <SelectItem value="Minority">Minority & Diversity</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -339,12 +334,12 @@ export default function ScholarshipForm({
               <div className="space-y-2">
                 <Label htmlFor="level" className="text-sm font-medium">
                   Education Level
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="ml-1 text-red-500">*</span>
                 </Label>
                 <Select
                   value={formData.level}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, level: value })
+                    setFormData((prev) => ({ ...prev, level: value }))
                   }
                 >
                   <SelectTrigger className="w-full">
@@ -355,9 +350,7 @@ export default function ScholarshipForm({
                     <SelectItem value="Undergraduate">Undergraduate</SelectItem>
                     <SelectItem value="Graduate">Graduate</SelectItem>
                     <SelectItem value="PhD">PhD/Doctoral</SelectItem>
-                    <SelectItem value="All Levels">
-                      All Education Levels
-                    </SelectItem>
+                    <SelectItem value="All Levels">All Education Levels</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -368,11 +361,11 @@ export default function ScholarshipForm({
                 type="url"
                 value={formData.link}
                 onChange={(value: string) =>
-                  setFormData({ ...formData, link: value })
+                  setFormData((prev) => ({ ...prev, link: value }))
                 }
                 placeholder="https://example.com/apply"
                 required
-                description="URL to the official application page"
+                description="URL to the official application page."
               />
 
               <FormField
@@ -385,89 +378,128 @@ export default function ScholarshipForm({
                     : ""
                 }
                 onChange={(value: string) =>
-                  setFormData({ ...formData, deadline: value })
+                  setFormData((prev) => ({ ...prev, deadline: value }))
                 }
                 required
               />
+
+              <div className="space-y-2">
+                <Label htmlFor="currency" className="text-sm font-medium">
+                  Currency
+                </Label>
+                <Select
+                  value={formData.currency}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, currency: value }))
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="USD">USD</SelectItem>
+                    <SelectItem value="NGN">NGN</SelectItem>
+                    <SelectItem value="GBP">GBP</SelectItem>
+                    <SelectItem value="EUR">EUR</SelectItem>
+                    <SelectItem value="CAD">CAD</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status" className="text-sm font-medium">
+                  Status
+                </Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, status: value }))
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="expired">Expired</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Description & About Card */}
-        <div>
-          <div className="pt-6 space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Description</h3>
-            <FormTextarea
-              label=""
-              id="description"
-              value={formData.description}
-              onChange={(value: string) =>
-                setFormData({ ...formData, description: value })
-              }
-              rows={5}
-              placeholder="Brief overview of the scholarship, its purpose, and what makes it unique..."
-              description="This will appear in search results and lists"
-            />
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">Description</h3>
+          <FormTextarea
+            label="Short Description"
+            id="description"
+            value={formData.description}
+            onChange={(value: string) =>
+              setFormData((prev) => ({ ...prev, description: value }))
+            }
+            rows={5}
+            required
+            placeholder="Brief overview of the scholarship."
+            description="This appears in search results and cards."
+          />
 
-            <FormTextarea
-              label="About the Scholarship"
-              id="about"
-              value={formData.about}
-              onChange={(value: string) =>
-                setFormData({ ...formData, about: value })
-              }
-              rows={5}
-              placeholder="Detailed information about the scholarship, benefits, selection process..."
-              description="Detailed description that appears on the scholarship page"
-            />
-          </div>
+          <FormTextarea
+            label="About the Scholarship"
+            id="about"
+            value={formData.about}
+            onChange={(value: string) =>
+              setFormData((prev) => ({ ...prev, about: value }))
+            }
+            rows={7}
+            required
+            placeholder="Detailed information about the scholarship."
+            description="This appears on the scholarship detail page."
+          />
         </div>
 
-        {/* Requirements & Tags Card */}
-        <div>
-          <div className="pt-6 space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Requirements & Tags
-            </h3>
+        <div className="space-y-6">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Requirements & Tags
+          </h3>
 
-            <FormMultiInput
-              label="Eligibility Criteria"
-              id="eligibility"
-              values={formData.eligibility}
-              onChange={(values: string[]) =>
-                setFormData({ ...formData, eligibility: values })
-              }
-              placeholder="e.g., Minimum 3.0 GPA, U.S. citizenship"
-              description="List specific requirements applicants must meet"
-            />
+          <FormMultiInput
+            label="Eligibility Criteria"
+            id="eligibility"
+            values={formData.eligibility}
+            onChange={(values: string[]) =>
+              setFormData((prev) => ({ ...prev, eligibility: values }))
+            }
+            placeholder="e.g., Minimum 3.0 GPA"
+            description="List the requirements applicants must meet."
+          />
 
-            <FormMultiInput
-              label="Required Documents"
-              id="required"
-              values={formData.required}
-              onChange={(values: string[]) =>
-                setFormData({ ...formData, required: values })
-              }
-              placeholder="e.g., Transcript, Letter of recommendation"
-              description="Documents needed for application"
-            />
-          </div>
+          <FormMultiInput
+            label="Required Documents"
+            id="required"
+            values={formData.required}
+            onChange={(values: string[]) =>
+              setFormData((prev) => ({ ...prev, required: values }))
+            }
+            placeholder="e.g., Transcript"
+            description="Documents needed for application."
+          />
         </div>
       </div>
 
       <div className="space-y-3">
         <Label className="text-sm font-medium">Tags</Label>
         <p className="text-xs text-gray-500">
-          Add tags to help students find this scholarship. Click suggestions to
-          add.
+          Add tags to help students find this scholarship quickly.
         </p>
 
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="mb-3 flex flex-wrap gap-2">
           {tagSuggestions.map((tag) => (
             <Badge
               key={tag}
               variant="outline"
-              className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+              className="cursor-pointer transition-colors hover:bg-primary hover:text-primary-foreground"
               onClick={() => addTag(tag)}
             >
               {tag}
@@ -476,44 +508,39 @@ export default function ScholarshipForm({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {formData.tags.map(
-            (tag: string, index: number) =>
-              tag.trim() && (
-                <div key={index} className="flex gap-2 items-center">
-                  <Badge className="flex-1 justify-between">
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const updated = [...formData.tags];
-                        updated.splice(index, 1);
-                        setFormData({ ...formData, tags: updated });
-                      }}
-                      className="ml-2 hover:text-red-300"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                </div>
-              )
-          )}
+          {formData.tags
+            .filter((tag) => tag.trim())
+            .map((tag: string, index: number) => (
+              <Badge key={`${tag}-${index}`} className="flex items-center gap-2">
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      tags: prev.tags.filter((_, tagIndex) => tagIndex !== index),
+                    }));
+                  }}
+                  className="hover:text-red-300"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
         </div>
 
         <Input
-          placeholder="Type custom tag and press Enter"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              const input = e.currentTarget;
+          placeholder="Type a custom tag and press Enter"
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              const input = event.currentTarget;
               const newTag = input.value.trim();
               if (newTag && !formData.tags.includes(newTag)) {
-                setFormData({
-                  ...formData,
-                  tags: [
-                    ...formData.tags.filter((t: string) => t.trim() !== ""),
-                    newTag,
-                  ],
-                });
+                setFormData((prev) => ({
+                  ...prev,
+                  tags: [...prev.tags.filter((tag) => tag.trim()), newTag],
+                }));
               }
               input.value = "";
             }
@@ -521,37 +548,38 @@ export default function ScholarshipForm({
         />
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="image">Upload Image</Label>
         <Input
+          id="image"
           type="file"
           accept="image/*"
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              imageFile: e.target.files?.[0] || null,
-            })
+          onChange={(event) =>
+            setFormData((prev) => ({
+              ...prev,
+              imageFile: event.target.files?.[0] || null,
+            }))
           }
           disabled={isLoading}
         />
         {(formData.imageFile || formData.imageUrl) && (
-          <p className="text-sm mt-1">
+          <>
             {/* eslint-disable @next/next/no-img-element */}
             <img
               src={
                 formData.imageFile
-                  ? URL.createObjectURL(formData.imageFile!)
+                  ? URL.createObjectURL(formData.imageFile)
                   : formData.imageUrl
               }
-              alt="Image Preview"
-              className="mt-2 max-h-40 object-cover rounded border"
+              alt="Scholarship preview"
+              className="mt-2 max-h-40 rounded border object-cover"
             />
-          </p>
+          </>
         )}
       </div>
 
-      <DialogFooter className="sticky bottom-0 bg-background pt-4 border-t">
-        <div className="flex justify-between w-full">
+      <DialogFooter className="sticky bg-white bottom-0 border-t bg-background pt-4">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-between">
           <Button
             type="button"
             variant="outline"
@@ -560,14 +588,16 @@ export default function ScholarshipForm({
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading} className="min-w-32">
+          <Button type="submit" disabled={isLoading} className="sm:min-w-40">
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Saving...
               </>
+            ) : initialData ? (
+              "Update Scholarship"
             ) : (
-              `${initialData ? "Update" : "Create"} Scholarship`
+              "Create Scholarship"
             )}
           </Button>
         </div>

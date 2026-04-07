@@ -135,7 +135,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-lg border-0 mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Create Account</CardTitle>
         <CardDescription>

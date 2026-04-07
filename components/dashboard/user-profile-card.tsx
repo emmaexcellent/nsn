@@ -1,10 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User2 } from "lucide-react";
-import { Models } from "appwrite";
+import type { ProfileDocument } from "@/lib/documents";
 
 interface UserProfileCardProps {
-  user: Models.Document | null;
+  user: ProfileDocument | null;
 }
 
 export default function UserProfileCard({ user }: UserProfileCardProps) {

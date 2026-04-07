@@ -23,6 +23,10 @@ import Image from "next/image";
 import { Search, Calendar, User, ArrowRight } from "lucide-react";
 import { NewsletterSubscription } from "@/components/newsletter-subscription";
 import { databaseId, databases } from "@/lib/appwrite";
+import {
+  normalizeBlogPost,
+  type BlogPostDocument,
+} from "@/lib/documents";
 
 export default function BlogPage() {
   const [blogPosts, setBlogPosts] = useState<Models.Document[]>([]);
@@ -30,6 +34,7 @@ export default function BlogPage() {
     useState<Models.Document | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const categories = [
     "all",
@@ -46,14 +51,21 @@ export default function BlogPage() {
         const response = await databases.listDocuments(
           databaseId, // replace with your actual database ID
           "blogs", // replace with your blog collection ID
-          [Query.orderDesc("$createdAt"), Query.limit(20)]
+          [
+            Query.equal("status", "published"),
+            Query.orderDesc("$createdAt"),
+            Query.limit(20),
+          ]
         );
-        const posts = response.documents;
+        const posts = response.documents.map((document) =>
+          normalizeBlogPost(document as BlogPostDocument)
+        );
         setBlogPosts(posts);
         const featured = posts.find((post) => post.tags?.includes("featured"));
         setFeaturedPost(featured || posts[0]);
       } catch (error) {
         console.error("Error fetching blog posts:", error);
+        setErrorMessage("Unable to load articles right now. Please try again.");
       }
     };
 
@@ -84,11 +96,18 @@ export default function BlogPage() {
         </div>
 
         {/* Featured Article */}
-        <Card className="mb-12 overflow-hidden hover:shadow-xl transition-all duration-300">
-          <div className="grid gPrid-cols-1 lg:grid-cols-2">
+        {errorMessage ? (
+          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errorMessage}
+          </div>
+        ) : null}
+
+        {featuredPost ? (
+          <Card className="mb-12 overflow-hidden hover:shadow-xl transition-all duration-300">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             <div className="relative h-64 lg:h-auto">
               <Image
-                src={featuredPost?.image || "/placeholder.svg"}
+                src={featuredPost?.imageUrl || "/placeholder.svg"}
                 alt={featuredPost?.title || "featured post"}
                 fill
                 className="object-cover"
@@ -126,7 +145,7 @@ export default function BlogPage() {
                   </div>
                   <div>{featuredPost?.readTime} min</div>
                 </div>
-                <Link href={`/blog/${featuredPost?.id}`}>
+                <Link href={`/blog/${featuredPost?.slug}`}>
                   <Button className="bg-navy hover:bg-navy/90 text-white">
                     Read Full Article
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -136,6 +155,7 @@ export default function BlogPage() {
             </div>
           </div>
         </Card>
+        ) : null}
 
         {/* Search and Filter */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow border p-6 mb-8">
@@ -233,17 +253,16 @@ export default function BlogPage() {
             </Card>
           ))}
         </div>
-
-        {/* Load More */}
-        <div className="text-center mt-12">
-          <Button
-            size="lg"
-            variant="outline"
-            className="border-navy text-navy hover:bg-navy hover:text-white dark:border-gold dark:text-gold dark:hover:bg-gold dark:hover:text-navy bg-transparent"
-          >
-            Load More Articles
-          </Button>
-        </div>
+        {filteredPosts.length === 0 ? (
+          <div className="rounded-xl border border-dashed bg-white p-8 text-center dark:bg-gray-800">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              No articles match your search
+            </h2>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Try another keyword or category to find more scholarship guidance.
+            </p>
+          </div>
+        ) : null}
 
         {/* Newsletter CTA */}
         <div className="mt-16">

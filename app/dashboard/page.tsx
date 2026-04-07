@@ -12,13 +12,25 @@ import QuickActionsCard from "@/components/dashboard/quick-actions-card";
 
 // Context
 import { useAuth } from "@/context/auth";
+import {
+  normalizeProfile,
+  normalizeScholarship,
+  type ProfileDocument,
+  type ScholarshipDocument,
+} from "@/lib/documents";
 
 // Appwrite
 import { Models, Query } from "appwrite";
 import { databaseId, databases } from "@/lib/appwrite";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthModal } from "@/components/auth/auth-modal";
+import { Button } from "@/components/ui/button";
+import { User } from "lucide-react";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const normalizedUser = user ? normalizeProfile(user as ProfileDocument) : null;
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [savedScholarships, setSavedScholarships] = useState<Models.Document[]>(
     []
   );
@@ -26,7 +38,7 @@ export default function DashboardPage() {
   const [recommendations, setRecommendations] = useState<Models.Document[]>([]);
 
   useEffect(() => {
-    if (!user?.$id) return;
+    if (!normalizedUser?.$id) return;
 
     const fetchScholarships = async () => {
       try {
@@ -34,7 +46,10 @@ export default function DashboardPage() {
         const savedRes = await databases.listDocuments(
           databaseId,
           "saved_scholarships",
-          [Query.equal("profile", user.$id), Query.equal("action", "save")]
+          [
+            Query.equal("profile", normalizedUser.$id),
+            Query.equal("action", "save"),
+          ]
         );
         setSavedScholarships(savedRes.documents);
 
@@ -42,7 +57,10 @@ export default function DashboardPage() {
         const appliedRes = await databases.listDocuments(
           databaseId,
           "saved_scholarships",
-          [Query.equal("profile", user.$id), Query.equal("action", "apply")]
+          [
+            Query.equal("profile", normalizedUser.$id),
+            Query.equal("action", "apply"),
+          ]
         );
         setApplications(appliedRes.documents);
 
@@ -50,39 +68,85 @@ export default function DashboardPage() {
         const recommendationQueries = [
           Query.limit(5), // Default limit
         ];
-        if (user?.currentLevel)
-          recommendationQueries.push(Query.equal("level", user.currentLevel));
+        if (normalizedUser.currentLevel) {
+          recommendationQueries.push(
+            Query.equal("level", normalizedUser.currentLevel)
+          );
+        }
         const recommendedRes = await databases.listDocuments(
           databaseId,
           "scholarships",
           recommendationQueries
         );
 
-        setRecommendations(recommendedRes.documents);
+        setRecommendations(
+          recommendedRes.documents.map((document) =>
+            normalizeScholarship(document as ScholarshipDocument)
+          )
+        );
       } catch (error) {
         console.error("Error fetching scholarships:", error);
       }
     };
 
     fetchScholarships();
-  }, [user?.$id]);
+  }, [normalizedUser?.$id, normalizedUser?.currentLevel]);
+
+  if (authLoading) {
+    return <div className="min-h-screen pt-24 pb-12 bg-gray-50 dark:bg-gray-900" />;
+  }
+
+  if (!normalizedUser) {
+    return (
+      <>
+        <div className="min-h-screen pt-24 pb-12 bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+          <Card className="w-full max-w-lg">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-navy/10">
+                <User className="h-7 w-7 text-navy dark:text-gold" />
+              </div>
+              <CardTitle>Sign in to access your dashboard</CardTitle>
+              <CardDescription>
+                Track saved scholarships, applications, and personalized recommendations in one place.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                className="w-full bg-navy hover:bg-navy/90 text-white"
+                onClick={() => setIsAuthModalOpen(true)}
+              >
+                Sign In
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          defaultView="login"
+        />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-24 pb-12 bg-gray-50 dark:bg-gray-900">
       <div className="w-full max-w-6xl mx-auto px-4">
         {/* Header */}
-        <DashboardHeader firstName={user?.firstName} />
+        <DashboardHeader firstName={normalizedUser?.firstName || "Scholar"} />
 
         {/* Stats Overview */}
         <StatsOverview
           savedCount={savedScholarships.length}
           applicationsCount={applications.length}
-          profileCompletion={user?.profileCompletion || 0}
+          profileCompletion={normalizedUser?.profileCompletion || 0}
         />
 
         {/* Profile Completion */}
-        {user && user?.profileCompletion < 100 && (
-          <ProfileCompletionCard profileCompletion={user.profileCompletion} />
+        {normalizedUser && normalizedUser.profileCompletion < 100 && (
+          <ProfileCompletionCard
+            profileCompletion={normalizedUser.profileCompletion}
+          />
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -97,7 +161,7 @@ export default function DashboardPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <UserProfileCard user={user} />
+            <UserProfileCard user={normalizedUser} />
             <QuickActionsCard />
           </div>
         </div>

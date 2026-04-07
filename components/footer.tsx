@@ -4,12 +4,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Facebook,
-  Twitter,
   Instagram,
-  Linkedin,
   Mail,
   Phone,
-  MapPin,
 } from "lucide-react";
 import { NewsletterSubscription } from "./newsletter-subscription";
 import Image from "next/image";
@@ -131,20 +128,18 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-gold" />
-                <span className="text-gray-300">
-                  info@newtonscholarshipnexus.org
-                </span>
+                <span className="text-gray-300">info@newtonscholar.com</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-gold" />
-                <span className="text-gray-300">+1 (555) 123-4567</span>
+                <span className="text-gray-300">+234 816 713 8071</span>
               </li>
-              <li className="flex items-center space-x-3">
+              {/* <li className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-gold" />
                 <span className="text-gray-300">
                   123 Education Blvd, Learning City, LC 12345
                 </span>
-              </li>
+              </li> */}
             </ul>
           </div>
 

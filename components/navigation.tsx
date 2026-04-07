@@ -37,6 +37,17 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [path]);
+
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/scholarships", label: "Scholarships" },
@@ -58,8 +69,8 @@ export function Navigation() {
 
   const handleOpenMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    setIsScrolled(true)
-  }
+    setIsScrolled(true);
+  };
 
   const handleAuthClick = (view: "login" | "signup") => {
     setAuthModalView(view);
@@ -74,7 +85,6 @@ export function Navigation() {
 
   return (
     <>
-      {" "}
       <nav
         className={cn(
           "fixed top-0 w-full z-50 transition-all duration-300",
@@ -165,12 +175,26 @@ export function Navigation() {
                 </>
               ) : (
                 !loading && (
-                  <Button
-                    onClick={() => handleAuthClick("signup")}
-                    className="hidden sm:flex bg-navy hover:bg-navy/90 text-white"
-                  >
-                    Sign Up
-                  </Button>
+                  <div className="hidden sm:flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleAuthClick("login")}
+                      className={cn(
+                        "font-medium",
+                        path === "/" && !isScrolled
+                          ? "text-white hover:bg-white/10 hover:text-white"
+                          : "text-gray-700 dark:text-gray-300"
+                      )}
+                    >
+                      Log In
+                    </Button>
+                    <Button
+                      onClick={() => handleAuthClick("signup")}
+                      className="bg-navy hover:bg-navy/90 text-white"
+                    >
+                      Sign Up
+                    </Button>
+                  </div>
                 )
               )}
 
@@ -179,7 +203,12 @@ export function Navigation() {
                 variant="ghost"
                 size="icon"
                 onClick={handleOpenMobileMenu}
-                className="lg:hidden"
+                className={cn(
+                  "lg:hidden",
+                  path === "/" && !isScrolled
+                    ? "text-white hover:bg-white/10 hover:text-white"
+                    : "text-gray-700 dark:text-gray-300"
+                )}
               >
                 {isMobileMenuOpen ? (
                   <X className="h-6 w-6" />
@@ -193,7 +222,7 @@ export function Navigation() {
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <div className="w-full lg:hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-800">
-              <div className="flex flex-col space-y-4 pt-4">
+              <div className="flex flex-col space-y-3 pt-4">
                 {navItems.map((item) => (
                   <Link
                     key={item.href}
@@ -210,59 +239,53 @@ export function Navigation() {
                   </Link>
                 ))}
 
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col gap-3 pt-2">
                   {user ? (
                     <>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger>
-                          <div className="w-full h-full flex items-center justify-center bg-background p-1 rounded-full">
-                            <User className="h-4 w-4 text-gray-500" />
-                          </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          className="w-56"
-                          align="end"
-                          forceMount
+                      <Link href="/dashboard">
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start bg-transparent"
                         >
-                          <div className="flex items-center justify-start gap-2 p-2">
-                            <div className="flex flex-col space-y-1 leading-none">
-                              <p className="font-medium">
-                                {user.firstName} {user.lastName}
-                              </p>
-                              <p className="w-[200px] truncate text-sm text-muted-foreground">
-                                {user.email}
-                              </p>
-                            </div>
-                          </div>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <Link href="/dashboard">
-                              <BookOpen className="mr-2 h-4 w-4" />
-                              Dashboard
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href="/profile">
-                              <Settings className="mr-2 h-4 w-4" />
-                              Profile Settings
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={handleLogout}>
-                            <LogOut className="mr-2 h-4 w-4" />
-                            Sign Out
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                          <BookOpen className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Button>
+                      </Link>
+                      <Link href="/profile">
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start bg-transparent"
+                        >
+                          <Settings className="mr-2 h-4 w-4" />
+                          Profile Settings
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start bg-transparent"
+                        onClick={handleLogout}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </Button>
                     </>
                   ) : (
                     !loading && (
-                      <Button
-                        onClick={() => handleAuthClick("signup")}
-                        className="lg:hidden sm:flex bg-navy hover:bg-navy/90 text-white"
-                      >
-                        Sign Up
-                      </Button>
+                      <>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleAuthClick("login")}
+                          className="w-full justify-center bg-transparent"
+                        >
+                          Log In
+                        </Button>
+                        <Button
+                          onClick={() => handleAuthClick("signup")}
+                          className="w-full bg-navy hover:bg-navy/90 text-white"
+                        >
+                          Create Account
+                        </Button>
+                      </>
                     )
                   )}
                 </div>

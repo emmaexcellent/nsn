@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Calendar, GraduationCap, Mail } from "lucide-react";
 import { Models } from "appwrite";
 
@@ -16,6 +17,9 @@ export default function UserCard({ user }: UserCardProps) {
               <h3 className="text-lg font-semibold">
                 {user.firstName} {user.lastName}
               </h3>
+              <Badge variant={user.role === "admin" ? "default" : "secondary"}>
+                {user.role || "user"}
+              </Badge>
             </div>
             <p className="text-muted-foreground mb-2 flex items-center gap-1">
               <Mail className="h-4 w-4" />
@@ -31,7 +35,11 @@ export default function UserCard({ user }: UserCardProps) {
               </span>
               <span className="flex items-center gap-1">
                 <GraduationCap className="h-4 w-4" />
-                {user.applications || 0} applications
+                {user.currentLevel || "No level set"}
+              </span>
+              <span className="flex items-center gap-1">
+                <GraduationCap className="h-4 w-4" />
+                {user.applicationCount || 0} applications
               </span>
             </div>
           </div>
