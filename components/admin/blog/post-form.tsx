@@ -21,6 +21,22 @@ const MarkdownEditor = dynamic(() => import("../markdown-editor"), {
   ssr: false,
 });
 
+const WORDS_PER_MINUTE = 200;
+
+function estimateReadTime(markdown: string): string {
+  const plainText = markdown
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`[^`]*`/g, " ")
+    .replace(/!\[[^\]]*]\([^)]*\)/g, " ")
+    .replace(/\[[^\]]*]\([^)]*\)/g, " ")
+    .replace(/[#>*_~\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const wordCount = plainText ? plainText.split(" ").length : 0;
+  return String(Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE)));
+}
+
 interface BlogPostFormProps {
   onSubmit: (data: BlogFormDataType) => void;
   isLoading: boolean;
@@ -208,6 +224,16 @@ export default function BlogPostForm({
     );
   }, [formData.title]);
 
+  useEffect(() => {
+    const estimatedReadTime = estimateReadTime(formData.content);
+
+    setFormData((prev) =>
+      prev.readTime === estimatedReadTime
+        ? prev
+        : { ...prev, readTime: estimatedReadTime }
+    );
+  }, [formData.content]);
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     onSubmit({
@@ -240,15 +266,13 @@ export default function BlogPostForm({
           required
         />
         <FormField
-          disabled={isLoading}
-          label="Read Time (mins)"
+          label="Estimated Read Time (mins)"
           id="readTime"
           type="number"
           value={formData.readTime}
-          onChange={(value: string) =>
-            setFormData((prev) => ({ ...prev, readTime: value }))
-          }
+          onChange={() => undefined}
           required
+          disabled
         />
         <div className="space-y-2">
           <Label htmlFor="category">Category</Label>

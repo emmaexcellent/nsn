@@ -116,11 +116,22 @@ export default function AdminDashboard() {
         <DashboardHeader />
         <div className="mt-8">
           <Tabs>
-            <TabsList className="flex items-center gap-5 opacity-50 pointer-events-none overflow-x-auto ">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="scholarships">Scholarships</TabsTrigger>
-              <TabsTrigger value="blog">Blog Posts</TabsTrigger>
-              <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 gap-2 opacity-50 md:grid-cols-4">
+              <TabsTrigger value="overview" className="min-w-0 text-xs sm:text-sm">
+                Overview
+              </TabsTrigger>
+              <TabsTrigger
+                value="scholarships"
+                className="min-w-0 text-xs sm:text-sm"
+              >
+                Scholarships
+              </TabsTrigger>
+              <TabsTrigger value="blog" className="min-w-0 text-xs sm:text-sm">
+                Blog Posts
+              </TabsTrigger>
+              <TabsTrigger value="users" className="min-w-0 text-xs sm:text-sm">
+                Users
+              </TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -155,10 +166,21 @@ export default function AdminDashboard() {
         className="space-y-6"
       >
         <TabsList className="grid w-full grid-cols-2 gap-2 md:grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="scholarships">Scholarships</TabsTrigger>
-          <TabsTrigger value="blog">Blog Posts</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="overview" className="min-w-0 text-xs sm:text-sm">
+            Overview
+          </TabsTrigger>
+          <TabsTrigger
+            value="scholarships"
+            className="min-w-0 text-xs sm:text-sm"
+          >
+            Scholarships
+          </TabsTrigger>
+          <TabsTrigger value="blog" className="min-w-0 text-xs sm:text-sm">
+            Blog Posts
+          </TabsTrigger>
+          <TabsTrigger value="users" className="min-w-0 text-xs sm:text-sm">
+            Users
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">

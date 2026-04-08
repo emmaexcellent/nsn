@@ -128,7 +128,9 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-gold" />
-                <span className="text-gray-300">info@newtonscholar.com</span>
+                <span className="text-gray-300">
+                  newtonscholarshipnexus29@gmail.com
+                </span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-gold" />
