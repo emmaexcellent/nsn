@@ -383,19 +383,22 @@ export default function BlogDetailPage() {
           </div>
         )}
 
-        {post.imageUrl && (
-          <div className="relative h-[350px] md:h-[450px] rounded-xl overflow-hidden mb-8">
-            <Image
-              src={post.imageUrl}
-              alt={post.title || "Blog image"}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-        )}
+        <div className="w-full flex items-center justify-center">
+          {post.imageUrl && (
+            <div className="relative h-auto rounded-xl overflow-hidden mb-8">
+              <Image
+                src={post.imageUrl}
+                alt={post.title || "Blog image"}
+                height={600}
+                width={500}
+                className="h-auto object-cover"
+                priority
+              />
+            </div>
+          )}
+        </div>
 
-        <div className="flex flex-wrap gap-3 mb-8">
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
           <Button
             variant={isBookmarked ? "default" : "outline"}
             size="sm"
