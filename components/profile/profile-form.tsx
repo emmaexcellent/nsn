@@ -83,7 +83,7 @@ export function ProfileForm() {
       <h1 className="text-2xl font-bold">Profile Settings</h1>
 
       {message && (
-        <Alert variant={message.type === "error" ? "destructive" : "default"}>
+        <Alert variant={message.type === "error" ? "destructive" : "success"}>
           {message.type === "success" ? (
             <CheckCircle className="h-4 w-4" />
           ) : (

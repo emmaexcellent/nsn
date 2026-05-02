@@ -43,6 +43,19 @@ export default function ScholarshipCard({
               <StatusBadge status={scholarship.status} />
             </div>
 
+            {(typeof scholarship.match === "number" || scholarship.reason) && (
+              <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                {typeof scholarship.match === "number" && scholarship.match > 0 && (
+                  <span className="rounded-full bg-blue-50 px-2 py-1 font-medium text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
+                    {scholarship.match}% match
+                  </span>
+                )}
+                {scholarship.reason && (
+                  <span className="line-clamp-2">{scholarship.reason}</span>
+                )}
+              </div>
+            )}
+
             <div className="grid grid-cols-1 gap-3 py-3 text-xs sm:grid-cols-2">
               <div className="flex items-center text-gray-600 dark:text-gray-400">
                 <Calendar className="h-3 w-3 mr-2" />

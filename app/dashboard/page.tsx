@@ -7,6 +7,7 @@ import DashboardHeader from "@/components/dashboard/header";
 import StatsOverview from "@/components/dashboard/stats-overview";
 import ProfileCompletionCard from "@/components/dashboard/profile-completion-card";
 import ScholarshipTabs from "@/components/dashboard/scholarship-tabs";
+import type { DashboardScholarshipRecord } from "@/components/dashboard/scholarship-tabs";
 import UserProfileCard from "@/components/dashboard/user-profile-card";
 import QuickActionsCard from "@/components/dashboard/quick-actions-card";
 
@@ -14,13 +15,16 @@ import QuickActionsCard from "@/components/dashboard/quick-actions-card";
 import { useAuth } from "@/context/auth";
 import {
   normalizeProfile,
-  normalizeScholarship,
   type ProfileDocument,
   type ScholarshipDocument,
 } from "@/lib/documents";
+import {
+  buildScholarshipRecommendations,
+  type RecommendedScholarship,
+} from "@/lib/recommendations";
 
 // Appwrite
-import { Models, Query } from "appwrite";
+import { Query } from "appwrite";
 import { databaseId, databases } from "@/lib/appwrite";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AuthModal } from "@/components/auth/auth-modal";
@@ -30,12 +34,28 @@ import { User } from "lucide-react";
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const normalizedUser = user ? normalizeProfile(user as ProfileDocument) : null;
+  const recommendationProfileKey = normalizedUser
+    ? [
+        normalizedUser.$id,
+        normalizedUser.currentLevel,
+        normalizedUser.country,
+        normalizedUser.state,
+        normalizedUser.courseOfStudy,
+        normalizedUser.bio,
+        normalizedUser.gpa,
+        normalizedUser.scholarshipTypes.join("|"),
+      ].join("::")
+    : "";
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [savedScholarships, setSavedScholarships] = useState<Models.Document[]>(
+  const [savedScholarships, setSavedScholarships] = useState<
+    DashboardScholarshipRecord[]
+  >([]);
+  const [applications, setApplications] = useState<DashboardScholarshipRecord[]>(
     []
   );
-  const [applications, setApplications] = useState<Models.Document[]>([]);
-  const [recommendations, setRecommendations] = useState<Models.Document[]>([]);
+  const [recommendations, setRecommendations] = useState<
+    RecommendedScholarship[]
+  >([]);
 
   useEffect(() => {
     if (!normalizedUser?.$id) return;
@@ -51,7 +71,9 @@ export default function DashboardPage() {
             Query.equal("action", "save"),
           ]
         );
-        setSavedScholarships(savedRes.documents);
+        setSavedScholarships(
+          savedRes.documents as unknown as DashboardScholarshipRecord[]
+        );
 
         // Fetch applications
         const appliedRes = await databases.listDocuments(
@@ -62,35 +84,36 @@ export default function DashboardPage() {
             Query.equal("action", "apply"),
           ]
         );
-        setApplications(appliedRes.documents);
+        setApplications(
+          appliedRes.documents as unknown as DashboardScholarshipRecord[]
+        );
 
-        // Fetch recommendations based on user data
-        const recommendationQueries = [
-          Query.limit(5), // Default limit
-        ];
-        if (normalizedUser.currentLevel) {
-          recommendationQueries.push(
-            Query.equal("level", normalizedUser.currentLevel)
-          );
-        }
+        // Fetch active scholarships, then score them against the student's profile.
         const recommendedRes = await databases.listDocuments(
           databaseId,
           "scholarships",
-          recommendationQueries
+          [Query.equal("status", ["active"]), Query.limit(100)]
         );
 
-        setRecommendations(
-          recommendedRes.documents.map((document) =>
-            normalizeScholarship(document as ScholarshipDocument)
-          )
+        const excludedScholarshipIds = new Set(
+          [...savedRes.documents, ...appliedRes.documents]
+            .map((document) => String(document.scholarship?.$id || document.scholarship || ""))
+            .filter(Boolean)
         );
+
+        const recommendedScholarships = buildScholarshipRecommendations(
+          normalizedUser,
+          recommendedRes.documents as ScholarshipDocument[]
+        ).filter((scholarship) => !excludedScholarshipIds.has(scholarship.$id));
+
+        setRecommendations(recommendedScholarships);
       } catch (error) {
         console.error("Error fetching scholarships:", error);
       }
     };
 
     fetchScholarships();
-  }, [normalizedUser?.$id, normalizedUser?.currentLevel]);
+  }, [recommendationProfileKey]);
 
   if (authLoading) {
     return <div className="min-h-screen pt-24 pb-12 bg-gray-50 dark:bg-gray-900" />;

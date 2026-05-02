@@ -4,11 +4,26 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import ScholarshipCard from "./scholarship-card";
 import { Models } from "appwrite";
+import type { RecommendedScholarship } from "@/lib/recommendations";
+
+type ScholarshipRelation = {
+  $id: string;
+  title?: string;
+  deadline?: string;
+  amount?: number | string;
+  currency?: string;
+  match?: number;
+  reason?: string;
+};
+
+export type DashboardScholarshipRecord = Models.Document & {
+  scholarship: ScholarshipRelation;
+};
 
 interface ScholarshipTabsProps {
-  savedScholarships: Models.Document[];
-  recommendations: Models.Document[];
-  applications: Models.Document[];
+  savedScholarships: DashboardScholarshipRecord[];
+  recommendations: RecommendedScholarship[];
+  applications: DashboardScholarshipRecord[];
 }
 export default function ScholarshipTabs({
   savedScholarships,
@@ -72,13 +87,13 @@ export default function ScholarshipTabs({
               key={saved.scholarship.$id}
               scholarship={{
                 id: saved.scholarship.$id,
-                title: saved.scholarship.title,
-                deadline: saved.scholarship.deadline,
+                title: saved.scholarship.title || "Saved scholarship",
+                deadline: saved.scholarship.deadline || "",
                 amount: `${saved.scholarship.currency || "$"} ${
-                  saved.scholarship.amount
+                  saved.scholarship.amount || 0
                 }`,
                 status: "saved",
-                daysLeft: saved.scholarship.deadline,
+                daysLeft: 0,
                 match: saved.scholarship.match,
                 reason: saved.scholarship.reason,
               }}
@@ -103,9 +118,9 @@ export default function ScholarshipTabs({
               key={rec.$id}
               scholarship={{
                 id: rec.$id,
-                title: rec.title,
-                deadline: rec.deadline,
-                amount: "",
+                title: rec.title || "Scholarship opportunity",
+                deadline: rec.deadline || "",
+                amount: `${rec.currency || "USD"} ${rec.amount || 0}`,
                 status: "recommended",
                 daysLeft: 0,
                 match: rec.match,
@@ -132,13 +147,13 @@ export default function ScholarshipTabs({
               key={applied.scholarship.$id}
               scholarship={{
                 id: applied.scholarship.$id,
-                title: applied.scholarship.title,
-                deadline: applied.scholarship.deadline,
+                title: applied.scholarship.title || "Applied scholarship",
+                deadline: applied.scholarship.deadline || "",
                 amount: `${applied.scholarship.currency || "$"} ${
-                  applied.scholarship.amount
+                  applied.scholarship.amount || 0
                 }`,
                 status: "applied",
-                daysLeft: applied.scholarship.deadline,
+                daysLeft: 0,
               }}
               showCountdown={true}
             />

@@ -38,12 +38,16 @@ export interface ScholarshipDocument extends AppwriteDocument {
   currency?: string;
   imageUrl?: string;
   imageFileId?: string;
+  status?: string;
+  match?: number;
+  reason?: string;
 }
 
 export interface ProfileDocument extends AppwriteDocument {
   firstName?: string;
   lastName?: string;
   email?: string;
+  dateOfBirth?: string;
   phone?: string;
   state?: string;
   country?: string;
@@ -119,6 +123,7 @@ export const normalizeScholarship = (document: ScholarshipDocument) => ({
   sponsor: document.sponsor ?? "",
   category: document.category ?? "",
   deadline: document.deadline ?? "",
+  status: document.status ?? "active",
 });
 
 export const serializeScholarship = (document: ScholarshipDocument) =>
@@ -132,6 +137,7 @@ export const normalizeProfile = (document: ProfileDocument) => ({
   firstName: document.firstName ?? "",
   lastName: document.lastName ?? "",
   email: document.email ?? "",
+  dateOfBirth: document.dateOfBirth ?? "",
   state: document.state ?? "",
   country: document.country ?? "",
   currentLevel: document.currentLevel ?? "",

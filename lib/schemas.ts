@@ -1,6 +1,10 @@
 import { z } from "zod";
 
 const optionalTrimmedString = z.preprocess((value) => {
+  if (value === null) {
+    return undefined;
+  }
+
   if (typeof value !== "string") {
     return value;
   }
@@ -10,6 +14,10 @@ const optionalTrimmedString = z.preprocess((value) => {
 }, z.string().trim().optional());
 
 const optionalJsonArrayField = z.preprocess((value) => {
+  if (value === null) {
+    return undefined;
+  }
+
   if (Array.isArray(value)) {
     return value;
   }
@@ -44,6 +52,10 @@ const dateTimeField = z
   });
 
 const optionalDateTimeField = z.preprocess((value) => {
+  if (value === null) {
+    return undefined;
+  }
+
   if (typeof value !== "string") {
     return value;
   }
